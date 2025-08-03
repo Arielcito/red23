@@ -8,10 +8,10 @@ This is a Next.js 15 project using React 19 with TypeScript and Tailwind CSS 4. 
 
 ## Development Commands
 
-- `ppm run dev` - Start development server with Turbopack
-- `ppm run build` - Build production version
-- `ppm run start` - Start production server
-- `ppm run lint` - Run ESLint
+- `npm run dev` - Start development server with Turbopack
+- `npm run build` - Build production version
+- `npm run start` - Start production server
+- `npm run lint` - Run ESLint
 - `npx tsc --noEmit` - Type check without emitting files (run after completing tasks)
 
 ## Architecture
