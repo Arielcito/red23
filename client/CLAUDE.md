@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Setup
 
-This is a Next.js 15 project using React 19 with TypeScript and Tailwind CSS 4. The project follows Next.js App Router architecture with Supabase as database and deploys to Vercel.
+This is a Next.js 15 project using React 19 with TypeScript and Tailwind CSS 4. The project is a marketing management platform for online casinos called "Red23". Uses Next.js App Router architecture and is configured to deploy to Vercel.
 
 ## Development Commands
 
@@ -18,78 +18,175 @@ This is a Next.js 15 project using React 19 with TypeScript and Tailwind CSS 4. 
 
 - **Framework**: Next.js 15 with App Router
 - **UI**: React 19 with TypeScript
-- **Styling**: Tailwind CSS 4 with PostCSS
-- **Database**: Supabase
-- **Deployment**: Vercel
-- **Fonts**: Geist Sans and Geist Mono from Google Fonts
+- **Styling**: Tailwind CSS 4 with PostCSS and tw-animate-css
+- **Component Library**: shadcn/ui with Radix UI primitives
+- **AI Integration**: Vercel AI SDK (@ai-sdk/openai, @ai-sdk/react)
+- **Icons**: Lucide React
+- **Theme System**: next-themes with dark mode support
+- **Fonts**: Inter from Google Fonts with Geist Mono fallback
 - **Path aliases**: `@/*` maps to `./src/*`
+- **Styling approach**: CSS Variables with OKLCH color space and custom variants
 
 ### Project Structure
 - `src/app/` - App Router pages and layouts
-- `src/app/layout.tsx` - Root layout with font configuration
-- `src/app/page.tsx` - Homepage
-- `src/app/globals.css` - Global styles with Tailwind and CSS variables
-- `public/` - Static assets
+  - `layout.tsx` - Root layout with Inter font and ThemeProvider
+  - `page.tsx` - Homepage
+  - `globals.css` - Global styles with Tailwind CSS 4 syntax and OKLCH colors
+  - `dashboard/page.tsx` - Dashboard page
+  - `gallery/page.tsx` - Gallery page
+  - `login/page.tsx` - Login page
+  - `upload/page.tsx` - Upload page
+  - `whatsapp-setup/page.tsx` - WhatsApp setup page
+- `src/components/` - Reusable components
+  - `ui/` - shadcn/ui components (Button, Card, Input, etc.)
+  - `theme-provider.tsx` - Theme context provider
+  - `theme-toggle.tsx` - Dark mode toggle component
+- `src/lib/utils.ts` - Utility functions (cn helper for class merging)
+- `public/` - Static assets including logos and icons
 
-## Frontend Guidelines
+## Frontend Architecture
 
 ### Folder Structure
-- `/src`
-    - `/components`
-        - `/domain`
-            - `/hooks`
-            - `/types`
-            - `/utils`
-            - `/components`
-                - `specific-component-1.tsx`
-                - `specific-component-2.tsx`
-            - `domain.tsx`
-    - `/app` (Next.js App Router)
-        - `/domain`
-            - `/hooks`
-            - `/utils`
-            - `/types`
-            - `/components`
-                - `specific-component-1.tsx`
-                - `specific-component-2.tsx`
-                - `/complex-component`
-                    - `/hooks`
-                    - `/utils`
-                    - `/types`
-                    - `index.ts`
-            - `/[sub-domain]` -> dynamic routes. For example /contents/[user-id]
-                - `/hooks`
-                - `/utils`
-                - `/types`
-                - `page.tsx`
-            - `page.tsx`
+
+Domain-based organization following these patterns:
+
+```
+app/                              # Next.js App Router
+├── (auth)/                       # Auth routes group
+├── dashboard/                    # Dashboard domain
+│   ├── hooks/                   # Domain-specific hooks
+│   ├── components/              # Domain components
+│   ├── types/                   # Domain types
+│   ├── utils/                   # Domain utilities
+│   ├── gallery/                 # Sub-domain
+│   │   ├── hooks/
+│   │   ├── components/
+│   │   ├── types/
+│   │   └── page.tsx
+│   └── page.tsx
+├── upload/                      # Upload domain
+│   ├── hooks/
+│   ├── components/
+│   ├── types/
+│   └── page.tsx
+├── whatsapp-setup/              # WhatsApp setup domain
+│   ├── hooks/
+│   ├── components/
+│   ├── types/
+│   └── page.tsx
+└── login/                       # Login domain
+    ├── components/
+    ├── types/
+    └── page.tsx
+
+components/                       # Shared components
+├── ui/                          # shadcn/ui components
+├── auth/                        # Authentication components
+├── theme/                       # Theme components
+└── shared/                      # Common shared components
+
+lib/                             # Business logic
+├── hooks/                       # Global hooks
+├── utils/                       # Utilities
+└── validations/                 # Zod schemas
+```
 
 ### Data Fetching
-Use TanStack Query with useQuery/useMutation. Handle errors with onError callback. Use Axios for HTTP requests.
+
+**Use custom hooks for all data fetching:**
+
+```tsx
+import { useState, useEffect } from 'react';
+
+// Custom hook example - Always call API routes, never services directly
+function useUserProfile(userId: string) {
+  const [data, setData] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        setIsLoading(true);
+        const response = await fetch(`/api/users/${userId}`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch user');
+        }
+        const result = await response.json();
+        setData(result.data);
+      } catch (err) {
+        setError(err);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    if (userId) {
+      fetchData();
+    }
+  }, [userId]);
+
+  return { data, isLoading, error };
+}
+```
+
+**Error Handling:**
+- Check error types for custom error messages
+- Always provide fallback UI for error states
+- Use proper HTTP status codes for different error types
+
+**Project includes Vercel AI SDK for AI integrations.** Currently no API routes exist but when implemented, follow the API structure outlined below.
 
 ### Component Guidelines
+
+**Atomic Design Principles:**
+- **Atoms**: Basic UI elements (Button, Input, Card)
+- **Molecules**: Simple component combinations (SearchBox, UserCard)
+- **Organisms**: Complex UI sections (Header, Dashboard, Gallery)
+- **Templates**: Page layouts
+- **Pages**: Specific page implementations
+
+**Component Structure:**
+```tsx
+// components/domain/specific-component.tsx
+interface ComponentProps {
+  // Props definition with TypeScript
+}
+
+export function ComponentName({ props }: ComponentProps) {
+  // Component logic
+  return (
+    // JSX with proper TypeScript typing
+  );
+}
+```
+
+**Guidelines:**
 - Create atomic components that are reusable and focused on single responsibility
 - Use TypeScript interfaces for props, preferably with Zod schemas when validation is needed
 - Implement proper prop destructuring with default values
 - Export components as default exports from their files
+- Use shadcn/ui components as base building blocks
 
 ### State Management
 - All data handling in React must be in custom hooks
 - Use React's built-in useState and useReducer for local state
-- Use TanStack Query for server state management
+- Theme state is managed by next-themes provider in layout.tsx
 - Create custom hooks for complex logic or shared state
 
 ### Styling Guidelines
-- Use Tailwind CSS classes for styling
+- Use Tailwind CSS 4 with modern syntax and configuration
 - Follow mobile-first responsive design approach
-- Use CSS variables for theming (already configured in globals.css)
+- Use CSS variables for theming with OKLCH color space (configured in globals.css)
+- Use shadcn/ui components for consistent design system
+- Custom color palette includes primary, secondary, tertiary with dark mode variants
+- Use `cn()` utility from `@/lib/utils` for conditional class merging
 - Avoid inline styles unless absolutely necessary
 
 ### Authentication & Security
 - Handle authentication through backend API endpoints (login, register, logout)
 - Store authentication tokens securely (httpOnly cookies or secure localStorage)
 - Implement proper route protection with middleware or guards
-- Use TanStack Query for auth state management
 - Never expose sensitive data in client-side code
 - Use environment variables for configuration
 
@@ -112,7 +209,7 @@ Use TanStack Query with useQuery/useMutation. Handle errors with onError callbac
 - Show loading state while data is being fetched
 
 ### Forms
-Use react-hook-form with Zod for validation. Show validation errors BELOW the input fields.
+Use react-hook-form with Zod for validation. Use shadcn/ui form components for consistent styling. Show validation errors BELOW the input fields.
 
 ## Backend/API Guidelines (Next.js API Routes)
 
@@ -127,8 +224,10 @@ Organize API routes by domain using Next.js App Router:
     - `/sub-domain`
       - `route.ts`
 
+**Note**: Currently no API routes exist in the project. When implementing, follow the structure above.
+
 ### Database Communication
-- All database operations through Supabase backend
+- When database integration is needed, consider the project's requirements
 - Use snake_case for table/column names
 - Include `created_at` and `updated_at` in all tables
 - Define foreign keys with appropriate delete conditions (cascade, null, etc.)
@@ -212,14 +311,13 @@ Use proper HTTP status codes and structured error responses. Log errors appropri
 - Never commit sensitive variables to repository
 
 ### Backend Communication
-- All database operations handled through API routes/endpoints
-- Use TanStack Query for server state management and caching
+- All database operations handled through API routes/endpoints when implemented
 - Implement proper error handling for API responses
-- Use Axios for HTTP requests with interceptors for auth tokens
 - Handle loading and error states consistently across the app
+- Use Vercel AI SDK for AI-related API integrations
 
 ### Deployment (Vercel)
-- Configure build settings in `vercel.json` if needed
+- Project is configured for Vercel deployment
 - Use Vercel environment variables for secrets
 - Enable automatic deployments from main branch
 - Configure custom domains through Vercel dashboard
@@ -232,9 +330,20 @@ Use proper HTTP status codes and structured error responses. Log errors appropri
 
 ## Development Notes
 
-- Uses CSS variables for theming with dark mode support
-- TypeScript strict mode enabled
-- Custom CSS variables defined in globals.css for background/foreground colors
-- Font variables are configured at the layout level
-- Always use `ppm` as package manager
+- Uses OKLCH color space with CSS variables for theming and dark mode support
+- TypeScript strict mode enabled with ES2017 target
+- Custom CSS variables defined in globals.css using modern Tailwind CSS 4 syntax
+- Inter font configured at the layout level with Geist Mono fallback
+- shadcn/ui components configured with neutral base color and CSS variables
+- Always use `npm` as package manager
 - Run `npx tsc --noEmit` after completing implementation tasks
+
+## Key Dependencies
+
+- **Vercel AI SDK**: For AI integrations (@ai-sdk/openai, @ai-sdk/react, ai)
+- **shadcn/ui**: Component library with Radix UI primitives
+- **Tailwind CSS 4**: Latest version with modern syntax and OKLCH colors
+- **next-themes**: Theme management with system preference detection
+- **Zod**: Schema validation for TypeScript
+- **Lucide React**: Icon library
+- **class-variance-authority & clsx**: For component styling patterns

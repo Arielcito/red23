@@ -9,8 +9,8 @@ import { ThemeProvider } from "@/components/theme-provider"
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" })
 
 export const metadata: Metadata = {
-  title: "AI Image Platform",
-  description: "Genera imágenes increíbles con IA y publícalas en WhatsApp",
+  title: "Red23",
+  description: "Gestión de marketing para casinos online",
   generator: "v0.dev",
 }
 
