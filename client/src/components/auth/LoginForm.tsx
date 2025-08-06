@@ -1,20 +1,15 @@
 "use client"
 
+import { SignIn } from '@clerk/nextjs'
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { LogIn, UserPlus } from "lucide-react"
-import Link from "next/link"
+import { UserPlus } from "lucide-react"
 
 interface LoginFormProps {
   onSwitchToDemo: () => void
 }
 
 export function LoginForm({ onSwitchToDemo }: LoginFormProps) {
-  const handleAuth = (e: React.FormEvent) => {
-    e.preventDefault()
-    window.location.href = "/dashboard"
-  }
+  console.log('[LoginForm] Renderizando componente de login con Clerk')
 
   return (
     <div className="space-y-4">
@@ -23,28 +18,22 @@ export function LoginForm({ onSwitchToDemo }: LoginFormProps) {
         <p className="text-gray-600 dark:text-gray-300">Accede a tu plataforma de marketing</p>
       </div>
 
-      <form onSubmit={handleAuth} className="space-y-4">
-        <div className="space-y-2">
-          <Label htmlFor="email">Email</Label>
-          <Input id="email" type="email" placeholder="tu@email.com" required />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="password">Contraseña</Label>
-          <Input id="password" type="password" required />
-        </div>
-        <Button type="submit" className="w-full bg-primary-600 hover:bg-primary-700">
-          <LogIn className="mr-2 h-4 w-4" />
-          Iniciar Sesión
-        </Button>
-      </form>
-
-      <div className="text-center">
-        <p className="text-sm text-gray-600 dark:text-gray-400">
-          ¿Olvidaste tu contraseña?{" "}
-          <Link href="#" className="text-primary-600 hover:text-primary-700">
-            Recupérala aquí
-          </Link>
-        </p>
+      <div className="flex justify-center">
+        <SignIn 
+          afterSignInUrl="/dashboard"
+          signUpUrl="#"
+          appearance={{
+            elements: {
+              rootBox: "w-full",
+              card: "shadow-none border-0 bg-transparent",
+              headerTitle: "hidden",
+              headerSubtitle: "hidden",
+              socialButtonsBlockButton: "w-full",
+              formButtonPrimary: "w-full bg-primary-600 hover:bg-primary-700",
+              footerAction: "hidden"
+            }
+          }}
+        />
       </div>
 
       <div className="text-center pt-4 border-t">

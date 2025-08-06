@@ -5,6 +5,7 @@ import { GeistMono } from "geist/font/mono"
 const geistMono = GeistMono
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
+import { ClerkProvider } from '@clerk/nextjs'
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" })
 
@@ -20,21 +21,23 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="es" suppressHydrationWarning>
-      <head>
-        <style>{`
+    <ClerkProvider>
+      <html lang="es" suppressHydrationWarning>
+        <head>
+          <style>{`
 html {
   font-family: ${inter.style.fontFamily};
   --font-sans: ${inter.variable};
   --font-mono: ${geistMono.className};
 }
-        `}</style>
-      </head>
-      <body className={inter.className}>
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-          {children}
-        </ThemeProvider>
-      </body>
-    </html>
+          `}</style>
+        </head>
+        <body className={inter.className}>
+          <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+            {children}
+          </ThemeProvider>
+        </body>
+      </html>
+    </ClerkProvider>
   )
 }

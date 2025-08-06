@@ -202,14 +202,86 @@ export function ComponentName({ props }: ComponentProps) {
 - Use proper typing for API responses
 - Avoid 'any' type - use 'unknown' when type is truly unknown
 
+### UI States
+
+**Always implement these states:**
+- **Loading**: Show skeleton or spinner while data loads
+- **Empty**: Show appropriate message when no data exists
+- **Error**: Show specific error messages with recovery options
+
+```tsx
+function UsersList() {
+  const { data: users, isLoading, error } = useUsers();
+
+  if (isLoading) return <UsersSkeleton />;
+  if (error) return <ErrorMessage error={error} />;
+  if (!users?.length) return <EmptyState message="No users found" />;
+
+  return (
+    <div>
+      {users.map(user => <UserCard key={user.id} user={user} />)}
+    </div>
+  );
+}
+```
+
 ### UI Guidelines
-- Always include loading states
-- Always include empty states
+- Always include loading states with proper skeleton components
+- Always include empty states with meaningful messages
 - Handle errors properly - check error type for specific messages
 - Show loading state while data is being fetched
+- Use shadcn/ui components for consistent styling
+- Implement proper accessibility features
 
 ### Forms
-Use react-hook-form with Zod for validation. Use shadcn/ui form components for consistent styling. Show validation errors BELOW the input fields.
+
+**Use React Hook Form with Zod validation:**
+
+```tsx
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { userSchema } from '@/lib/validations';
+
+function UserForm() {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting }
+  } = useForm({
+    resolver: zodResolver(userSchema)
+  });
+
+  const onSubmit = async (data) => {
+    try {
+      // Handle form submission
+    } catch (error) {
+      // Handle error
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <input {...register('name')} />
+      {errors.name && (
+        <p className="text-red-500 text-sm mt-1">
+          {errors.name.message}
+        </p>
+      )}
+      <button type="submit" disabled={isSubmitting}>
+        {isSubmitting ? 'Submitting...' : 'Submit'}
+      </button>
+    </form>
+  );
+}
+```
+
+**Form Guidelines:**
+- Use react-hook-form with Zod for validation
+- Use shadcn/ui form components for consistent styling
+- Show validation errors BELOW the input fields
+- Use proper loading states during submission
+- Provide clear success/error feedback
+- Implement proper TypeScript typing for form data
 
 ## Backend/API Guidelines (Next.js API Routes)
 
@@ -322,11 +394,35 @@ Use proper HTTP status codes and structured error responses. Log errors appropri
 - Enable automatic deployments from main branch
 - Configure custom domains through Vercel dashboard
 
-### Data Management
-- All data handling in React should be in custom hooks
-- When creating pages, always create atomic components
-- Check for existing types/interfaces before creating new ones
-- Add strategic logging for key process moments
+
+## Development Guidelines
+
+### Code Quality
+- Always check existing types before creating new ones
+- Data management in React should be handled via custom hooks
+- Create atomic components when building new pages
+- Add strategic logging to show key process moments
+- Use npm for package management
+- Run `npx tsc --noEmit` after completing development tasks
+
+### Performance
+- Use proper caching strategies for data fetching
+- Implement loading states and skeleton screens
+- Optimize images and assets with Next.js Image component
+- Use Next.js built-in optimizations
+- Use React.memo for expensive components that don't need frequent re-renders
+
+### Security
+- Validate all inputs with Zod schemas
+- Never expose sensitive data in client-side code
+- Implement proper authentication checks
+- Use environment variables for configuration
+
+### Type Safety
+- Always use TypeScript with strict mode
+- Define proper interfaces for all data structures
+- Use Zod for runtime validation
+- Leverage Next.js type generation
 
 ## Development Notes
 
@@ -337,6 +433,49 @@ Use proper HTTP status codes and structured error responses. Log errors appropri
 - shadcn/ui components configured with neutral base color and CSS variables
 - Always use `npm` as package manager
 - Run `npx tsc --noEmit` after completing implementation tasks
+
+## Quick Reference
+
+### Common Patterns
+
+**Data Fetching Hook:**
+```tsx
+function useUsers() {
+  const [data, setData] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    fetch('/api/users')
+      .then(res => res.json())
+      .then(setData)
+      .catch(setError)
+      .finally(() => setIsLoading(false));
+  }, []);
+
+  return { data, isLoading, error };
+}
+```
+
+**Form with Validation:**
+```tsx
+const form = useForm({
+  resolver: zodResolver(schema)
+});
+```
+
+**Component with States:**
+```tsx
+function ComponentName() {
+  const { data, isLoading, error } = useData();
+  
+  if (isLoading) return <Skeleton />;
+  if (error) return <ErrorMessage />;
+  if (!data) return <EmptyState />;
+  
+  return <DataDisplay data={data} />;
+}
+```
 
 ## Key Dependencies
 
