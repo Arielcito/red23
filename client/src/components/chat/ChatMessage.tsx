@@ -1,12 +1,13 @@
 import { Button } from "@/components/ui/button"
-import { Download, Share2, Bot, User } from "lucide-react"
+import { Download, Share2, Bot, User, Calendar } from "lucide-react"
 import { Message } from "@/lib/hooks/useChat"
 
 interface ChatMessageProps {
   message: Message
+  onSchedule?: (imageUrl: string, title: string) => void
 }
 
-export const ChatMessage = ({ message }: ChatMessageProps) => {
+export const ChatMessage = ({ message, onSchedule }: ChatMessageProps) => {
   return (
     <div
       className={`flex ${message.type === "user" ? "justify-end" : "justify-start"}`}
@@ -35,7 +36,7 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
                     className="w-full rounded-lg shadow-lg"
                   />
                 </div>
-                <div className="flex space-x-2 mt-3">
+                <div className="flex flex-wrap gap-2 mt-3">
                   <Button size="sm" variant="outline" className="text-xs">
                     <Download className="h-3 w-3 mr-1" />
                     Descargar
@@ -44,6 +45,17 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
                     <Share2 className="h-3 w-3 mr-1" />
                     Compartir
                   </Button>
+                  {onSchedule && (
+                    <Button 
+                      size="sm" 
+                      variant="outline" 
+                      className="text-xs bg-green-50 hover:bg-green-100 border-green-200"
+                      onClick={() => onSchedule(message.imageUrl!, "Imagen promocional")}
+                    >
+                      <Calendar className="h-3 w-3 mr-1" />
+                      Programar
+                    </Button>
+                  )}
                 </div>
               </div>
             )}

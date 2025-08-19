@@ -11,6 +11,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { ArrowLeft, Upload, ImageIcon, X, Calendar } from "lucide-react"
 import Link from "next/link"
 import { ThemeToggle } from "@/components/theme-toggle"
+import { AppLayout } from "@/components/layout/AppLayout"
 
 export default function UploadPage() {
   const [dragActive, setDragActive] = useState(false)
@@ -64,30 +65,13 @@ export default function UploadPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      {/* Header */}
-      <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-4">
-            <Link href="/dashboard">
-              <Button variant="ghost" size="sm">
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                Volver
-              </Button>
-            </Link>
-            <img src="/logo.png" alt="Logo" className="h-8 w-8" />
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Subir Imágenes</h1>
-              <p className="text-gray-600 dark:text-gray-300">Añade tus propias imágenes a la galería</p>
-            </div>
-            <div className="ml-auto">
-              <ThemeToggle />
-            </div>
-          </div>
-        </div>
-      </header>
-
-      <div className="p-6 max-w-4xl mx-auto space-y-6">
+    <AppLayout
+      title="Subir Imágenes"
+      subtitle="Añade tus propias imágenes a la galería"
+      showBackButton={true}
+      backHref="/dashboard"
+    >
+      <div className="p-4 sm:p-6 max-w-4xl mx-auto space-y-4 sm:space-y-6">
         {/* Upload Area */}
         <Card>
           <CardHeader>
@@ -96,7 +80,7 @@ export default function UploadPage() {
           </CardHeader>
           <CardContent>
             <div
-              className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
+              className={`border-2 border-dashed rounded-lg p-4 sm:p-8 text-center transition-colors ${
                 dragActive
                   ? "border-primary-500 bg-primary-50 dark:bg-primary-900/20"
                   : "border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500"
@@ -106,13 +90,13 @@ export default function UploadPage() {
               onDragOver={handleDrag}
               onDrop={handleDrop}
             >
-              <div className="space-y-4">
-                <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto">
-                  <Upload className="h-8 w-8 text-primary-500" />
+              <div className="space-y-3 sm:space-y-4">
+                <div className="w-12 h-12 sm:w-16 sm:h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto">
+                  <Upload className="h-6 w-6 sm:h-8 sm:w-8 text-primary-500" />
                 </div>
                 <div>
-                  <p className="text-lg font-medium text-gray-900 dark:text-white">Arrastra tus imágenes aquí</p>
-                  <p className="text-gray-600 dark:text-gray-300">o haz clic para seleccionar archivos</p>
+                  <p className="text-base sm:text-lg font-medium text-gray-900 dark:text-white">Arrastra tus imágenes aquí</p>
+                  <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300">o haz clic para seleccionar archivos</p>
                 </div>
                 <div>
                   <input
@@ -133,7 +117,7 @@ export default function UploadPage() {
                     </Button>
                   </label>
                 </div>
-                <p className="text-sm text-gray-500">Formatos soportados: JPG, PNG, GIF, WebP (máx. 10MB cada una)</p>
+                <p className="text-xs sm:text-sm text-gray-500">Formatos soportados: JPG, PNG, GIF, WebP (máx. 10MB cada una)</p>
               </div>
             </div>
           </CardContent>
@@ -146,7 +130,7 @@ export default function UploadPage() {
               <CardTitle>Imágenes Seleccionadas ({uploadedFiles.length})</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
                 {uploadedFiles.map((file, index) => (
                   <div key={index} className="relative group">
                     <div className="aspect-square bg-gray-100 rounded-lg overflow-hidden">
@@ -166,7 +150,7 @@ export default function UploadPage() {
                         </Button>
                       </div>
                     </div>
-                    <p className="text-xs text-gray-600 mt-2 truncate">{file.name}</p>
+                    <p className="text-xs text-gray-600 mt-1 sm:mt-2 truncate">{file.name}</p>
                     <p className="text-xs text-gray-500">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
                   </div>
                 ))}
@@ -185,8 +169,8 @@ export default function UploadPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
                   <div className="space-y-4">
                     <div>
                       <Label htmlFor="title">Título (opcional)</Label>
@@ -245,11 +229,11 @@ export default function UploadPage() {
                   </div>
                 </div>
 
-                <div className="flex justify-end space-x-3 pt-4 border-t">
-                  <Button type="button" variant="outline" onClick={() => setUploadedFiles([])}>
+                <div className="flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-3 pt-4 border-t">
+                  <Button type="button" variant="outline" onClick={() => setUploadedFiles([])} className="w-full sm:w-auto">
                     Cancelar
                   </Button>
-                  <Button type="submit" className="bg-primary-600 hover:bg-primary-700">
+                  <Button type="submit" className="bg-primary-600 hover:bg-primary-700 w-full sm:w-auto">
                     <Upload className="h-4 w-4 mr-2" />
                     Subir {uploadedFiles.length} imagen{uploadedFiles.length !== 1 ? "es" : ""}
                   </Button>
@@ -265,7 +249,7 @@ export default function UploadPage() {
             <CardTitle>Consejos para mejores resultados</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
               <div className="space-y-3">
                 <h4 className="font-medium">Calidad de imagen</h4>
                 <ul className="text-sm text-gray-600 space-y-1">
@@ -286,6 +270,6 @@ export default function UploadPage() {
           </CardContent>
         </Card>
       </div>
-    </div>
+    </AppLayout>
   )
 }

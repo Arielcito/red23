@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge"
 import { ArrowLeft, Smartphone, CheckCircle, AlertCircle, Clock, Settings, QrCode } from "lucide-react"
 import Link from "next/link"
 import { ThemeToggle } from "@/components/theme-toggle"
+import { AppLayout } from "@/components/layout/AppLayout"
 
 export default function WhatsAppSetupPage() {
   const [isConnected, setIsConnected] = useState(false)
@@ -30,45 +31,17 @@ export default function WhatsAppSetupPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      {/* Header */}
-      <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-4">
-            <Link href="/dashboard">
-              <Button variant="ghost" size="sm">
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                Volver
-              </Button>
-            </Link>
-            <img src="/logo.png" alt="Logo" className="h-8 w-8" />
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Configuración WhatsApp</h1>
-              <p className="text-gray-600 dark:text-gray-300">Conecta tu cuenta para publicaciones automáticas</p>
-            </div>
-          </div>
-          <div className="flex items-center space-x-4">
-            <ThemeToggle />
-            <Badge
-              variant={isConnected ? "default" : "secondary"}
-              className={isConnected ? "bg-tertiary-500 hover:bg-tertiary-600" : ""}
-            >
-              {isConnected ? (
-                <>
-                  <CheckCircle className="h-3 w-3 mr-1" />
-                  Conectado
-                </>
-              ) : (
-                <>
-                  <AlertCircle className="h-3 w-3 mr-1" />
-                  Desconectado
-                </>
-              )}
-            </Badge>
-          </div>
-        </div>
-      </header>
-
+    <AppLayout
+      title="Configuración WhatsApp"
+      subtitle="Conecta tu cuenta para publicaciones automáticas"
+      showBackButton={true}
+      backHref="/dashboard"
+      badge={{
+        text: isConnected ? "Conectado" : "Desconectado",
+        variant: isConnected ? "default" : "secondary",
+        className: isConnected ? "bg-tertiary-500 hover:bg-tertiary-600" : ""
+      }}
+    >
       <div className="p-6 max-w-4xl mx-auto space-y-6">
         {/* Connection Status */}
         <Card>
@@ -268,6 +241,6 @@ export default function WhatsAppSetupPage() {
           </Button>
         </div>
       </div>
-    </div>
+    </AppLayout>
   )
 }
