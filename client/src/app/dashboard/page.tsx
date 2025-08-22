@@ -20,6 +20,7 @@ import Link from "next/link"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { ScheduledImagesList } from "@/components/schedule/ScheduledImagesList"
 import { AppLayout } from "@/components/layout/AppLayout"
+import { WinnerBanner } from "@/components/ui/winner-banner"
 
 export default function Dashboard() {
   const [stats] = useState({
@@ -27,6 +28,12 @@ export default function Dashboard() {
     whatsappPosts: 45,
     galleryItems: 89,
     monthlyLimit: 500,
+  })
+
+  const [dailyWinner] = useState({
+    name: "María González",
+    points: 2850,
+    avatar: "/placeholder.svg?height=64&width=64&text=MG"
   })
 
   const quickActions = [
@@ -78,6 +85,9 @@ export default function Dashboard() {
       }}
     >
       <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
+        {/* Winner Banner */}
+        <WinnerBanner winner={dailyWinner} />
+
         {/* Stats Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           <Card>

@@ -14,6 +14,7 @@ import {
   X,
   ChevronLeft,
   ChevronRight,
+  GraduationCap,
 } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
@@ -73,6 +74,13 @@ export function Sidebar({ className }: SidebarProps) {
       icon: Smartphone,
       badge: upcomingCount > 0 ? upcomingCount : undefined,
       description: "Configurar WhatsApp"
+    },
+    {
+      title: "Tutoriales",
+      href: "/tutorials",
+      icon: GraduationCap,
+      badge: "Nuevo",
+      description: "Cursos de marketing"
     },
     {
       title: "Ayuda",

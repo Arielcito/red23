@@ -33,7 +33,7 @@ export function AppLayout({
   const { isCollapsed, isMobileOpen } = useSidebar()
 
   return (
-    <div className="h-screen bg-gray-50 dark:bg-gray-900 flex overflow-hidden">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex">
       <Sidebar />
       
       <div 
@@ -56,7 +56,7 @@ export function AppLayout({
           />
         )}
         
-        <main className={cn("flex-1 min-w-0 overflow-hidden", className)}>
+        <main className={cn("flex-1 min-w-0 overflow-y-auto", className)}>
           {children}
         </main>
       </div>
