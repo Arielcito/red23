@@ -5,7 +5,6 @@ import { useChat } from "@/lib/hooks/useChat"
 import { ChatMessage } from "@/components/chat/ChatMessage"
 import { LoadingIndicator } from "@/components/chat/LoadingIndicator"
 import { ChatInput } from "@/components/chat/ChatInput"
-import { ChatSidebar } from "@/components/chat/ChatSidebar"
 import { ImageScheduler, type ScheduleData } from "@/components/schedule/ImageScheduler"
 import { useScheduledImages } from "@/lib/hooks/useScheduledImages"
 import { AppLayout } from "@/components/layout/AppLayout"
@@ -17,9 +16,9 @@ export default function ChatPage() {
     inputValue,
     setInputValue,
     mockImagePrompts,
-    chatStats,
     sendMessage,
     setQuickPrompt,
+    error,
   } = useChat()
   
   const [schedulerOpen, setSchedulerOpen] = useState(false)
@@ -70,10 +69,18 @@ export default function ChatPage() {
       }}
       hideHeader={false}
     >
-      <div className="flex flex-col lg:flex-row h-full gap-0">
+      <div className="flex flex-col h-full">
         {/* Chat Main Area */}
-        <div className="flex-1 flex flex-col min-w-0 order-2 lg:order-1">
+        <div className="flex-1 flex flex-col min-w-0">
           <div className="flex-1 overflow-y-auto p-3 sm:p-4 space-y-3 sm:space-y-4">
+            {error && (
+              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+                <p className="text-sm">
+                  <strong>Error de conexión:</strong> {error}
+                </p>
+              </div>
+            )}
+            
             {messages.map((message) => (
               <ChatMessage key={message.id} message={message} onSchedule={handleScheduleImage} />
             ))}
@@ -91,15 +98,6 @@ export default function ChatPage() {
               onQuickPrompt={handleQuickPrompt}
             />
           </div>
-        </div>
-
-        {/* Chat Sidebar */}
-        <div className="order-1 lg:order-2 w-full lg:w-80 flex-shrink-0 h-full">
-          <ChatSidebar
-            quickPrompts={mockImagePrompts}
-            onQuickPrompt={handleQuickPrompt}
-            stats={chatStats}
-          />
         </div>
       </div>
       

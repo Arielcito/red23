@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { useImageGeneration } from "./useImageGeneration"
 
 export interface Message {
   id: string
@@ -25,8 +26,8 @@ export const useChat = () => {
     },
   ])
   
-  const [isGenerating, setIsGenerating] = useState(false)
   const [inputValue, setInputValue] = useState("")
+  const { generateImage, isGenerating, error } = useImageGeneration()
 
   const mockImagePrompts = [
     "Banner promocional con jackpot de $1M",
@@ -53,6 +54,8 @@ export const useChat = () => {
   const sendMessage = async (content: string) => {
     if (!content.trim() || isGenerating) return
 
+    console.log('💬 Enviando mensaje:', content)
+
     const userMessage: Message = {
       id: Date.now().toString(),
       type: "user",
@@ -61,19 +64,32 @@ export const useChat = () => {
     }
 
     setMessages(prev => [...prev, userMessage])
-    setIsGenerating(true)
 
-    setTimeout(() => {
-      const aiMessage: Message = {
+    // Generar imagen usando la API real
+    const result = await generateImage({ prompt: content })
+    
+    let aiMessage: Message
+
+    if (result.success && result.imageUrl) {
+      console.log('🎉 Imagen generada correctamente')
+      aiMessage = {
         id: (Date.now() + 1).toString(),
         type: "ai",
         content: `He creado una imagen de marketing para casino basada en tu descripción: "${content}". Aquí tienes el resultado optimizado para promociones:`,
         timestamp: new Date(),
-        imageUrl: mockGeneratedImages[Math.floor(Math.random() * mockGeneratedImages.length)],
+        imageUrl: result.imageUrl,
       }
-      setMessages(prev => [...prev, aiMessage])
-      setIsGenerating(false)
-    }, 3000)
+    } else {
+      console.log('⚠️ Error generando imagen:', result.error)
+      aiMessage = {
+        id: (Date.now() + 1).toString(),
+        type: "ai",
+        content: `Lo siento, hubo un problema al generar la imagen: ${result.error || 'Error desconocido'}. Por favor, intenta con otro prompt.`,
+        timestamp: new Date(),
+      }
+    }
+
+    setMessages(prev => [...prev, aiMessage])
   }
 
   const setQuickPrompt = (prompt: string) => {
@@ -94,5 +110,6 @@ export const useChat = () => {
     sendMessage,
     setQuickPrompt,
     clearInput,
+    error,
   }
 }
