@@ -18,12 +18,20 @@ export interface ImageGenerationHook {
 }
 
 // Tipos para la respuesta de la API externa
+export interface ExternalApiData {
+  created_at: string
+  logo: string | null
+  position: string | null
+  prompt: string
+  result: string
+  result_with_logo: string | null
+}
+
 export interface ExternalApiResponse {
-  image_url?: string
-  imageUrl?: string
-  url?: string
-  error?: string
-  success?: boolean
+  data: ExternalApiData
+  message: string
+  request_id: string
+  status: string
 }
 
 // Configuración de la API externa
@@ -31,5 +39,4 @@ export interface ApiConfig {
   baseUrl: string
   endpoint: string
   authorizationToken: string
-  timeout: number
 }

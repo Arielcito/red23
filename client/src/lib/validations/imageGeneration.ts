@@ -27,9 +27,15 @@ export type GenerateImageResponse = z.infer<typeof generateImageResponseSchema>
 
 // Validación para la respuesta completa de la API externa
 export const externalApiResponseSchema = z.object({
-  image_url: z.string().url().optional(),
-  imageUrl: z.string().url().optional(),
-  url: z.string().url().optional(),
-  error: z.string().optional(),
-  success: z.boolean().optional()
+  data: z.object({
+    created_at: z.string(),
+    logo: z.string().nullable(),
+    position: z.string().nullable(),
+    prompt: z.string(),
+    result: z.string().url('La URL del resultado debe ser válida'),
+    result_with_logo: z.string().nullable()
+  }),
+  message: z.string(),
+  request_id: z.string(),
+  status: z.string()
 })

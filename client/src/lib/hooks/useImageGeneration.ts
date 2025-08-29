@@ -25,13 +25,11 @@ export const useImageGeneration = (): ImageGenerationHook => {
       const apiConfig = getApiConfig()
       console.log('🔧 Usando configuración de API:', {
         baseUrl: apiConfig.baseUrl,
-        endpoint: apiConfig.endpoint,
-        timeout: apiConfig.timeout
+        endpoint: apiConfig.endpoint
       })
 
-      // Crear el controlador de aborto para timeout
+      // Crear el controlador de aborto
       const controller = new AbortController()
-      const timeoutId = setTimeout(() => controller.abort(), apiConfig.timeout)
 
       const response = await fetch(`${apiConfig.baseUrl}${apiConfig.endpoint}`, {
         method: 'POST',
@@ -45,8 +43,6 @@ export const useImageGeneration = (): ImageGenerationHook => {
         }),
         signal: controller.signal
       })
-
-      clearTimeout(timeoutId)
 
       if (!response.ok) {
         const errorText = await response.text()
@@ -69,20 +65,32 @@ export const useImageGeneration = (): ImageGenerationHook => {
       }
 
       const data: ExternalApiResponse = await response.json()
-      console.log('📦 Respuesta de la API recibida:', data)
+      console.log('📦 Respuesta de la API recibida:', {
+        status: data.status,
+        message: data.message,
+        requestId: data.request_id,
+        hasResult: !!data.data?.result
+      })
 
       // Validar la respuesta usando Zod
       const validatedResponse = externalApiResponseSchema.parse(data)
 
-      // Extraer la URL de la imagen de diferentes posibles campos
-      const imageUrl = validatedResponse.image_url || validatedResponse.imageUrl || validatedResponse.url
+      // Extraer la URL de la imagen desde data.result
+      const imageUrl = validatedResponse.data.result
 
       if (!imageUrl) {
-        console.error('❌ No se encontró URL de imagen en la respuesta:', validatedResponse)
+        console.error('❌ No se encontró URL de imagen en la respuesta:', {
+          data: validatedResponse.data,
+          requestId: validatedResponse.request_id
+        })
         throw new Error('La API no retornó una URL de imagen válida')
       }
 
-      console.log('✅ Imagen generada exitosamente:', imageUrl)
+      console.log('✅ Imagen generada exitosamente:', {
+        imageUrl,
+        requestId: validatedResponse.request_id,
+        createdAt: validatedResponse.data.created_at
+      })
 
       return {
         success: true,
@@ -94,7 +102,7 @@ export const useImageGeneration = (): ImageGenerationHook => {
 
       if (err instanceof Error) {
         if (err.name === 'AbortError') {
-          errorMessage = 'La solicitud excedió el tiempo límite, intenta con un prompt más corto'
+          errorMessage = 'La solicitud fue cancelada'
         } else if (err.name === 'TypeError' && err.message.includes('fetch')) {
           errorMessage = 'Error de conexión, verifica tu conexión a internet'
         } else {

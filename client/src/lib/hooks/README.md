@@ -13,7 +13,7 @@ Se ha mejorado significativamente la implementación del hook `useImageGeneratio
 
 ### 2. **Manejo de Errores Mejorado**
 - ✅ Detección específica de tipos de error (401, 429, 500+)
-- ✅ Manejo de timeouts con AbortController
+- ✅ Manejo de cancelación con AbortController
 - ✅ Mensajes de error contextuales para el usuario
 - ✅ Logging detallado para debugging
 
@@ -53,7 +53,6 @@ Crea un archivo `.env.local` en la raíz del proyecto:
 # Configuración de la API de Generación de Imágenes
 NEXT_PUBLIC_IMAGE_GENERATOR_API_URL=https://imagesgeneratorapi-219275077232.us-central1.run.app
 IMAGE_GENERATOR_API_TOKEN=tu_token_aqui
-IMAGE_GENERATOR_API_TIMEOUT=30000
 IMAGE_GENERATOR_API_ENDPOINT=/generate
 ```
 
@@ -105,7 +104,7 @@ function MiComponente() {
 - **401**: Error de autenticación
 - **429**: Límite de solicitudes excedido
 - **500+**: Error del servidor
-- **Timeout**: Solicitud cancelada por tiempo excedido
+- **Cancelación**: Solicitud cancelada por el usuario
 - **Network**: Error de conexión
 
 ### Logging
