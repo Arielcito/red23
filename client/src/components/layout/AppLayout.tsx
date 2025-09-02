@@ -2,8 +2,8 @@
 
 import { Sidebar } from "./Sidebar"
 import { NavigationHeader } from "@/components/auth/NavigationHeader"
-import { useSidebar } from "@/lib/hooks/useSidebar"
 import { cn } from "@/lib/utils"
+import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar"
 
 interface AppLayoutProps {
   children: React.ReactNode
@@ -30,38 +30,24 @@ export function AppLayout({
   hideHeader = false,
   className
 }: AppLayoutProps) {
-  const { isCollapsed, isMobileOpen } = useSidebar()
-
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex">
+    <SidebarProvider>
       <Sidebar />
-      
-      <div 
-        className={cn(
-          "flex-1 flex flex-col transition-all duration-300 min-w-0",
-          // Adjust for sidebar width
-          "lg:ml-0", // Sidebar is relative, no margin needed
-          // Mobile padding for menu button
-          "pl-12 lg:pl-0"
-        )}
-      >
+      <SidebarInset className="w-full overflow-x-hidden md:m-0 md:rounded-none md:shadow-none">
         {!hideHeader && (
           <NavigationHeader
             title={title}
             subtitle={subtitle}
             showBackButton={showBackButton}
             backHref={backHref}
-            showLogo={false} // Logo is in sidebar
+            showLogo={false}
             badge={badge}
           />
         )}
-        
-        <main className={cn("flex-1 min-w-0 overflow-y-auto", className)}>
+        <main className={cn("flex flex-col flex-1 min-w-0 min-h-0 w-full overflow-x-hidden", className)}>
           {children}
         </main>
-      </div>
-
-      {/* Mobile sidebar backdrop - handled in Sidebar component */}
-    </div>
+      </SidebarInset>
+    </SidebarProvider>
   )
 }

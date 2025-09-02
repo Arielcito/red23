@@ -9,6 +9,7 @@ import {
   Smartphone,
   HelpCircle,
   GraduationCap,
+  Gift,
 } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
@@ -26,6 +27,7 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar"
 import { useScheduledImages } from "@/lib/hooks/useScheduledImages"
+import { RewardsMenuItem } from "@/components/rewards/RewardsMenuItem"
 import Image from "next/image"
 
 interface SidebarProps {
@@ -81,6 +83,12 @@ export function Sidebar({ className }: SidebarProps) {
       description: "Configurar WhatsApp"
     },
     {
+      title: "Premios",
+      href: "/rewards",
+      icon: Gift,
+      description: "Sorteos y premios"
+    },
+    {
       title: "Tutoriales",
       href: "/tutorials",
       icon: GraduationCap,
@@ -124,12 +132,18 @@ export function Sidebar({ className }: SidebarProps) {
                   <SidebarMenuItem key={item.href}>
                     <SidebarMenuButton asChild isActive={active}>
                       <Link href={item.href}>
-                        <Icon className="h-4 w-4" />
-                        <span>{item.title}</span>
-                        {item.badge && (
-                          <Badge variant="secondary" className="ml-auto text-xs">
-                            {item.badge}
-                          </Badge>
+                        {item.href === "/rewards" ? (
+                          <RewardsMenuItem />
+                        ) : (
+                          <>
+                            <Icon className="h-4 w-4" />
+                            <span>{item.title}</span>
+                            {item.badge && (
+                              <Badge variant="secondary" className="ml-auto text-xs">
+                                {item.badge}
+                              </Badge>
+                            )}
+                          </>
                         )}
                       </Link>
                     </SidebarMenuButton>
@@ -139,6 +153,7 @@ export function Sidebar({ className }: SidebarProps) {
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
+
       </SidebarContent>
 
       <SidebarFooter>

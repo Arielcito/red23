@@ -69,7 +69,7 @@ export const ChatMessage = ({ message, onSchedule }: ChatMessageProps) => {
       className={`flex ${message.type === "user" ? "justify-end" : "justify-start"}`}
     >
       <div
-        className={`max-w-[85%] sm:max-w-[70%] ${
+        className={`max-w-[90%] sm:max-w-[70%] md:max-w-[65%] ${
           message.type === "user"
             ? "bg-primary-500 text-white rounded-l-lg rounded-tr-lg"
             : "bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-r-lg rounded-tl-lg"
@@ -82,10 +82,10 @@ export const ChatMessage = ({ message, onSchedule }: ChatMessageProps) => {
             </div>
           )}
           <div className="flex-1">
-            <p className="text-xs sm:text-sm">{message.content}</p>
+            <p className="text-xs sm:text-sm break-words">{message.content}</p>
             {message.imageUrl && (
               <div className="mt-2 sm:mt-3">
-                <div className="bg-gradient-to-r from-purple-500 to-blue-500 p-0.5 sm:p-1 rounded-lg max-w-xs sm:max-w-sm md:max-w-md">
+                <div className="bg-gradient-to-r from-purple-500 to-blue-500 p-0.5 sm:p-1 rounded-lg w-full max-w-xs sm:max-w-sm md:max-w-md">
                   <img
                     src={message.imageUrl}
                     alt="Imagen promocional de casino"
