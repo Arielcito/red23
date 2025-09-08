@@ -5,8 +5,9 @@ import { useChat } from "@/lib/hooks/useChat"
 import { ChatMessage } from "@/components/chat/ChatMessage"
 import { LoadingIndicator } from "@/components/chat/LoadingIndicator"
 import { ChatInput } from "@/components/chat/ChatInput"
-import { ImageScheduler, type ScheduleData } from "@/components/schedule/ImageScheduler"
-import { useScheduledImages } from "@/lib/hooks/useScheduledImages"
+// Temporalmente deshabilitado
+// import { ImageScheduler, type ScheduleData } from "@/components/schedule/ImageScheduler"
+// import { useScheduledImages } from "@/lib/hooks/useScheduledImages"
 import { AppLayout } from "@/components/layout/AppLayout"
 
 export default function ChatPage() {
@@ -21,10 +22,10 @@ export default function ChatPage() {
     error,
   } = useChat()
   
-  const [schedulerOpen, setSchedulerOpen] = useState(false)
-  const [selectedImageForSchedule, setSelectedImageForSchedule] = useState<{ url: string; title: string } | null>(null)
-  
-  const { scheduleImage } = useScheduledImages()
+  // Temporalmente deshabilitado
+  // const [schedulerOpen, setSchedulerOpen] = useState(false)
+  // const [selectedImageForSchedule, setSelectedImageForSchedule] = useState<{ url: string; title: string } | null>(null)
+  // const { scheduleImage } = useScheduledImages()
 
   const handleSendMessage = async () => {
     if (!inputValue.trim() || isGenerating) return
@@ -36,25 +37,26 @@ export default function ChatPage() {
     setQuickPrompt(prompt)
   }
 
-  const handleScheduleImage = (imageUrl: string, title: string) => {
-    setSelectedImageForSchedule({ url: imageUrl, title })
-    setSchedulerOpen(true)
-  }
+  // Temporalmente deshabilitado
+  // const handleScheduleImage = (imageUrl: string, title: string) => {
+  //   setSelectedImageForSchedule({ url: imageUrl, title })
+  //   setSchedulerOpen(true)
+  // }
 
-  const handleScheduleConfirm = (scheduleData: ScheduleData) => {
-    try {
-      scheduleImage(
-        scheduleData.imageUrl || "",
-        scheduleData.imageTitle || "",
-        scheduleData.date,
-        scheduleData.time,
-        scheduleData.caption
-      )
-      alert("¡Imagen programada exitosamente para WhatsApp!")
-    } catch {
-      alert("Error al programar la imagen")
-    }
-  }
+  // const handleScheduleConfirm = (scheduleData: ScheduleData) => {
+  //   try {
+  //     scheduleImage(
+  //       scheduleData.imageUrl || "",
+  //       scheduleData.imageTitle || "",
+  //       scheduleData.date,
+  //       scheduleData.time,
+  //       scheduleData.caption
+  //     )
+  //     alert("¡Imagen programada exitosamente para WhatsApp!")
+  //   } catch {
+  //     alert("Error al programar la imagen")
+  //   }
+  // }
 
   return (
     <AppLayout
@@ -82,7 +84,7 @@ export default function ChatPage() {
             )}
             
             {messages.map((message) => (
-              <ChatMessage key={message.id} message={message} onSchedule={handleScheduleImage} />
+              <ChatMessage key={message.id} message={message} /* onSchedule={handleScheduleImage} */ />
             ))}
 
             {isGenerating && <LoadingIndicator />}
@@ -101,6 +103,7 @@ export default function ChatPage() {
         </div>
       </div>
       
+      {/* Temporalmente oculto
       <ImageScheduler
         isOpen={schedulerOpen}
         onOpenChange={setSchedulerOpen}
@@ -108,6 +111,7 @@ export default function ChatPage() {
         imageTitle={selectedImageForSchedule?.title}
         onSchedule={handleScheduleConfirm}
       />
+      */}
     </AppLayout>
   )
 }

@@ -75,6 +75,7 @@ export function Sidebar({ className }: SidebarProps) {
       icon: Upload,
       description: "Subir imágenes"
     },
+    /* Temporalmente oculto
     {
       title: "WhatsApp",
       href: "/whatsapp-setup",
@@ -82,6 +83,7 @@ export function Sidebar({ className }: SidebarProps) {
       badge: upcomingCount > 0 ? upcomingCount : undefined,
       description: "Configurar WhatsApp"
     },
+    */
     {
       title: "Premios",
       href: "/rewards",

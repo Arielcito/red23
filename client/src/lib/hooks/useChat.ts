@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { useImageGeneration } from "./useImageGeneration"
+import { useImagesApi } from "./useImagesApi"
 
 export interface Message {
   id: string
@@ -25,9 +26,10 @@ export const useChat = () => {
       timestamp: new Date(Date.now() - 60000),
     },
   ])
-  
+
   const [inputValue, setInputValue] = useState("")
   const { generateImage, isGenerating, error } = useImageGeneration()
+  const { images: apiImages } = useImagesApi()
 
   const mockImagePrompts = [
     "Banner promocional con jackpot de $1M",
@@ -37,18 +39,18 @@ export const useChat = () => {
     "Evento especial de blackjack",
   ]
 
-  const mockGeneratedImages = [
-    "/placeholder.svg?height=400&width=800&text=Jackpot+$1M",
-    "/placeholder.svg?height=400&width=800&text=VIP+Card",
-    "/placeholder.svg?height=400&width=800&text=Welcome+Bonus",
-    "/placeholder.svg?height=400&width=800&text=Slots+Promo",
-    "/placeholder.svg?height=400&width=800&text=Blackjack+Event",
-  ]
+
+  // Calcular estadísticas basadas en las imágenes de la API
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+  const imagesGeneratedToday = apiImages.filter(img =>
+    new Date(img.created_at) >= today
+  ).length
 
   const chatStats: ChatStats = {
-    imagesGeneratedToday: 12,
+    imagesGeneratedToday,
     dailyLimit: 50,
-    usagePercentage: 24,
+    usagePercentage: Math.min(Math.round((imagesGeneratedToday / 50) * 100), 100),
   }
 
   const sendMessage = async (content: string) => {

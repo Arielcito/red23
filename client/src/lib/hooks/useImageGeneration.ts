@@ -39,7 +39,11 @@ export const useImageGeneration = (): ImageGenerationHook => {
         },
         body: JSON.stringify({
           prompt: validatedRequest.prompt,
-          images: validatedRequest.images
+          images: validatedRequest.images,
+          logo: validatedRequest.logo,
+          position: validatedRequest.position,
+          tokens: validatedRequest.tokens,
+          user_email: validatedRequest.user_email
         }),
         signal: controller.signal
       })

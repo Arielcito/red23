@@ -5,12 +5,70 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Search, Download, Heart, ArrowLeft, Grid3X3, List, Calendar, Trash2 } from "lucide-react"
+import { Search, Download, ArrowLeft, Grid3X3, List, Calendar, Trash2 } from "lucide-react"
 import Link from "next/link"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { ImageScheduler, type ScheduleData } from "@/components/schedule/ImageScheduler"
 import { useScheduledImages } from "@/lib/hooks/useScheduledImages"
-import { useImageStorage } from "@/lib/hooks/useImageStorage"
+import { useImagesApi } from "@/lib/hooks/useImagesApi"
+import { useImageDownload } from "@/lib/hooks/useImageDownload"
+// import { useImageStorage } from "@/lib/hooks/useImageStorage" // No se usa más
+import type { ImageRecord } from "@/lib/types/imageGeneration"
+import type { StoredImage } from "@/lib/hooks/useImageStorage"
+
+// Tipo simplificado para la UI de la galería
+interface GalleryImage {
+  id: string
+  url: string
+  title: string
+  prompt: string
+  timestamp: Date
+  tags: string[]
+}
+
+// Función para convertir ImageRecord (API) a GalleryImage
+const convertApiImageToGalleryImage = (apiImage: ImageRecord): GalleryImage => {
+  return {
+    id: apiImage.id.toString(),
+    url: apiImage.result_with_logo || apiImage.result, // Preferir imagen con logo
+    title: apiImage.prompt.substring(0, 50) + "...", // Truncar prompt como título
+    prompt: apiImage.prompt,
+    timestamp: new Date(apiImage.created_at),
+    tags: extractTagsFromPrompt(apiImage.prompt)
+  }
+}
+
+// Función para convertir ImageRecord (API) a StoredImage cuando sea necesario
+const convertApiImageToStoredImage = (apiImage: ImageRecord): StoredImage => {
+  return {
+    id: apiImage.id.toString(),
+    url: apiImage.result_with_logo || apiImage.result,
+    title: apiImage.prompt.substring(0, 50) + "...",
+    prompt: apiImage.prompt,
+    timestamp: new Date(apiImage.created_at),
+    tags: extractTagsFromPrompt(apiImage.prompt),
+    favorite: false,
+    scheduled: false
+  }
+}
+
+// Función auxiliar para extraer tags del prompt (similar a useImageStorage)
+const extractTagsFromPrompt = (prompt: string): string[] => {
+  const commonCasinoTerms = [
+    'casino', 'jackpot', 'slots', 'poker', 'blackjack', 'roulette', 
+    'bonus', 'vip', 'promoción', 'premio', 'winner', 'gold', 'luxury'
+  ]
+  
+  const lowerPrompt = prompt.toLowerCase()
+  const tags = commonCasinoTerms.filter(term => lowerPrompt.includes(term))
+  
+  // Add generic tags based on content
+  if (lowerPrompt.includes('banner')) tags.push('banner')
+  if (lowerPrompt.includes('tarjeta')) tags.push('tarjeta')
+  if (lowerPrompt.includes('evento')) tags.push('evento')
+  
+  return [...new Set(tags)] // Remove duplicates
+}
 import { AppLayout } from "@/components/layout/AppLayout"
 
 export default function GalleryPage() {
@@ -21,62 +79,63 @@ export default function GalleryPage() {
   const [selectedImageForSchedule, setSelectedImageForSchedule] = useState<{ url: string; title: string } | null>(null)
   
   const { scheduleImage } = useScheduledImages()
-  const { images, isLoading, toggleFavorite, deleteImage, downloadImage, getFilteredImages } = useImageStorage()
+  const { images: apiImages, isLoading: apiLoading, error: apiError, refreshImages } = useImagesApi()
+  const { downloadImage, isDownloading } = useImageDownload()
 
-  // Get filtered images from localStorage
+  // Convertir imágenes de la API al formato GalleryImage
+  const galleryImages: GalleryImage[] = apiImages.map(convertApiImageToGalleryImage)
+  const isLoading = apiLoading
+
+  // Convertir también a StoredImage para compatibilidad con funciones existentes
+  const images: StoredImage[] = apiImages.map(convertApiImageToStoredImage)
+
+  // Función de filtrado para GalleryImage
+  const getFilteredImages = (filter: 'all' | 'favorites' | 'scheduled', searchTerm: string): GalleryImage[] => {
+    let filtered = galleryImages
+
+    // Apply filter (favorites y scheduled no implementados en API por ahora)
+    if (filter === 'favorites' || filter === 'scheduled') {
+      return [] // Por ahora retornar vacío para estos filtros
+    }
+
+    // Apply search
+    if (searchTerm) {
+      const term = searchTerm.toLowerCase()
+      filtered = filtered.filter(img =>
+        img.title.toLowerCase().includes(term) ||
+        img.prompt.toLowerCase().includes(term) ||
+        img.tags.some(tag => tag.toLowerCase().includes(term))
+      )
+    }
+
+    return filtered
+  }
+
+  // Get filtered images
   const filteredImages = getFilteredImages(selectedFilter as 'all' | 'favorites' | 'scheduled', searchTerm)
 
-  const handleSchedulePost = (imageId: string) => {
-    const image = images.find(img => img.id === imageId)
-    if (image) {
-      setSelectedImageForSchedule({
-        url: image.url,
-        title: image.title
-      })
-      setSchedulerOpen(true)
-    }
-  }
-
-  const handleScheduleConfirm = (scheduleData: ScheduleData) => {
-    try {
-      scheduleImage(
-        scheduleData.imageUrl || "",
-        scheduleData.imageTitle || "",
-        scheduleData.date,
-        scheduleData.time,
-        scheduleData.caption
-      )
-      alert("¡Imagen programada exitosamente para WhatsApp!")
-    } catch (error) {
-      alert("Error al programar la imagen")
-    }
-  }
-
-  const handleToggleFavorite = (imageId: string) => {
-    toggleFavorite(imageId)
-  }
 
   const handleDownload = async (imageId: string) => {
-    const image = images.find(img => img.id === imageId)
+    const image = galleryImages.find(img => img.id === imageId)
     if (image) {
       try {
-        await downloadImage(image)
+        await downloadImage(image.url, `${image.title.replace(/[^a-zA-Z0-9\s]/g, '').replace(/\s+/g, '_')}.png`)
       } catch (error) {
+        console.error('Error al descargar la imagen:', error)
         alert('Error al descargar la imagen')
       }
     }
   }
 
   const handleDelete = (imageId: string) => {
-    if (confirm('¿Estás seguro de que quieres eliminar esta imagen?')) {
-      deleteImage(imageId)
-    }
+    // Las imágenes de la API no se pueden eliminar desde aquí
+    alert('Las imágenes de la API no se pueden eliminar desde la galería')
   }
 
   return (
     <AppLayout
       title="Galería"
-      subtitle={`${filteredImages.length} imágenes`}
+      subtitle={`${filteredImages.length} imágenes (API)`}
       showBackButton={true}
       backHref="/dashboard"
     >
@@ -125,16 +184,7 @@ export default function GalleryPage() {
             >
               Todas
             </Button>
-            <Button
-              variant={selectedFilter === "favorites" ? "default" : "outline"}
-              size="sm"
-              onClick={() => setSelectedFilter("favorites")}
-              className="text-xs sm:text-sm"
-            >
-              <Heart className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
-              <span className="hidden sm:inline">Favoritas</span>
-              <span className="sm:hidden">♥</span>
-            </Button>
+            {/* Temporalmente oculto
             <Button
               variant={selectedFilter === "scheduled" ? "default" : "outline"}
               size="sm"
@@ -145,8 +195,18 @@ export default function GalleryPage() {
               <span className="hidden sm:inline">Programadas</span>
               <span className="sm:hidden">📅</span>
             </Button>
+            */}
           </div>
         </div>
+
+        {/* Error State de API */}
+        {apiError && (
+          <div className="bg-yellow-50 border border-yellow-200 text-yellow-700 px-4 py-3 rounded-lg mb-4">
+            <p className="text-sm">
+              <strong>Error:</strong> No se pudieron cargar las imágenes de la API. {apiError}
+            </p>
+          </div>
+        )}
 
         {/* Loading State */}
         {isLoading ? (
@@ -189,22 +249,13 @@ export default function GalleryPage() {
                           <Button size="sm" variant="secondary" onClick={() => handleDownload(image.id)}>
                             <Download className="h-4 w-4" />
                           </Button>
-                          <Button size="sm" variant="secondary" onClick={() => handleToggleFavorite(image.id)}>
-                            <Heart className={`h-4 w-4 ${image.favorite ? "fill-red-500 text-red-500" : ""}`} />
-                          </Button>
+                          {/* Temporalmente oculto
                           <Button size="sm" variant="secondary" onClick={() => handleSchedulePost(image.id)}>
                             <Calendar className="h-4 w-4" />
                           </Button>
+                          */}
                         </div>
                       </div>
-                      {image.scheduled && (
-                        <Badge className="absolute top-2 right-2 bg-tertiary-500 hover:bg-tertiary-600">
-                          Programada
-                        </Badge>
-                      )}
-                      {image.favorite && (
-                        <Heart className="absolute top-2 left-2 h-5 w-5 fill-primary-500 text-primary-500" />
-                      )}
                     </div>
                     <CardContent className="p-3 sm:p-4">
                       <h3 className="text-sm sm:text-base font-semibold mb-1">{image.title}</h3>
@@ -247,12 +298,11 @@ export default function GalleryPage() {
                             <Button size="sm" variant="outline" className="hidden sm:flex" onClick={() => handleDownload(image.id)}>
                               <Download className="h-4 w-4" />
                             </Button>
-                            <Button size="sm" variant="outline" onClick={() => handleToggleFavorite(image.id)}>
-                              <Heart className={`h-3 w-3 sm:h-4 sm:w-4 ${image.favorite ? "fill-red-500 text-red-500" : ""}`} />
-                            </Button>
+                            {/* Temporalmente oculto
                             <Button size="sm" variant="outline" onClick={() => handleSchedulePost(image.id)}>
                               <Calendar className="h-3 w-3 sm:h-4 sm:w-4" />
                             </Button>
+                            */}
                             <Button size="sm" variant="outline" className="hidden sm:flex" onClick={() => handleDelete(image.id)}>
                               <Trash2 className="h-4 w-4" />
                             </Button>
@@ -268,6 +318,7 @@ export default function GalleryPage() {
         )}
       </div>
       
+      {/* Temporalmente oculto
       <ImageScheduler
         isOpen={schedulerOpen}
         onOpenChange={setSchedulerOpen}
@@ -275,6 +326,7 @@ export default function GalleryPage() {
         imageTitle={selectedImageForSchedule?.title}
         onSchedule={handleScheduleConfirm}
       />
+      */}
     </AppLayout>
   )
 }

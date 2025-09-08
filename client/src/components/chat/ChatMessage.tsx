@@ -1,8 +1,8 @@
 import { Button } from "@/components/ui/button"
 import { Download, Bot, User, Calendar } from "lucide-react"
 import { Message } from "@/lib/hooks/useChat"
-import { useImageStorage } from "@/lib/hooks/useImageStorage"
-import { useEffect, useState } from "react"
+import { useImageDownload } from "@/lib/hooks/useImageDownload"
+import { useState } from "react"
 
 interface ChatMessageProps {
   message: Message
@@ -10,57 +10,20 @@ interface ChatMessageProps {
 }
 
 export const ChatMessage = ({ message, onSchedule }: ChatMessageProps) => {
-  const { saveImage } = useImageStorage()
-  const [isDownloading, setIsDownloading] = useState(false)
-  const [isSaved, setIsSaved] = useState(false)
-
-  // Auto-save image to localStorage when message with image is received
-  useEffect(() => {
-    if (message.imageUrl && message.type === "ai" && !isSaved) {
-      const autoSaveImage = async () => {
-        try {
-          const title = `Imagen generada ${new Date().toLocaleDateString()}`
-          const prompt = message.content.includes('"') 
-            ? message.content.split('"')[1] 
-            : "Imagen promocional de casino"
-          
-          await saveImage(message.imageUrl!, title, prompt)
-          setIsSaved(true)
-          console.log('📦 Imagen guardada automáticamente en galería')
-        } catch (error) {
-          console.error('Error auto-saving image:', error)
-        }
-      }
-      
-      autoSaveImage()
-    }
-  }, [message.imageUrl, message.type, message.content, saveImage, isSaved])
+  const { downloadImage, isDownloading, error } = useImageDownload()
 
   const handleDownload = async () => {
     if (!message.imageUrl) return
     
+    const fileName = `casino_promo_${Date.now()}.png`
+    
     try {
-      setIsDownloading(true)
-      console.log('⬇️ Iniciando descarga de imagen')
-      
-      const response = await fetch(message.imageUrl)
-      const blob = await response.blob()
-      const url = window.URL.createObjectURL(blob)
-      
-      const link = document.createElement('a')
-      link.href = url
-      link.download = `casino_promo_${Date.now()}.png`
-      document.body.appendChild(link)
-      link.click()
-      document.body.removeChild(link)
-      
-      window.URL.revokeObjectURL(url)
-      console.log('✅ Descarga completada')
+      await downloadImage(message.imageUrl, fileName)
     } catch (error) {
-      console.error('Error downloading image:', error)
-      alert('Error al descargar la imagen')
-    } finally {
-      setIsDownloading(false)
+      console.error('Error downloading image from ChatMessage:', error)
+      if (error instanceof Error) {
+        alert(error.message)
+      }
     }
   }
 
@@ -103,6 +66,7 @@ export const ChatMessage = ({ message, onSchedule }: ChatMessageProps) => {
                     <Download className="h-3 w-3 mr-1" />
                     {isDownloading ? 'Descargando...' : 'Descargar'}
                   </Button>
+                  {/* Temporalmente oculto
                   {onSchedule && (
                     <Button 
                       size="sm" 
@@ -114,6 +78,7 @@ export const ChatMessage = ({ message, onSchedule }: ChatMessageProps) => {
                       Programar
                     </Button>
                   )}
+                  */}
                 </div>
               </div>
             )}
