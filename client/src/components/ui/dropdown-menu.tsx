@@ -168,6 +168,18 @@ const DropdownMenuSeparator = React.forwardRef<
 ))
 DropdownMenuSeparator.displayName = DropdownMenuPrimitive.Separator.displayName
 
+const DropdownMenuHeader = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement>
+>(({ className, ...props }, ref) => (
+  <div
+    ref={ref}
+    className={cn("px-2 py-1.5 text-sm font-semibold", className)}
+    {...props}
+  />
+))
+DropdownMenuHeader.displayName = "DropdownMenuHeader"
+
 const DropdownMenuShortcut = ({
   className,
   ...props
@@ -190,6 +202,7 @@ export {
   DropdownMenuRadioItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
+  DropdownMenuHeader,
   DropdownMenuShortcut,
   DropdownMenuGroup,
   DropdownMenuPortal,

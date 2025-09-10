@@ -15,6 +15,7 @@ import { Settings, LogOut, User, ArrowLeft, Moon, Sun } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
 import { ThemeToggle } from "@/components/theme-toggle"
+import { NotificationDropdown } from "@/components/ui/notification-dropdown"
 import { useAuth } from "@/lib/hooks/useAuth"
 import { useTheme } from "next-themes"
 import { SidebarTrigger } from "@/components/layout/Sidebar"
@@ -119,6 +120,9 @@ export function NavigationHeader({
           <div className="hidden sm:block">
             <ThemeToggle />
           </div>
+
+          {/* Notifications */}
+          <NotificationDropdown />
 
           {/* User Menu */}
           <DropdownMenu>

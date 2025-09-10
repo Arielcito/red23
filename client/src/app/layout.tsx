@@ -5,6 +5,7 @@ import { GeistMono } from "geist/font/mono"
 const geistMono = GeistMono
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
+import { NotificationProvider } from "@/lib/contexts/NotificationContext"
 import { ClerkProvider } from '@clerk/nextjs'
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" })
@@ -34,7 +35,9 @@ html {
         </head>
         <body className={inter.className}>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-            {children}
+            <NotificationProvider>
+              {children}
+            </NotificationProvider>
           </ThemeProvider>
         </body>
       </html>
