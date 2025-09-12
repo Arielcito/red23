@@ -20,6 +20,7 @@ import { ThemeToggle } from "@/components/theme-toggle"
 import { ScheduledImagesList } from "@/components/schedule/ScheduledImagesList"
 import { AppLayout } from "@/components/layout/AppLayout"
 import { WinnerBanner } from "@/components/ui/winner-banner"
+import { CasinoComparisonSection } from "@/components/casinos/CasinoComparisonSection"
 import { useWinnersApi } from "@/lib/hooks/useWinnersApi"
 import { useImagesApi } from "@/lib/hooks/useImagesApi"
 import { useStatsApi } from "@/lib/hooks/useStatsApi"
@@ -167,6 +168,9 @@ export default function Dashboard() {
             ))}
           </div>
         </div>
+
+        {/* Casino Comparison Section */}
+        <CasinoComparisonSection showAdminButton={true} />
 
         {/* Recent Images & Scheduled Posts */}
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-3 sm:gap-4 lg:gap-6">

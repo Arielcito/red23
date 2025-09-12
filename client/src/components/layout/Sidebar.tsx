@@ -10,6 +10,7 @@ import {
   HelpCircle,
   GraduationCap,
   Gift,
+  Settings,
 } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
@@ -102,6 +103,13 @@ export function Sidebar({ className }: SidebarProps) {
       href: "/help",
       icon: HelpCircle,
       description: "Guías y soporte"
+    },
+    {
+      title: "Admin Casinos",
+      href: "/admin/casinos",
+      icon: Settings,
+      badge: "Admin",
+      description: "Gestión de casinos"
     },
   ]
 
