@@ -120,17 +120,6 @@ export default function Dashboard() {
 
           <Card className="h-full">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">En Galería</CardTitle>
-              <Gallery className="h-4 w-4 text-secondary-500" />
-            </CardHeader>
-            <CardContent className="pt-0">
-              <div className="text-xl sm:text-2xl font-bold mb-1">{stats.galleryItems}</div>
-              <p className="text-xs text-muted-foreground">Imágenes guardadas</p>
-            </CardContent>
-          </Card>
-
-          <Card className="h-full">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Uso Mensual</CardTitle>
               <TrendingUp className="h-4 w-4 text-primary-600" />
             </CardHeader>
