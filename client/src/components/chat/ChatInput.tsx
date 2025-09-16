@@ -128,10 +128,11 @@ export const ChatInput = ({
           />
           <Button
             onClick={onSend}
-            disabled={
+            disabled={Boolean(
               !value.trim() ||
               isGenerating ||
               (requiresFullLogoInfo && (!logoUrl.trim() || !logoPosition))
+            )
             }
             className="px-6"
           >
