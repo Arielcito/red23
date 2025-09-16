@@ -116,42 +116,6 @@ export default function Dashboard() {
       }}
     >
       <div className="p-3 sm:p-4 lg:p-6 space-y-3 sm:space-y-4 lg:space-y-6">
-        {/* Controles rápidos para mobile */}
-        <div className="sm:hidden">
-          <Card>
-            <CardContent className="flex items-center gap-3 p-3">
-              <div className="flex items-center gap-3 flex-1 min-w-0">
-                <SidebarTrigger className="h-9 w-9" />
-                <div className="flex items-center gap-3 min-w-0">
-                  <Avatar className="h-10 w-10">
-                    <AvatarImage src={user?.imageUrl || undefined} alt={userName} />
-                    <AvatarFallback className="bg-primary-100 text-primary-700">
-                      {userInitials}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="min-w-0">
-                    <p className="text-sm font-semibold text-gray-900 dark:text-gray-100 truncate">
-                      {userName}
-                    </p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
-                      {userEmail}
-                    </p>
-                  </div>
-                </div>
-              </div>
-              <div className="flex items-center gap-2 flex-wrap justify-end">
-                <NotificationDropdown className="h-9 w-9" />
-                <ThemeToggle />
-                <Link href="/profile">
-                  <Button size="sm" variant="outline" className="text-xs px-3">
-                    Ver perfil
-                  </Button>
-                </Link>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
         {/* Winner Banner */}
         <WinnerBanner winner={dailyWinner} />
 

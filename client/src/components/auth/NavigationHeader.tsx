@@ -108,14 +108,6 @@ export function NavigationHeader({
         </div>
 
         <div className="flex items-center gap-1 sm:gap-2 md:gap-3 lg:gap-4 ml-auto flex-shrink-0">
-          {badge && (
-            <Badge
-              variant={badge.variant || "outline"}
-              className={badge.className || "text-[0.65rem] sm:text-xs px-2 py-1 sm:px-3 sm:py-1.5"}
-            >
-              {badge.text}
-            </Badge>
-          )}
 
           <div className="hidden sm:block">
             <ThemeToggle />

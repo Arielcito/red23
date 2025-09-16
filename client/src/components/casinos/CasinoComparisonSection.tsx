@@ -156,51 +156,7 @@ export function CasinoComparisonSection({
           </Card>
 
           {/* Stats Summary */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <Card>
-              <CardContent className="p-4 text-center">
-                <div className="text-2xl font-bold text-foreground mb-1">
-                  {casinos.length}
-                </div>
-                <div className="text-xs text-muted-foreground">
-                  Total Casinos
-                </div>
-              </CardContent>
-            </Card>
-            
-            <Card>
-              <CardContent className="p-4 text-center">
-                <div className="text-2xl font-bold text-green-600 mb-1">
-                  {casinos.filter(c => c.potencial.color === 'green').length}
-                </div>
-                <div className="text-xs text-muted-foreground">
-                  Alto Potencial
-                </div>
-              </CardContent>
-            </Card>
-            
-            <Card>
-              <CardContent className="p-4 text-center">
-                <div className="text-2xl font-bold text-yellow-600 mb-1">
-                  {casinos.filter(c => c.potencial.color === 'yellow').length}
-                </div>
-                <div className="text-xs text-muted-foreground">
-                  Potencial Medio
-                </div>
-              </CardContent>
-            </Card>
-            
-            <Card>
-              <CardContent className="p-4 text-center">
-                <div className="text-2xl font-bold text-primary-600 mb-1">
-                  {config.customFields.length}
-                </div>
-                <div className="text-xs text-muted-foreground">
-                  Métricas
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+
         </>
       )}
     </div>

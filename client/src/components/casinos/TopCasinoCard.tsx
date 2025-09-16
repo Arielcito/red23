@@ -82,7 +82,12 @@ export function TopCasinoCard({ casino, className }: TopCasinoCardProps) {
             onError={(e) => {
               // Fallback to placeholder if image fails to load
               const target = e.target as HTMLImageElement
-              target.src = '/placeholder-casino.jpg'
+              if (!target.src.includes('placeholder-casino.svg')) {
+                target.src = '/placeholder-casino.svg'
+              } else {
+                // If placeholder also fails, show a simple background
+                target.style.display = 'none'
+              }
             }}
           />
         </div>

@@ -27,7 +27,7 @@ const MOCK_CASINOS: Casino[] = [
     ],
     isTopThree: true,
     topThreePosition: 1,
-    imageUrl: '/casino-royal.jpg',
+    imageUrl: '/casino-royal.svg',
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   },
@@ -45,7 +45,7 @@ const MOCK_CASINOS: Casino[] = [
     ],
     isTopThree: true,
     topThreePosition: 2,
-    imageUrl: '/golden-palace.jpg',
+    imageUrl: '/golden-palace.svg',
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   },
@@ -63,7 +63,7 @@ const MOCK_CASINOS: Casino[] = [
     ],
     isTopThree: true,
     topThreePosition: 3,
-    imageUrl: '/lucky-stars.jpg',
+    imageUrl: '/lucky-stars.svg',
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   },
@@ -149,7 +149,7 @@ export function useCasinosData(): CasinosDataHook {
       id: casino.id,
       name: casino.name,
       plataforma: casino.plataforma,
-      imageUrl: casino.imageUrl || '/placeholder-casino.jpg',
+      imageUrl: casino.imageUrl || '/placeholder-casino.svg',
       potencial: casino.potencial,
       position: casino.topThreePosition || 0
     }))

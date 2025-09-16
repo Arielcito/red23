@@ -1,6 +1,7 @@
 "use client"
 
 import { Badge } from "@/components/ui/badge"
+// Algunos imports se usan en elementos temporalmente comentados (ej: Smartphone para WhatsApp)
 import {
   Home,
   MessageCircle,
@@ -30,6 +31,7 @@ import {
 } from "@/components/ui/sidebar"
 import { useScheduledImages } from "@/lib/hooks/useScheduledImages"
 import { RewardsMenuItem } from "@/components/rewards/RewardsMenuItem"
+import { useUser } from "@/lib/hooks/useUser"
 import Image from "next/image"
 
 interface SidebarProps {
@@ -42,15 +44,26 @@ interface MenuItem {
   icon: React.ComponentType<{ className?: string }>
   badge?: string | number
   description?: string
+  isAdmin?: boolean
 }
 
 export function Sidebar({ className }: SidebarProps) {
   const pathname = usePathname()
   const { scheduledImages } = useScheduledImages()
+  const { user } = useUser()
 
+  // upcomingCount se usa en el elemento de WhatsApp (temporalmente comentado)
   const upcomingCount = scheduledImages.filter(img =>
     img.status === "pending" && new Date(`${img.date}T${img.time}`) > new Date()
   ).length
+
+  // IDs de usuarios admin autorizados
+  const adminUserIds = [
+    'user_31DCO0Te7aX1F7a8KOO7CZwNbTA',
+    'user_32TNG7qogCbcPn03Ad1BS95i3Pf'
+  ]
+
+  const isAdminUser = user && adminUserIds.includes(user.id)
 
   const menuItems: MenuItem[] = [
     {
@@ -110,18 +123,29 @@ export function Sidebar({ className }: SidebarProps) {
       href: "/admin/rewards",
       icon: Megaphone,
       badge: "Admin",
-      description: "Configurar premios"
+      description: "Configurar premios",
+      isAdmin: true
     },
     {
       title: "Admin Casinos",
       href: "/admin/casinos",
       icon: Settings,
       badge: "Admin",
-      description: "Gestión de casinos"
+      description: "Gestión de casinos",
+      isAdmin: true
     },
   ]
 
   const isActive = (href: string) => pathname === href
+
+  // Filtrar elementos del menú basándose en permisos de admin
+  const filteredMenuItems = menuItems.filter(item => {
+    // Si el elemento es de admin y el usuario no es admin, no mostrarlo
+    if (item.isAdmin && !isAdminUser) {
+      return false
+    }
+    return true
+  })
 
   return (
     <SidebarComponent variant="inset" {...{ className }}>
@@ -142,7 +166,7 @@ export function Sidebar({ className }: SidebarProps) {
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
-              {menuItems.map((item) => {
+              {filteredMenuItems.map((item) => {
                 const Icon = item.icon
                 const active = isActive(item.href)
 
