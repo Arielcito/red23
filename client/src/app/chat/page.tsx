@@ -9,6 +9,7 @@ import { ChatInput } from "@/components/chat/ChatInput"
 // import { ImageScheduler, type ScheduleData } from "@/components/schedule/ImageScheduler"
 // import { useScheduledImages } from "@/lib/hooks/useScheduledImages"
 import { AppLayout } from "@/components/layout/AppLayout"
+import { useUser } from "@/lib/hooks/useUser"
 
 export default function ChatPage() {
   const {
@@ -24,6 +25,7 @@ export default function ChatPage() {
 
   const [logoUrl, setLogoUrl] = useState("")
   const [logoPosition, setLogoPosition] = useState("")
+  const { user } = useUser()
   
   // Temporalmente deshabilitado
   // const [schedulerOpen, setSchedulerOpen] = useState(false)
@@ -45,7 +47,11 @@ export default function ChatPage() {
       promptSections.push(`Posición del logo (1-9): ${logoPosition}`)
     }
 
-    await sendMessage(promptSections.join("\n"))
+    await sendMessage(promptSections.join("\n"), {
+      logoUrl: hasLogoUrl ? logoUrl.trim() : undefined,
+      logoPosition: hasLogoPosition ? Number(logoPosition) : undefined,
+      userEmail: user?.email
+    })
     setInputValue("")
     setLogoUrl("")
     setLogoPosition("")

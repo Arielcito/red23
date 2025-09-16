@@ -30,7 +30,10 @@ export const useImageGeneration = (): ImageGenerationHook => {
 
       // Crear el controlador de aborto
       const controller = new AbortController()
-
+      console.log('🔧 Creando controlador de aborto:', {
+        user_email: validatedRequest.user_email,
+        images: validatedRequest.images
+      })
       const response = await fetch(`${apiConfig.baseUrl}${apiConfig.endpoint}`, {
         method: 'POST',
         headers: {
@@ -42,7 +45,7 @@ export const useImageGeneration = (): ImageGenerationHook => {
           images: validatedRequest.images,
           logo: validatedRequest.logo,
           position: validatedRequest.position,
-          tokens: validatedRequest.tokens,
+          tokens: 1,
           user_email: validatedRequest.user_email
         }),
         signal: controller.signal

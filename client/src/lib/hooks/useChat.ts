@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { useImageGeneration } from "./useImageGeneration"
 import { useImagesApi } from "./useImagesApi"
+import { useUser } from "./useUser"
 
 export interface Message {
   id: string
@@ -17,6 +18,14 @@ export interface ChatStats {
   usagePercentage: number
 }
 
+interface SendMessageOptions {
+  logoUrl?: string
+  logoPosition?: number
+  userEmail?: string
+  images?: string[]
+  tokens?: number
+}
+
 export const useChat = () => {
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -30,6 +39,7 @@ export const useChat = () => {
   const [inputValue, setInputValue] = useState("")
   const { generateImage, isGenerating, error } = useImageGeneration()
   const { images: apiImages } = useImagesApi()
+  const { user } = useUser()
 
   const mockImagePrompts = [
     "Banner promocional con jackpot de $1M",
@@ -53,10 +63,18 @@ export const useChat = () => {
     usagePercentage: Math.min(Math.round((imagesGeneratedToday / 50) * 100), 100),
   }
 
-  const sendMessage = async (content: string) => {
+  const sendMessage = async (content: string, options: SendMessageOptions = {}) => {
     if (!content.trim() || isGenerating) return
 
     console.log('💬 Enviando mensaje:', content)
+
+    const trimmedLogoUrl = options.logoUrl?.trim()
+    const normalizedLogo = trimmedLogoUrl ? trimmedLogoUrl : undefined
+    const normalizedPosition = normalizedLogo && typeof options.logoPosition === 'number'
+      ? options.logoPosition
+      : undefined
+    const normalizedEmail = options.userEmail?.trim() || user?.email || undefined
+    const filteredImages = options.images && options.images.length > 0 ? options.images : undefined
 
     const userMessage: Message = {
       id: Date.now().toString(),
@@ -68,7 +86,14 @@ export const useChat = () => {
     setMessages(prev => [...prev, userMessage])
 
     // Generar imagen usando la API real
-    const result = await generateImage({ prompt: content })
+    const result = await generateImage({
+      prompt: content,
+      logo: normalizedLogo,
+      position: normalizedPosition,
+      user_email: normalizedEmail,
+      images: filteredImages,
+      tokens: options.tokens
+    })
     
     let aiMessage: Message
 
