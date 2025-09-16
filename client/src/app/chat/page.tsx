@@ -21,6 +21,9 @@ export default function ChatPage() {
     setQuickPrompt,
     error,
   } = useChat()
+
+  const [logoUrl, setLogoUrl] = useState("")
+  const [logoPosition, setLogoPosition] = useState("")
   
   // Temporalmente deshabilitado
   // const [schedulerOpen, setSchedulerOpen] = useState(false)
@@ -28,9 +31,24 @@ export default function ChatPage() {
   // const { scheduleImage } = useScheduledImages()
 
   const handleSendMessage = async () => {
-    if (!inputValue.trim() || isGenerating) return
-    await sendMessage(inputValue)
+    const hasPrompt = inputValue.trim()
+    const hasLogoUrl = logoUrl.trim()
+    const hasLogoPosition = Boolean(logoPosition)
+
+    if (!hasPrompt || isGenerating) return
+    if ((hasLogoUrl && !hasLogoPosition) || (!hasLogoUrl && hasLogoPosition)) return
+
+    const promptSections = [inputValue.trim()]
+
+    if (hasLogoUrl && hasLogoPosition) {
+      promptSections.push(`URL del logo: ${logoUrl.trim()}`)
+      promptSections.push(`Posición del logo (1-9): ${logoPosition}`)
+    }
+
+    await sendMessage(promptSections.join("\n"))
     setInputValue("")
+    setLogoUrl("")
+    setLogoPosition("")
   }
 
   const handleQuickPrompt = (prompt: string) => {
@@ -98,6 +116,10 @@ export default function ChatPage() {
               isGenerating={isGenerating}
               quickPrompts={mockImagePrompts}
               onQuickPrompt={handleQuickPrompt}
+              logoUrl={logoUrl}
+              onLogoUrlChange={setLogoUrl}
+              logoPosition={logoPosition}
+              onLogoPositionChange={setLogoPosition}
             />
           </div>
         </div>

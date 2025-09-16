@@ -11,6 +11,7 @@ import {
   GraduationCap,
   Gift,
   Settings,
+  Megaphone,
 } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
@@ -103,6 +104,13 @@ export function Sidebar({ className }: SidebarProps) {
       href: "/help",
       icon: HelpCircle,
       description: "Guías y soporte"
+    },
+    {
+      title: "Admin Premios",
+      href: "/admin/rewards",
+      icon: Megaphone,
+      badge: "Admin",
+      description: "Configurar premios"
     },
     {
       title: "Admin Casinos",

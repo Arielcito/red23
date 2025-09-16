@@ -68,8 +68,8 @@ export function NavigationHeader({
 
   return (
     <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-3 sm:px-4 md:px-6 py-2 sm:py-3 md:py-4">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-3 md:gap-0">
-        <div className="flex items-center space-x-2 sm:space-x-3 md:space-x-4 min-w-0 flex-1">
+      <div className="flex flex-wrap items-center gap-2 sm:gap-3 lg:gap-4">
+        <div className="flex items-center gap-2 sm:gap-3 lg:gap-4 min-w-0 flex-1">
           <SidebarTrigger className="h-9 w-9 sm:h-10 sm:w-10" />
 
           {showBackButton && (
@@ -107,11 +107,11 @@ export function NavigationHeader({
           </div>
         </div>
 
-        <div className="flex items-center justify-between sm:justify-end space-x-1 sm:space-x-2 md:space-x-3 lg:space-x-4 flex-shrink-0">
+        <div className="flex items-center gap-1 sm:gap-2 md:gap-3 lg:gap-4 ml-auto flex-shrink-0">
           {badge && (
             <Badge
               variant={badge.variant || "outline"}
-              className={badge.className || "text-xs sm:text-sm px-2 py-1 sm:px-3 sm:py-1.5"}
+              className={badge.className || "text-[0.65rem] sm:text-xs px-2 py-1 sm:px-3 sm:py-1.5"}
             >
               {badge.text}
             </Badge>

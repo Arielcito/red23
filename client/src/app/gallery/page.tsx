@@ -77,6 +77,7 @@ export default function GalleryPage() {
   const [selectedFilter, setSelectedFilter] = useState("all")
   const [schedulerOpen, setSchedulerOpen] = useState(false)
   const [selectedImageForSchedule, setSelectedImageForSchedule] = useState<{ url: string; title: string } | null>(null)
+  const [downloadingImageId, setDownloadingImageId] = useState<string | null>(null)
   
   const { scheduleImage } = useScheduledImages()
   const { images: apiImages, isLoading: apiLoading, error: apiError, refreshImages } = useImagesApi()
@@ -119,10 +120,13 @@ export default function GalleryPage() {
     const image = galleryImages.find(img => img.id === imageId)
     if (image) {
       try {
+        setDownloadingImageId(imageId)
         await downloadImage(image.url, `${image.title.replace(/[^a-zA-Z0-9\s]/g, '').replace(/\s+/g, '_')}.png`)
       } catch (error) {
         console.error('Error al descargar la imagen:', error)
         alert('Error al descargar la imagen')
+      } finally {
+        setDownloadingImageId(null)
       }
     }
   }
@@ -246,7 +250,12 @@ export default function GalleryPage() {
                       />
                       <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-all duration-200 flex items-center justify-center opacity-0 group-hover:opacity-100">
                         <div className="flex space-x-2">
-                          <Button size="sm" variant="secondary" onClick={() => handleDownload(image.id)}>
+                          <Button
+                            size="sm"
+                            variant="secondary"
+                            onClick={() => handleDownload(image.id)}
+                            disabled={downloadingImageId === image.id && isDownloading}
+                          >
                             <Download className="h-4 w-4" />
                           </Button>
                           {/* Temporalmente oculto
@@ -268,6 +277,16 @@ export default function GalleryPage() {
                         ))}
                       </div>
                       <p className="text-xs text-gray-500">{image.timestamp.toLocaleDateString()}</p>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="mt-3 w-full"
+                        onClick={() => handleDownload(image.id)}
+                        disabled={downloadingImageId === image.id && isDownloading}
+                      >
+                        <Download className="h-4 w-4 mr-1" />
+                        {downloadingImageId === image.id && isDownloading ? 'Descargando...' : 'Descargar imagen'}
+                      </Button>
                     </CardContent>
                   </div>
                 ) : (
@@ -295,7 +314,13 @@ export default function GalleryPage() {
                             <p className="text-xs text-gray-500">{image.timestamp.toLocaleDateString()}</p>
                           </div>
                           <div className="flex space-x-1 ml-2 sm:ml-4">
-                            <Button size="sm" variant="outline" className="hidden sm:flex" onClick={() => handleDownload(image.id)}>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="flex-1 sm:flex-none"
+                              onClick={() => handleDownload(image.id)}
+                              disabled={downloadingImageId === image.id && isDownloading}
+                            >
                               <Download className="h-4 w-4" />
                             </Button>
                             {/* Temporalmente oculto

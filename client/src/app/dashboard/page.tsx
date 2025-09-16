@@ -1,19 +1,14 @@
 "use client"
 
-import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import {
   MessageCircle,
   Image,
   GalleryThumbnailsIcon as Gallery,
-  Settings,
   TrendingUp,
-  Calendar,
   Sparkles,
-  Plus,
 } from "lucide-react"
 import Link from "next/link"
 import { ThemeToggle } from "@/components/theme-toggle"
@@ -24,11 +19,30 @@ import { CasinoComparisonSection } from "@/components/casinos/CasinoComparisonSe
 import { useWinnersApi } from "@/lib/hooks/useWinnersApi"
 import { useImagesApi } from "@/lib/hooks/useImagesApi"
 import { useStatsApi } from "@/lib/hooks/useStatsApi"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { useAuth } from "@/lib/hooks/useAuth"
+import { NotificationDropdown } from "@/components/ui/notification-dropdown"
+import { SidebarTrigger } from "@/components/layout/Sidebar"
 
 export default function Dashboard() {
   const { images: apiImages, isLoading: imagesLoading } = useImagesApi()
   const { winners, isLoading: winnersLoading, error: winnersError } = useWinnersApi()
   const { stats, isLoading: statsLoading, error: statsError } = useStatsApi()
+  const { user } = useAuth()
+
+  const getUserInitials = (name?: string | null) => {
+    if (!name) return "U"
+    return name
+      .split(" ")
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase()
+      .slice(0, 2)
+  }
+
+  const userName = user?.fullName || user?.firstName || "Usuario"
+  const userEmail = user?.primaryEmailAddress?.emailAddress || "usuario@ejemplo.com"
+  const userInitials = getUserInitials(user?.fullName || user?.firstName)
 
   // Usar el primer ganador de la API o un fallback
   const dailyWinner = winners.length > 0 ? {
@@ -102,6 +116,42 @@ export default function Dashboard() {
       }}
     >
       <div className="p-3 sm:p-4 lg:p-6 space-y-3 sm:space-y-4 lg:space-y-6">
+        {/* Controles rápidos para mobile */}
+        <div className="sm:hidden">
+          <Card>
+            <CardContent className="flex items-center gap-3 p-3">
+              <div className="flex items-center gap-3 flex-1 min-w-0">
+                <SidebarTrigger className="h-9 w-9" />
+                <div className="flex items-center gap-3 min-w-0">
+                  <Avatar className="h-10 w-10">
+                    <AvatarImage src={user?.imageUrl || undefined} alt={userName} />
+                    <AvatarFallback className="bg-primary-100 text-primary-700">
+                      {userInitials}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="min-w-0">
+                    <p className="text-sm font-semibold text-gray-900 dark:text-gray-100 truncate">
+                      {userName}
+                    </p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                      {userEmail}
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div className="flex items-center gap-2 flex-wrap justify-end">
+                <NotificationDropdown className="h-9 w-9" />
+                <ThemeToggle />
+                <Link href="/profile">
+                  <Button size="sm" variant="outline" className="text-xs px-3">
+                    Ver perfil
+                  </Button>
+                </Link>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
         {/* Winner Banner */}
         <WinnerBanner winner={dailyWinner} />
 

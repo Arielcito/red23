@@ -5,12 +5,16 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { MessageCircle } from "lucide-react"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+
+const WHATSAPP_CLOSER_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_CLOSER || "59899123456"
+const COUNTRIES = ["Paraguay", "México", "Uruguay"] as const
 
 interface ContactFormData {
   name: string
   email: string
-  phone: string
-  company: string
+  telegram: string
+  country: string
 }
 
 interface DemoRequestFormProps {
@@ -21,12 +25,12 @@ export function DemoRequestForm({ onSubmitSuccess }: DemoRequestFormProps) {
   const [contactFormData, setContactFormData] = useState<ContactFormData>({
     name: "",
     email: "",
-    phone: "",
-    company: "",
+    telegram: "",
+    country: "",
   })
   const [isLoading, setIsLoading] = useState(false)
 
-  const handleContactInputChange = (field: string, value: string) => {
+  const handleContactInputChange = (field: keyof ContactFormData, value: string) => {
     setContactFormData((prev) => ({ ...prev, [field]: value }))
   }
 
@@ -34,10 +38,29 @@ export function DemoRequestForm({ onSubmitSuccess }: DemoRequestFormProps) {
     e.preventDefault()
     setIsLoading(true)
 
-    setTimeout(() => {
+    if (!contactFormData.country) {
+      alert("Por favor selecciona tu país")
       setIsLoading(false)
-      onSubmitSuccess()
-    }, 2000)
+      return
+    }
+
+    const whatsappMessage = `Hola, soy ${contactFormData.name}. Me gustaría solicitar una demo de la plataforma Red23.\n\n` +
+      `Correo: ${contactFormData.email}\n` +
+      `Telegram: ${contactFormData.telegram}\n` +
+      `País: ${contactFormData.country}`
+
+    const whatsappUrl = `https://wa.me/${WHATSAPP_CLOSER_NUMBER}?text=${encodeURIComponent(whatsappMessage)}`
+
+    try {
+      window.open(whatsappUrl, "_blank")
+    } catch (error) {
+      console.error("No se pudo abrir WhatsApp", error)
+    } finally {
+      setTimeout(() => {
+        setIsLoading(false)
+        onSubmitSuccess()
+      }, 500)
+    }
   }
 
   return (
@@ -83,26 +106,36 @@ export function DemoRequestForm({ onSubmitSuccess }: DemoRequestFormProps) {
           </div>
           <div className="grid md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="phone">
-                WhatsApp/Teléfono <span className="text-red-500">*</span>
+              <Label htmlFor="telegram">
+                Usuario de Telegram <span className="text-red-500">*</span>
               </Label>
               <Input
-                id="phone"
-                type="tel"
-                placeholder="+1234567890"
-                value={contactFormData.phone}
-                onChange={(e) => handleContactInputChange("phone", e.target.value)}
+                id="telegram"
+                placeholder="@usuario"
+                value={contactFormData.telegram}
+                onChange={(e) => handleContactInputChange("telegram", e.target.value)}
                 required
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="company">Empresa/Marca</Label>
-              <Input
-                id="company"
-                placeholder="Nombre de tu empresa"
-                value={contactFormData.company}
-                onChange={(e) => handleContactInputChange("company", e.target.value)}
-              />
+              <Label htmlFor="country">
+                País <span className="text-red-500">*</span>
+              </Label>
+              <Select
+                value={contactFormData.country}
+                onValueChange={(value) => handleContactInputChange("country", value)}
+              >
+                <SelectTrigger id="country" className="w-full">
+                  <SelectValue placeholder="Selecciona tu país" />
+                </SelectTrigger>
+                <SelectContent>
+                  {COUNTRIES.map((country) => (
+                    <SelectItem key={country} value={country}>
+                      {country}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           </div>
         </div>

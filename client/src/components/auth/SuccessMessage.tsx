@@ -22,7 +22,7 @@ export function SuccessMessage() {
             <div className="space-y-3 text-sm text-gray-500 dark:text-gray-400">
               <div className="flex items-center justify-center space-x-2">
                 <MessageCircle className="h-4 w-4" />
-                <span>Te contactaremos por email y WhatsApp</span>
+                <span>Te contactaremos por email y Telegram</span>
               </div>
               <div className="flex items-center justify-center space-x-2">
                 <Calendar className="h-4 w-4" />

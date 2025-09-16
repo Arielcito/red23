@@ -7,9 +7,12 @@ import { RecentWinners } from "@/components/rewards/RecentWinners"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Gift, Trophy, Clock, Star } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
+import { RewardsBanner } from "@/components/rewards/RewardsBanner"
+import { useRewardsSettings } from "@/lib/hooks/useRewardsSettings"
 
 export default function RewardsPage() {
   const { nextDailyPrize, nextMonthlyPrize, recentWinners, isLoading } = useRewards()
+  const { settings: bannerSettings } = useRewardsSettings()
 
   return (
     <AppLayout
@@ -22,6 +25,8 @@ export default function RewardsPage() {
       }}
     >
       <div className="container mx-auto p-6 space-y-8">
+        <RewardsBanner settings={bannerSettings} />
+
         {/* Header con información general */}
         <div className="text-center space-y-4">
           <div className="flex items-center justify-center gap-2">
@@ -87,7 +92,7 @@ export default function RewardsPage() {
         </div>
 
         {/* Información sobre cómo participar */}
-        <Card>
+        <Card id="reglas-premios">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Gift className="h-5 w-5" />
