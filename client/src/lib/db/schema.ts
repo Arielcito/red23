@@ -50,3 +50,28 @@ export const automaticPrompts = pgTable('automatic_prompts', {
 
 export type AutomaticPrompt = typeof automaticPrompts.$inferSelect
 export type NewAutomaticPrompt = typeof automaticPrompts.$inferInsert
+
+export const userReferrals = pgTable('user_referrals', {
+  id: bigserial('id', { mode: 'number' }).primaryKey(),
+  user_id: text('user_id').notNull(),
+  referral_code: text('referral_code').notNull().unique(),
+  referred_by_code: text('referred_by_code'),
+  referred_by_user_id: text('referred_by_user_id'),
+  created_at: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  updated_at: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull()
+})
+
+export const referralTracking = pgTable('referral_tracking', {
+  id: bigserial('id', { mode: 'number' }).primaryKey(),
+  referrer_user_id: text('referrer_user_id').notNull(),
+  referred_user_id: text('referred_user_id').notNull(),
+  referral_code: text('referral_code').notNull(),
+  status: text('status').default('pending').notNull(),
+  created_at: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  completed_at: timestamp('completed_at', { withTimezone: true })
+})
+
+export type UserReferral = typeof userReferrals.$inferSelect
+export type NewUserReferral = typeof userReferrals.$inferInsert
+export type ReferralTracking = typeof referralTracking.$inferSelect
+export type NewReferralTracking = typeof referralTracking.$inferInsert

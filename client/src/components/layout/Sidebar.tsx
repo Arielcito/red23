@@ -13,6 +13,7 @@ import {
   Gift,
   Settings,
   Megaphone,
+  Users,
 } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
@@ -111,6 +112,12 @@ export function Sidebar({ className }: SidebarProps) {
       icon: GraduationCap,
       badge: "Nuevo",
       description: "Cursos de marketing"
+    },
+    {
+      title: "Referidos",
+      href: "/referrals",
+      icon: Users,
+      description: "Sistema de referidos"
     },
     {
       title: "Ayuda",

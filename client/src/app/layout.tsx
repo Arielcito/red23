@@ -7,6 +7,7 @@ import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import { NotificationProvider } from "@/lib/contexts/NotificationContext"
 import { ClerkProvider } from '@clerk/nextjs'
+import { ReferralAutoSetup } from "@/components/referrals/ReferralAutoSetup"
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" })
 
@@ -36,6 +37,7 @@ html {
         <body className={inter.className}>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
             <NotificationProvider>
+              <ReferralAutoSetup />
               {children}
             </NotificationProvider>
           </ThemeProvider>
