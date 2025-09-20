@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { AutomaticPrompt, NewAutomaticPrompt } from '@/lib/db/schema'
+import type { AutomaticPrompt, NewAutomaticPrompt } from '@/lib/supabase/types'
 
 interface UseAdminPromptsReturn {
   prompts: AutomaticPrompt[]

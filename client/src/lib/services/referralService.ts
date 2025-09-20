@@ -1,5 +1,5 @@
-import { db, userReferrals, referralTracking, type NewUserReferral, type NewReferralTracking } from '@/lib/db'
-import { eq, desc, and, count } from 'drizzle-orm'
+import { supabase } from '@/lib/supabase/client'
+import type { UserReferral, NewUserReferral, ReferralTracking, NewReferralTracking } from '@/lib/supabase/types'
 import { nanoid } from 'nanoid'
 
 export interface CreateReferralData {
@@ -25,15 +25,21 @@ export class ReferralService {
     try {
       console.log('👤 Creando registro de referido para usuario:', data.userId)
 
-      const existingUser = await db
-        .select()
-        .from(userReferrals)
-        .where(eq(userReferrals.user_id, data.userId))
+      const { data: existingUser, error: existingUserError } = await supabase
+        .from('user_referrals')
+        .select('*')
+        .eq('user_id', data.userId)
         .limit(1)
+        .single()
 
-      if (existingUser.length > 0) {
-        console.log('⚠️ Usuario ya tiene código de referido:', existingUser[0].referral_code)
-        return existingUser[0]
+      if (existingUserError && existingUserError.code !== 'PGRST116') {
+        console.error('Error checking existing user:', existingUserError)
+        throw new Error('Error verificando usuario existente')
+      }
+
+      if (existingUser) {
+        console.log('⚠️ Usuario ya tiene código de referido:', existingUser.referral_code)
+        return existingUser
       }
 
       let referredByUserId: string | undefined
@@ -69,15 +75,21 @@ export class ReferralService {
         referred_by_user_id: referredByUserId
       }
 
-      const [insertedReferral] = await db
-        .insert(userReferrals)
-        .values(referralData)
-        .returning()
+      const { data: insertedReferral, error: insertError } = await supabase
+        .from('user_referrals')
+        .insert(referralData)
+        .select('*')
+        .single()
+
+      if (insertError) {
+        console.error('Error inserting referral:', insertError)
+        throw new Error('Error al insertar el referido')
+      }
 
       console.log('✅ Registro de referido creado exitosamente:', {
-        id: insertedReferral.id,
-        referral_code: insertedReferral.referral_code,
-        referred_by_code: insertedReferral.referred_by_code
+        id: insertedReferral?.id,
+        referral_code: insertedReferral?.referral_code,
+        referred_by_code: insertedReferral?.referred_by_code
       })
 
       if (referredByUserId) {
@@ -88,7 +100,7 @@ export class ReferralService {
         })
       }
 
-      return insertedReferral
+      return insertedReferral!
     } catch (error) {
       console.error('❌ Error creando registro de referido:', error)
       throw new Error('Error al crear el registro de referido')
@@ -97,11 +109,17 @@ export class ReferralService {
 
   static async getUserByReferralCode(referralCode: string) {
     try {
-      const [user] = await db
-        .select()
-        .from(userReferrals)
-        .where(eq(userReferrals.referral_code, referralCode))
+      const { data: user, error } = await supabase
+        .from('user_referrals')
+        .select('*')
+        .eq('referral_code', referralCode)
         .limit(1)
+        .single()
+
+      if (error && error.code !== 'PGRST116') {
+        console.error('❌ Error obteniendo usuario por código:', error)
+        throw error
+      }
 
       return user || null
     } catch (error) {
@@ -114,11 +132,17 @@ export class ReferralService {
     try {
       console.log('🔍 Obteniendo datos de referido para usuario:', userId)
 
-      const [userReferral] = await db
-        .select()
-        .from(userReferrals)
-        .where(eq(userReferrals.user_id, userId))
+      const { data: userReferral, error } = await supabase
+        .from('user_referrals')
+        .select('*')
+        .eq('user_id', userId)
         .limit(1)
+        .single()
+
+      if (error && error.code !== 'PGRST116') {
+        console.error('Error getting user referral:', error)
+        throw error
+      }
 
       if (!userReferral) {
         console.log('⚠️ Usuario no tiene datos de referido')
@@ -152,13 +176,19 @@ export class ReferralService {
         status: 'pending'
       }
 
-      const [insertedTracking] = await db
-        .insert(referralTracking)
-        .values(trackingData)
-        .returning()
+      const { data: insertedTracking, error } = await supabase
+        .from('referral_tracking')
+        .insert(trackingData)
+        .select('*')
+        .single()
 
-      console.log('✅ Tracking de referido creado:', insertedTracking.id)
-      return insertedTracking
+      if (error) {
+        console.error('Error inserting tracking:', error)
+        throw error
+      }
+
+      console.log('✅ Tracking de referido creado:', insertedTracking?.id)
+      return insertedTracking!
     } catch (error) {
       console.error('❌ Error creando tracking de referido:', error)
       throw new Error('Error al crear el tracking de referido')
@@ -169,19 +199,21 @@ export class ReferralService {
     try {
       console.log('✔️ Completando tracking de referido para:', referredUserId)
 
-      const [updatedTracking] = await db
-        .update(referralTracking)
-        .set({
+      const { data: updatedTracking, error } = await supabase
+        .from('referral_tracking')
+        .update({
           status: 'completed',
-          completed_at: new Date()
+          completed_at: new Date().toISOString()
         })
-        .where(
-          and(
-            eq(referralTracking.referred_user_id, referredUserId),
-            eq(referralTracking.status, 'pending')
-          )
-        )
-        .returning()
+        .eq('referred_user_id', referredUserId)
+        .eq('status', 'pending')
+        .select('*')
+        .single()
+
+      if (error && error.code !== 'PGRST116') {
+        console.error('Error updating tracking:', error)
+        throw error
+      }
 
       if (updatedTracking) {
         console.log('✅ Tracking completado:', updatedTracking.id)
@@ -203,35 +235,42 @@ export class ReferralService {
         throw new Error('Usuario no encontrado en sistema de referidos')
       }
 
-      const [totalResult] = await db
-        .select({ count: count() })
-        .from(referralTracking)
-        .where(eq(referralTracking.referrer_user_id, userId))
+      const { count: totalCount, error: totalError } = await supabase
+        .from('referral_tracking')
+        .select('*', { count: 'exact', head: true })
+        .eq('referrer_user_id', userId)
 
-      const [pendingResult] = await db
-        .select({ count: count() })
-        .from(referralTracking)
-        .where(
-          and(
-            eq(referralTracking.referrer_user_id, userId),
-            eq(referralTracking.status, 'pending')
-          )
-        )
+      if (totalError) {
+        console.error('Error getting total count:', totalError)
+        throw totalError
+      }
 
-      const [completedResult] = await db
-        .select({ count: count() })
-        .from(referralTracking)
-        .where(
-          and(
-            eq(referralTracking.referrer_user_id, userId),
-            eq(referralTracking.status, 'completed')
-          )
-        )
+      const { count: pendingCount, error: pendingError } = await supabase
+        .from('referral_tracking')
+        .select('*', { count: 'exact', head: true })
+        .eq('referrer_user_id', userId)
+        .eq('status', 'pending')
+
+      if (pendingError) {
+        console.error('Error getting pending count:', pendingError)
+        throw pendingError
+      }
+
+      const { count: completedCount, error: completedError } = await supabase
+        .from('referral_tracking')
+        .select('*', { count: 'exact', head: true })
+        .eq('referrer_user_id', userId)
+        .eq('status', 'completed')
+
+      if (completedError) {
+        console.error('Error getting completed count:', completedError)
+        throw completedError
+      }
 
       const stats: ReferralStats = {
-        totalReferrals: totalResult.count,
-        pendingReferrals: pendingResult.count,
-        completedReferrals: completedResult.count,
+        totalReferrals: totalCount || 0,
+        pendingReferrals: pendingCount || 0,
+        completedReferrals: completedCount || 0,
         myReferralCode: userReferral.referral_code
       }
 
@@ -247,21 +286,35 @@ export class ReferralService {
     try {
       console.log('👥 Obteniendo lista de referidos para:', userId)
 
-      const referrals = await db
-        .select({
-          id: referralTracking.id,
-          referredUserId: referralTracking.referred_user_id,
-          referralCode: referralTracking.referral_code,
-          status: referralTracking.status,
-          createdAt: referralTracking.created_at,
-          completedAt: referralTracking.completed_at
-        })
-        .from(referralTracking)
-        .where(eq(referralTracking.referrer_user_id, userId))
-        .orderBy(desc(referralTracking.created_at))
+      const { data: referrals, error } = await supabase
+        .from('referral_tracking')
+        .select(`
+          id,
+          referred_user_id,
+          referral_code,
+          status,
+          created_at,
+          completed_at
+        `)
+        .eq('referrer_user_id', userId)
+        .order('created_at', { ascending: false })
 
-      console.log('✅ Referidos obtenidos:', referrals.length)
-      return referrals
+      if (error) {
+        console.error('Error getting referrals:', error)
+        throw error
+      }
+
+      const mappedReferrals = referrals?.map(r => ({
+        id: r.id,
+        referredUserId: r.referred_user_id,
+        referralCode: r.referral_code,
+        status: r.status,
+        createdAt: r.created_at,
+        completedAt: r.completed_at
+      })) || []
+
+      console.log('✅ Referidos obtenidos:', mappedReferrals.length)
+      return mappedReferrals
     } catch (error) {
       console.error('❌ Error obteniendo lista de referidos:', error)
       throw new Error('Error al obtener la lista de referidos')

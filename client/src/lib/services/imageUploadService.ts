@@ -1,5 +1,5 @@
-import { db, imagesGenerator, type NewImagesGenerator } from '@/lib/db'
-import { eq, desc, and } from 'drizzle-orm'
+import { supabase } from '@/lib/supabase/client'
+import type { ImagesGenerator, NewImagesGenerator } from '@/lib/supabase/types'
 import { nanoid } from 'nanoid'
 
 export interface UploadImageData {
@@ -30,18 +30,24 @@ export class ImageUploadService {
         tokens: data.tokens || 0
       }
 
-      const [insertedImage] = await db
-        .insert(imagesGenerator)
-        .values(imageData)
-        .returning()
+      const { data: insertedImage, error } = await supabase
+        .from('images_generator')
+        .insert(imageData)
+        .select('*')
+        .single()
+
+      if (error) {
+        console.error('Error inserting image:', error)
+        throw error
+      }
 
       console.log('✅ Imagen guardada exitosamente en DB:', {
-        id: insertedImage.id,
-        request_id: insertedImage.request_id,
-        created_at: insertedImage.created_at
+        id: insertedImage?.id,
+        request_id: insertedImage?.request_id,
+        created_at: insertedImage?.created_at
       })
 
-      return insertedImage
+      return insertedImage!
     } catch (error) {
       console.error('❌ Error guardando imagen en DB:', {
         error: error instanceof Error ? error.message : error,
@@ -55,15 +61,20 @@ export class ImageUploadService {
     try {
       console.log('🔍 Obteniendo imágenes del usuario:', { userEmail, limit })
 
-      const images = await db
-        .select()
-        .from(imagesGenerator)
-        .where(eq(imagesGenerator.user_email, userEmail))
-        .orderBy(desc(imagesGenerator.created_at))
+      const { data: images, error } = await supabase
+        .from('images_generator')
+        .select('*')
+        .eq('user_email', userEmail)
+        .order('created_at', { ascending: false })
         .limit(limit)
 
-      console.log('✅ Imágenes obtenidas:', images.length)
-      return images
+      if (error) {
+        console.error('Error getting images:', error)
+        throw error
+      }
+
+      console.log('✅ Imágenes obtenidas:', images?.length || 0)
+      return images || []
     } catch (error) {
       console.error('❌ Error obteniendo imágenes:', error)
       throw new Error('Error al obtener las imágenes del usuario')
@@ -74,21 +85,24 @@ export class ImageUploadService {
     try {
       console.log('🗑️ Eliminando imagen:', { id, userEmail })
 
-      const [deletedImage] = await db
-        .delete(imagesGenerator)
-        .where(
-          and(
-            eq(imagesGenerator.id, id),
-            eq(imagesGenerator.user_email, userEmail)
-          )
-        )
-        .returning()
+      const { data: deletedImage, error } = await supabase
+        .from('images_generator')
+        .delete()
+        .eq('id', id)
+        .eq('user_email', userEmail)
+        .select('*')
+        .single()
+
+      if (error && error.code !== 'PGRST116') {
+        console.error('Error deleting image:', error)
+        throw error
+      }
 
       if (!deletedImage) {
         throw new Error('Imagen no encontrada o no autorizada')
       }
 
-      console.log('✅ Imagen eliminada exitosamente:', deletedImage.id)
+      console.log('✅ Imagen eliminada exitosamente:', deletedImage?.id)
       return deletedImage
     } catch (error) {
       console.error('❌ Error eliminando imagen:', error)

@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { automaticPrompts } from '@/lib/db/schema'
-import { db } from '@/lib/db'
-import { eq } from 'drizzle-orm'
+import { supabase } from '@/lib/supabase/client'
+import type { AutomaticPrompt } from '@/lib/supabase/types'
 
 type RouteContext = {
   params: Promise<Record<string, string | string[] | undefined>>
@@ -52,17 +51,23 @@ export async function PUT(request: NextRequest, context: RouteContext) {
       )
     }
 
-    const [updatedPrompt] = await db
-      .update(automaticPrompts)
-      .set({
+    const { data: updatedPrompt, error: updateError } = await supabase
+      .from('automatic_prompts')
+      .update({
         title: body.title.trim(),
         content: body.content.trim(),
         category: body.category || 'general',
         is_active: body.is_active ?? true,
-        updated_at: new Date()
+        updated_at: new Date().toISOString()
       })
-      .where(eq(automaticPrompts.id, id))
-      .returning()
+      .eq('id', id)
+      .select('*')
+      .single()
+
+    if (updateError && updateError.code !== 'PGRST116') {
+      console.error('Error updating prompt:', updateError)
+      throw updateError
+    }
 
     if (!updatedPrompt) {
       return NextResponse.json(
@@ -78,7 +83,7 @@ export async function PUT(request: NextRequest, context: RouteContext) {
       )
     }
 
-    console.log('✅ Updated prompt:', updatedPrompt.id)
+    console.log('✅ Updated prompt:', updatedPrompt?.id)
 
     return NextResponse.json({
       success: true,
@@ -123,10 +128,17 @@ export async function DELETE(request: NextRequest, context: RouteContext) {
       )
     }
 
-    const [deletedPrompt] = await db
-      .delete(automaticPrompts)
-      .where(eq(automaticPrompts.id, id))
-      .returning()
+    const { data: deletedPrompt, error: deleteError } = await supabase
+      .from('automatic_prompts')
+      .delete()
+      .eq('id', id)
+      .select('*')
+      .single()
+
+    if (deleteError && deleteError.code !== 'PGRST116') {
+      console.error('Error deleting prompt:', deleteError)
+      throw deleteError
+    }
 
     if (!deletedPrompt) {
       return NextResponse.json(
@@ -142,7 +154,7 @@ export async function DELETE(request: NextRequest, context: RouteContext) {
       )
     }
 
-    console.log('✅ Deleted prompt:', deletedPrompt.id)
+    console.log('✅ Deleted prompt:', deletedPrompt?.id)
 
     return NextResponse.json({
       success: true,

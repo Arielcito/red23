@@ -1,22 +1,27 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { automaticPrompts } from '@/lib/db/schema'
-import { db } from '@/lib/db'
-import { eq, desc } from 'drizzle-orm'
+import { supabase } from '@/lib/supabase/client'
+import type { AutomaticPrompt } from '@/lib/supabase/types'
 
 export async function GET() {
   try {
     console.log('📋 Fetching automatic prompts')
     
-    const prompts = await db
-      .select()
-      .from(automaticPrompts)
-      .orderBy(desc(automaticPrompts.order_index), desc(automaticPrompts.created_at))
+    const { data: prompts, error } = await supabase
+      .from('automatic_prompts')
+      .select('*')
+      .order('order_index', { ascending: false })
+      .order('created_at', { ascending: false })
 
-    console.log(`✅ Found ${prompts.length} prompts`)
+    if (error) {
+      console.error('❌ Error fetching prompts from Supabase:', error)
+      throw error
+    }
+
+    console.log(`✅ Found ${prompts?.length || 0} prompts`)
 
     return NextResponse.json({
       success: true,
-      data: prompts
+      data: prompts || []
     })
   } catch (error) {
     console.error('❌ Error fetching prompts:', error)
@@ -56,26 +61,38 @@ export async function POST(request: NextRequest) {
     }
 
     // Get next order index
-    const lastPrompt = await db
-      .select()
-      .from(automaticPrompts)
-      .orderBy(desc(automaticPrompts.order_index))
+    const { data: lastPrompt, error: lastPromptError } = await supabase
+      .from('automatic_prompts')
+      .select('order_index')
+      .order('order_index', { ascending: false })
       .limit(1)
+      .single()
 
-    const nextOrderIndex = (lastPrompt[0]?.order_index || 0) + 1
+    if (lastPromptError && lastPromptError.code !== 'PGRST116') {
+      console.error('Error getting last prompt:', lastPromptError)
+      throw lastPromptError
+    }
 
-    const [newPrompt] = await db
-      .insert(automaticPrompts)
-      .values({
+    const nextOrderIndex = (lastPrompt?.order_index || 0) + 1
+
+    const { data: newPrompt, error: insertError } = await supabase
+      .from('automatic_prompts')
+      .insert({
         title: body.title.trim(),
         content: body.content.trim(),
         category: body.category || 'general',
         is_active: body.is_active ?? true,
         order_index: nextOrderIndex
       })
-      .returning()
+      .select('*')
+      .single()
 
-    console.log('✅ Created prompt:', newPrompt.id)
+    if (insertError) {
+      console.error('Error inserting prompt:', insertError)
+      throw insertError
+    }
+
+    console.log('✅ Created prompt:', newPrompt?.id)
 
     return NextResponse.json({
       success: true,
