@@ -6,6 +6,7 @@ import type {
   ImageRecord,
   ImagesApiHook
 } from '@/lib/types/imageGeneration'
+import { useUser } from './useUser'
 
 // Función para construir URL de Google Storage basada en request_id
 const buildStorageUrl = (requestId: string, withLogo: boolean = false): string => {
@@ -27,6 +28,9 @@ export const useImagesApi = (): ImagesApiHook => {
   const [images, setImages] = useState<ImageRecord[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const { user, isLoading: isUserLoading } = useUser()
+
+  const userEmail = user?.email?.trim()
 
   const getImages = useCallback(async (params?: GetImagesRequest): Promise<GetImagesResponse | null> => {
     try {
@@ -39,7 +43,10 @@ export const useImagesApi = (): ImagesApiHook => {
       
       // Construir query params
       const queryParams = new URLSearchParams()
-      if (params?.user_email) queryParams.append('user_email', params.user_email)
+      const effectiveUserEmail = params?.user_email || userEmail || ''
+      if (effectiveUserEmail) {
+        queryParams.append('user_email', effectiveUserEmail)
+      }
       if (params?.limit) queryParams.append('limit', params.limit.toString())
       if (params?.start_date) queryParams.append('start_date', params.start_date)
       if (params?.end_date) queryParams.append('end_date', params.end_date)
@@ -90,8 +97,10 @@ export const useImagesApi = (): ImagesApiHook => {
       // Procesar imágenes para asegurar URLs correctas
       const processedImages = processApiImages(data.data || [])
 
-      // Actualizar estado local si es una consulta sin filtros específicos
-      if (!params || (!params.user_email && !params.start_date && !params.end_date)) {
+      const hasCustomFilters = Boolean(params && (params.limit || params.start_date || params.end_date))
+
+      // Actualizar estado local solo cuando estamos haciendo la consulta principal para el usuario actual
+      if (!hasCustomFilters) {
         setImages(processedImages)
       }
 
@@ -119,11 +128,17 @@ export const useImagesApi = (): ImagesApiHook => {
     } finally {
       setIsLoading(false)
     }
-  }, [])
+  }, [userEmail])
 
   const refreshImages = useCallback(async (): Promise<void> => {
-    await getImages()
-  }, [getImages])
+    if (!userEmail) {
+      console.warn('⚠️ refreshImages: se intentó cargar imágenes sin email de usuario')
+      setImages([])
+      return
+    }
+
+    await getImages({ user_email: userEmail })
+  }, [getImages, userEmail])
 
   const clearError = useCallback(() => {
     setError(null)
@@ -131,8 +146,10 @@ export const useImagesApi = (): ImagesApiHook => {
 
   // Cargar imágenes iniciales al montar el componente
   useEffect(() => {
-    refreshImages()
-  }, [refreshImages])
+    if (!isUserLoading) {
+      refreshImages()
+    }
+  }, [refreshImages, isUserLoading])
 
   return {
     images,

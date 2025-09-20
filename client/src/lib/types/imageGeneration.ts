@@ -84,7 +84,7 @@ export interface GetWinnersRequest {
 export interface WinnerRecord {
   id: number
   first_name: string
-  message: string
+  message: string | null
   user_id: number
   username: string | null
   won_at: string
@@ -111,5 +111,77 @@ export interface WinnersApiHook {
   error: string | null
   getWinners: (params?: GetWinnersRequest) => Promise<GetWinnersResponse | null>
   refreshWinners: () => Promise<void>
+  clearError: () => void
+}
+
+// Tipos para telegram_members
+export interface TelegramMemberRecord {
+  user_id: number
+  first_name: string
+  last_name: string | null
+  username: string | null
+  joined_at: string
+  is_active: boolean
+}
+
+export interface GetTelegramMembersRequest {
+  is_active?: boolean
+  limit?: number
+  offset?: number
+}
+
+export interface GetTelegramMembersResponse {
+  data: TelegramMemberRecord[]
+  total: number
+  limit: number
+  offset: number
+  status: string
+}
+
+export interface TelegramMembersApiHook {
+  members: TelegramMemberRecord[]
+  isLoading: boolean
+  error: string | null
+  getMembers: (params?: GetTelegramMembersRequest) => Promise<GetTelegramMembersResponse | null>
+  refreshMembers: () => Promise<void>
+  clearError: () => void
+}
+
+// Tipos para upload de imágenes
+export interface UploadImageRequest {
+  files: File[]
+  user_email: string
+  title?: string
+  description?: string
+  tags?: string
+}
+
+export interface UploadedImageInfo {
+  id: number
+  filename: string
+  url: string
+  size: number
+  type: string
+  created_at: string
+}
+
+export interface UploadImageResponse {
+  success: boolean
+  data?: {
+    message: string
+    images: UploadedImageInfo[]
+    metadata: {
+      title?: string
+      description?: string
+      tags: string[]
+    }
+  }
+  error?: string
+}
+
+export interface ImageUploadHook {
+  uploadImages: (request: UploadImageRequest) => Promise<UploadImageResponse>
+  isUploading: boolean
+  error: string | null
   clearError: () => void
 }

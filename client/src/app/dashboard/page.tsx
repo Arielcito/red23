@@ -11,38 +11,15 @@ import {
   Sparkles,
 } from "lucide-react"
 import Link from "next/link"
-import { ThemeToggle } from "@/components/theme-toggle"
-import { ScheduledImagesList } from "@/components/schedule/ScheduledImagesList"
 import { AppLayout } from "@/components/layout/AppLayout"
 import { WinnerBanner } from "@/components/ui/winner-banner"
-import { CasinoComparisonSection } from "@/components/casinos/CasinoComparisonSection"
 import { useWinnersApi } from "@/lib/hooks/useWinnersApi"
 import { useImagesApi } from "@/lib/hooks/useImagesApi"
 import { useStatsApi } from "@/lib/hooks/useStatsApi"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { useAuth } from "@/lib/hooks/useAuth"
-import { NotificationDropdown } from "@/components/ui/notification-dropdown"
-import { SidebarTrigger } from "@/components/layout/Sidebar"
-
 export default function Dashboard() {
-  const { images: apiImages, isLoading: imagesLoading } = useImagesApi()
-  const { winners, isLoading: winnersLoading, error: winnersError } = useWinnersApi()
-  const { stats, isLoading: statsLoading, error: statsError } = useStatsApi()
-  const { user } = useAuth()
-
-  const getUserInitials = (name?: string | null) => {
-    if (!name) return "U"
-    return name
-      .split(" ")
-      .map((n) => n[0])
-      .join("")
-      .toUpperCase()
-      .slice(0, 2)
-  }
-
-  const userName = user?.fullName || user?.firstName || "Usuario"
-  const userEmail = user?.primaryEmailAddress?.emailAddress || "usuario@ejemplo.com"
-  const userInitials = getUserInitials(user?.fullName || user?.firstName)
+  const { images: apiImages } = useImagesApi()
+  const { winners } = useWinnersApi()
+  const { stats } = useStatsApi()
 
   // Usar el primer ganador de la API o un fallback
   const dailyWinner = winners.length > 0 ? {
@@ -86,24 +63,6 @@ export default function Dashboard() {
     */
   ]
 
-  // Usar imágenes de la API o fallback
-  const recentImages = apiImages.length > 0
-    ? apiImages.slice(0, 4).map(img => ({
-        id: img.id,
-        url: img.result,
-        title: img.prompt.substring(0, 20) + "...",
-        date: new Date(img.created_at).toLocaleDateString('es-ES', {
-          weekday: 'short',
-          month: 'short',
-          day: 'numeric'
-        })
-      }))
-    : [
-        { id: 1, url: "/placeholder.svg?height=100&width=100", title: "Arte Abstracto", date: "Hoy" },
-        { id: 2, url: "/placeholder.svg?height=100&width=100", title: "Paisaje", date: "Ayer" },
-        { id: 3, url: "/placeholder.svg?height=100&width=100", title: "Retrato", date: "2 días" },
-        { id: 4, url: "/placeholder.svg?height=100&width=100", title: "Arte Digital", date: "3 días" },
-      ]
 
   return (
     <AppLayout
@@ -116,6 +75,7 @@ export default function Dashboard() {
       }}
     >
       <div className="p-3 sm:p-4 lg:p-6 space-y-3 sm:space-y-4 lg:space-y-6">
+
         {/* Winner Banner */}
         <WinnerBanner winner={dailyWinner} />
 
@@ -156,8 +116,8 @@ export default function Dashboard() {
         <div>
           <h2 className="text-lg font-semibold mb-3 sm:mb-4">Acciones Rápidas</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
-            {quickActions.map((action, index) => (
-              <Link key={index} href={action.href}>
+            {quickActions.map((action) => (
+              <Link key={action.href} href={action.href}>
                 <Card className="hover:shadow-md transition-shadow cursor-pointer h-full">
                   <CardHeader className="pb-2 sm:pb-3 px-4 sm:px-6">
                     <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-lg ${action.color} flex items-center justify-center mb-2`}>
@@ -172,46 +132,85 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Casino Comparison Section */}
-        <CasinoComparisonSection showAdminButton={true} />
+        {/* Daily and Monthly Prizes */}
+        <div>
+          <div className="flex items-center justify-between mb-3 sm:mb-4">
+            <h2 className="text-lg font-semibold">Premios</h2>
+            <Link href="/rewards">
+              <Button variant="outline" size="sm" className="text-xs sm:text-sm">
+                Ver todos los premios
+              </Button>
+            </Link>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 lg:gap-6">
+            <Card className="h-full">
+              <CardHeader>
+                <CardTitle className="text-base sm:text-lg">Premio Diario</CardTitle>
+                <CardDescription>Participa cada día para ganar</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="text-xl sm:text-2xl font-bold mb-2">$500 - $1,500</div>
+                <p className="text-xs text-muted-foreground">Sorteo automático cada día</p>
+              </CardContent>
+            </Card>
 
-        {/* Recent Images & Scheduled Posts */}
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-3 sm:gap-4 lg:gap-6">
-          {/* Recent Images */}
-          <Card className="h-full">
-            <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle className="text-base sm:text-lg">Imágenes Recientes</CardTitle>
-              <Link href="/gallery">
-                <Button variant="outline" size="sm" className="text-xs sm:text-sm">
-                  Ver todas
-                </Button>
-              </Link>
-            </CardHeader>
-            <CardContent className="pt-0">
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-2 xl:grid-cols-3 gap-2 sm:gap-3 lg:gap-4">
-                {recentImages.map((image) => (
-                  <div key={image.id} className="space-y-1 sm:space-y-2">
-                    <div className="aspect-square bg-gray-100 rounded-lg overflow-hidden">
-                      <img
-                        src={image.url || "/placeholder.svg"}
-                        alt={image.title}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                    <div>
-                      <p className="text-xs font-medium line-clamp-2">{image.title}</p>
-                      <p className="text-xs text-gray-500">{image.date}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Temporalmente oculto - Scheduled Posts 
-          <ScheduledImagesList />
-          */}
+            <Card className="h-full">
+              <CardHeader>
+                <CardTitle className="text-base sm:text-lg">Premio Mensual</CardTitle>
+                <CardDescription>Gran premio del mes</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="text-xl sm:text-2xl font-bold mb-2">$5,000 - $15,000</div>
+                <p className="text-xs text-muted-foreground">Gran sorteo mensual</p>
+              </CardContent>
+            </Card>
+          </div>
         </div>
+
+        {/* Learning Tutorials */}
+        <div>
+          <div className="flex items-center justify-between mb-3 sm:mb-4">
+            <h2 className="text-lg font-semibold">Tutoriales</h2>
+            <Link href="/tutorials">
+              <Button variant="outline" size="sm" className="text-xs sm:text-sm">
+                Ver todos los cursos
+              </Button>
+            </Link>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 lg:gap-6">
+            <Card className="h-full">
+              <CardHeader>
+                <CardTitle className="text-base sm:text-lg">Ruta Principiante</CardTitle>
+                <CardDescription>Fundamentos del Marketing Digital</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2">
+                  <p className="text-sm">• Conceptos básicos</p>
+                  <p className="text-sm">• Herramientas esenciales</p>
+                  <p className="text-sm">• Primeras estrategias</p>
+                  <p className="text-sm font-medium text-primary-600">4 cursos • 20 horas</p>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="h-full">
+              <CardHeader>
+                <CardTitle className="text-base sm:text-lg">Ruta Avanzada</CardTitle>
+                <CardDescription>Especialista en Casinos Online</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2">
+                  <p className="text-sm">• Estrategias avanzadas</p>
+                  <p className="text-sm">• Compliance y regulaciones</p>
+                  <p className="text-sm">• Optimización de conversiones</p>
+                  <p className="text-sm font-medium text-secondary-600">6 cursos • 35 horas</p>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+
+
       </div>
     </AppLayout>
   )

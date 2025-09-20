@@ -134,6 +134,14 @@ export function Sidebar({ className }: SidebarProps) {
       description: "Gestión de casinos",
       isAdmin: true
     },
+    {
+      title: "Admin Prompts",
+      href: "/admin/prompts",
+      icon: MessageCircle,
+      badge: "Admin",
+      description: "Editar prompts automáticos",
+      isAdmin: true
+    },
   ]
 
   const isActive = (href: string) => pathname === href
