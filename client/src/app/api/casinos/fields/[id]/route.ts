@@ -2,15 +2,14 @@ import { NextRequest, NextResponse } from 'next/server'
 import { CasinoService } from '@/lib/services/casinoService'
 import type { NewCasinoField } from '@/lib/supabase/types'
 
-interface RouteParams {
-  params: {
-    id: string
-  }
+type RouteParamsContext = {
+  params: Promise<{ id: string }>
 }
 
-export async function PUT(request: NextRequest, { params }: RouteParams) {
+export async function PUT(request: NextRequest, context: RouteParamsContext) {
   try {
-    console.log('📝 API: Actualizando campo personalizado:', params.id)
+    const { id } = await context.params
+    console.log('📝 API: Actualizando campo personalizado:', id)
 
     const body = await request.json()
 
@@ -36,7 +35,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
 
     console.log('📝 Datos a actualizar:', Object.keys(updateData))
 
-    const updatedField = await CasinoService.updateCasinoField(params.id, updateData)
+    const updatedField = await CasinoService.updateCasinoField(id, updateData)
 
     return NextResponse.json({
       success: true,
@@ -56,11 +55,12 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
   }
 }
 
-export async function DELETE(request: NextRequest, { params }: RouteParams) {
+export async function DELETE(request: NextRequest, context: RouteParamsContext) {
   try {
-    console.log('🗑️ API: Eliminando campo personalizado:', params.id)
+    const { id } = await context.params
+    console.log('🗑️ API: Eliminando campo personalizado:', id)
 
-    await CasinoService.deleteCasinoField(params.id)
+    await CasinoService.deleteCasinoField(id)
 
     return NextResponse.json({
       success: true,

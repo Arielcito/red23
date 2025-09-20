@@ -1,4 +1,5 @@
 import type React from "react"
+import { Suspense } from "react"
 import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import { GeistMono } from "geist/font/mono"
@@ -37,7 +38,9 @@ html {
         <body className={inter.className}>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
             <NotificationProvider>
-              <ReferralAutoSetup />
+              <Suspense fallback={null}>
+                <ReferralAutoSetup />
+              </Suspense>
               {children}
             </NotificationProvider>
           </ThemeProvider>

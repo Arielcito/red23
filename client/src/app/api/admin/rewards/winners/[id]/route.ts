@@ -8,15 +8,13 @@ const supabaseAdmin = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 )
 
-interface RouteParams {
-  params: {
-    id: string
-  }
+type RouteParamsContext = {
+  params: Promise<{ id: string }>
 }
 
-export async function GET(request: NextRequest, { params }: RouteParams) {
+export async function GET(request: NextRequest, context: RouteParamsContext) {
   try {
-    const { id } = params
+    const { id } = await context.params
     console.log('📋 Fetching winner:', id)
     
     const winnerId = parseInt(id)
@@ -73,9 +71,9 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
   }
 }
 
-export async function PUT(request: NextRequest, { params }: RouteParams) {
+export async function PUT(request: NextRequest, context: RouteParamsContext) {
   try {
-    const { id } = params
+    const { id } = await context.params
     console.log('📝 Updating winner:', id)
     
     const winnerId = parseInt(id)
@@ -161,9 +159,9 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
   }
 }
 
-export async function DELETE(request: NextRequest, { params }: RouteParams) {
+export async function DELETE(request: NextRequest, context: RouteParamsContext) {
   try {
-    const { id } = params
+    const { id } = await context.params
     console.log('🗑️ Deleting winner:', id)
     
     const winnerId = parseInt(id)

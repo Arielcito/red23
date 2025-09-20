@@ -2,17 +2,16 @@ import { NextRequest, NextResponse } from 'next/server'
 import { CasinoService } from '@/lib/services/casinoService'
 import type { NewCasino } from '@/lib/supabase/types'
 
-interface RouteParams {
-  params: {
-    casinoId: string
-  }
+type RouteParamsContext = {
+  params: Promise<{ casinoId: string }>
 }
 
-export async function GET(request: NextRequest, { params }: RouteParams) {
+export async function GET(request: NextRequest, context: RouteParamsContext) {
   try {
-    console.log('🔍 API: Obteniendo casino por ID:', params.casinoId)
+    const { casinoId } = await context.params
+    console.log('🔍 API: Obteniendo casino por ID:', casinoId)
 
-    const casino = await CasinoService.getCasinoById(params.casinoId)
+    const casino = await CasinoService.getCasinoById(casinoId)
 
     if (!casino) {
       return NextResponse.json(
@@ -42,14 +41,15 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
   }
 }
 
-export async function PUT(request: NextRequest, { params }: RouteParams) {
+export async function PUT(request: NextRequest, context: RouteParamsContext) {
   try {
-    console.log('📝 API: Actualizando casino:', params.casinoId)
+    const { casinoId } = await context.params
+    console.log('📝 API: Actualizando casino:', casinoId)
 
     const body = await request.json()
 
     // Validar que el casino existe
-    const existingCasino = await CasinoService.getCasinoById(params.casinoId)
+    const existingCasino = await CasinoService.getCasinoById(casinoId)
     if (!existingCasino) {
       return NextResponse.json(
         { 
@@ -89,7 +89,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
 
     console.log('📝 Datos a actualizar:', Object.keys(updateData))
 
-    const updatedCasino = await CasinoService.updateCasino(params.casinoId, updateData)
+    const updatedCasino = await CasinoService.updateCasino(casinoId, updateData)
 
     return NextResponse.json({
       success: true,
@@ -109,12 +109,13 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
   }
 }
 
-export async function DELETE(request: NextRequest, { params }: RouteParams) {
+export async function DELETE(request: NextRequest, context: RouteParamsContext) {
   try {
-    console.log('🗑️ API: Eliminando casino:', params.casinoId)
+    const { casinoId } = await context.params
+    console.log('🗑️ API: Eliminando casino:', casinoId)
 
     // Validar que el casino existe
-    const existingCasino = await CasinoService.getCasinoById(params.casinoId)
+    const existingCasino = await CasinoService.getCasinoById(casinoId)
     if (!existingCasino) {
       return NextResponse.json(
         { 
@@ -125,7 +126,7 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
       )
     }
 
-    await CasinoService.deleteCasino(params.casinoId)
+    await CasinoService.deleteCasino(casinoId)
 
     return NextResponse.json({
       success: true,

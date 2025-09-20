@@ -2,16 +2,14 @@ import { NextRequest, NextResponse } from 'next/server'
 import { CasinoService } from '@/lib/services/casinoService'
 import type { NewCasinoFieldValue } from '@/lib/supabase/types'
 
-interface RouteParams {
-  params: {
-    casinoId: string
-    fieldId: string
-  }
+type RouteParamsContext = {
+  params: Promise<{ casinoId: string; fieldId: string }>
 }
 
-export async function PUT(request: NextRequest, { params }: RouteParams) {
+export async function PUT(request: NextRequest, context: RouteParamsContext) {
   try {
-    console.log('💾 API: Actualizando valor de campo para casino:', params.casinoId, 'campo:', params.fieldId)
+    const { casinoId, fieldId } = await context.params
+    console.log('💾 API: Actualizando valor de campo para casino:', casinoId, 'campo:', fieldId)
 
     const body = await request.json()
 
@@ -50,8 +48,8 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     console.log('💾 Datos del valor a actualizar:', Object.keys(valueData))
 
     const updatedValue = await CasinoService.updateCasinoFieldValue(
-      params.casinoId, 
-      params.fieldId, 
+      casinoId,
+      fieldId,
       valueData
     )
 
