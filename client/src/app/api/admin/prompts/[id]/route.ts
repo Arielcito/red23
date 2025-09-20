@@ -3,15 +3,22 @@ import { automaticPrompts } from '@/lib/db/schema'
 import { db } from '@/lib/db'
 import { eq } from 'drizzle-orm'
 
-interface RouteParams {
-  params: {
-    id: string
-  }
+type RouteContext = {
+  params: Promise<Record<string, string | string[] | undefined>>
 }
 
-export async function PUT(request: NextRequest, { params }: RouteParams) {
+async function resolveParams(
+  context: RouteContext
+): Promise<Record<string, string | string[] | undefined>> {
+  return await context.params
+}
+
+export async function PUT(request: NextRequest, context: RouteContext) {
   try {
-    const id = parseInt(params.id)
+    const params = await resolveParams(context)
+    const idValue = params?.id
+    const idString = Array.isArray(idValue) ? idValue[0] : idValue
+    const id = parseInt(idString ?? '')
     const body = await request.json()
     
     console.log('📝 Updating prompt:', id, body)
@@ -93,9 +100,12 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
   }
 }
 
-export async function DELETE(request: NextRequest, { params }: RouteParams) {
+export async function DELETE(request: NextRequest, context: RouteContext) {
   try {
-    const id = parseInt(params.id)
+    const params = await resolveParams(context)
+    const idValue = params?.id
+    const idString = Array.isArray(idValue) ? idValue[0] : idValue
+    const id = parseInt(idString ?? '')
     
     console.log('🗑️ Deleting prompt:', id)
 
