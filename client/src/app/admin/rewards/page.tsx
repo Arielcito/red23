@@ -9,7 +9,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Switch } from "@/components/ui/switch"
 import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { useRewardsSettings, RewardsBannerSettings, RewardsBannerTheme } from "@/lib/hooks/useRewardsSettings"
+import { useAdminRewardsSettings, RewardsBannerSettings, RewardsBannerTheme } from "@/lib/hooks/useAdminRewardsSettings"
 import { RewardsBanner } from "@/components/rewards/RewardsBanner"
 import { AlertTriangle, Loader2, Paintbrush } from "lucide-react"
 
@@ -20,10 +20,12 @@ const THEME_OPTIONS: { value: RewardsBannerTheme; label: string; description: st
 ]
 
 export default function AdminRewardsPage() {
-  const { settings, updateSettings, resetSettings, isLoaded } = useRewardsSettings()
+  const { settings, updateSettings, resetSettings, isLoaded, error } = useAdminRewardsSettings()
   const [formState, setFormState] = useState<RewardsBannerSettings>(settings)
   const [isSaving, setIsSaving] = useState(false)
   const [hasChanges, setHasChanges] = useState(false)
+  
+  console.log('⚙️ Admin rewards page loaded:', { isLoaded, hasError: !!error })
 
   useEffect(() => {
     setFormState(settings)
@@ -73,6 +75,14 @@ export default function AdminRewardsPage() {
       }}
     >
       <div className="p-6 space-y-6">
+        {error && (
+          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+            <p className="text-sm">
+              <strong>Error:</strong> {error}
+            </p>
+          </div>
+        )}
+        
         <Card>
           <CardHeader className="space-y-2">
             <CardTitle>Estado del banner</CardTitle>

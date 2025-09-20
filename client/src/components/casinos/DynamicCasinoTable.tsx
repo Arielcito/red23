@@ -1,6 +1,6 @@
 "use client"
 
-import { Casino, CasinoField, CasinoBadgeValue } from '@/lib/types/casino'
+import type { CasinoWithFields, CasinoField, CasinoBadgeValue } from '@/lib/supabase/types'
 import { Badge } from '@/components/ui/badge'
 import {
   Table,
@@ -13,7 +13,7 @@ import {
 import { cn } from '@/lib/utils'
 
 interface DynamicCasinoTableProps {
-  casinos: Casino[]
+  casinos: CasinoWithFields[]
   customFields: CasinoField[]
   className?: string
 }
@@ -32,14 +32,14 @@ export function DynamicCasinoTable({ casinos, customFields, className }: Dynamic
     }
   }
 
-  const renderCellContent = (field: CasinoField, casino: Casino) => {
+  const renderCellContent = (field: CasinoField, casino: CasinoWithFields) => {
     const fieldValue = casino.customFields.find(cf => cf.fieldId === field.id)
     
     if (!fieldValue) {
       return <span className="text-muted-foreground">-</span>
     }
 
-    switch (field.type) {
+    switch (field.field_type) {
       case 'badge':
         const badgeValue = fieldValue.value as CasinoBadgeValue
         return (
@@ -87,8 +87,8 @@ export function DynamicCasinoTable({ casinos, customFields, className }: Dynamic
   // Filtrar solo casinos que no son top 3 para la tabla
   const tableCasinos = casinos.filter(casino => !casino.isTopThree)
 
-  // Ordenar campos personalizados por order
-  const sortedFields = [...customFields].sort((a, b) => a.order - b.order)
+  // Ordenar campos personalizados por display_order
+  const sortedFields = [...customFields].sort((a, b) => a.display_order - b.display_order)
 
   return (
     <div className={cn('w-full overflow-auto', className)}>
@@ -163,8 +163,8 @@ export function DynamicCasinoTable({ casinos, customFields, className }: Dynamic
                 </Badge>
               </TableCell>
               <TableCell className="text-sm text-muted-foreground max-w-xs">
-                <div className="truncate" title={casino.similar}>
-                  {casino.similar}
+                <div className="truncate" title={casino.similar || undefined}>
+                  {casino.similar || '-'}
                 </div>
               </TableCell>
               {sortedFields.map(field => (

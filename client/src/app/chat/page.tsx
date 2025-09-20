@@ -10,6 +10,7 @@ import { ChatInput } from "@/components/chat/ChatInput"
 // import { useScheduledImages } from "@/lib/hooks/useScheduledImages"
 import { AppLayout } from "@/components/layout/AppLayout"
 import { useUser } from "@/lib/hooks/useUser"
+import { useAdminPrompts } from "@/lib/hooks/useAdminPrompts"
 
 export default function ChatPage() {
   const {
@@ -17,7 +18,6 @@ export default function ChatPage() {
     isGenerating,
     inputValue,
     setInputValue,
-    mockImagePrompts,
     sendMessage,
     setQuickPrompt,
     error,
@@ -26,6 +26,15 @@ export default function ChatPage() {
   const [logoUrl, setLogoUrl] = useState("")
   const [logoPosition, setLogoPosition] = useState("")
   const { user } = useUser()
+  const { prompts, isLoading: isLoadingPrompts } = useAdminPrompts()
+  
+  console.log('📋 Loaded prompts for chat:', prompts.length)
+  
+  // Filter active prompts and map to content array
+  const quickPrompts = prompts
+    .filter(prompt => prompt.is_active)
+    .sort((a, b) => b.order_index - a.order_index)
+    .map(prompt => prompt.content)
   
   // Temporalmente deshabilitado
   // const [schedulerOpen, setSchedulerOpen] = useState(false)
@@ -119,8 +128,8 @@ export default function ChatPage() {
               value={inputValue}
               onChange={setInputValue}
               onSend={handleSendMessage}
-              isGenerating={isGenerating}
-              quickPrompts={mockImagePrompts}
+              isGenerating={isGenerating || isLoadingPrompts}
+              quickPrompts={quickPrompts}
               onQuickPrompt={handleQuickPrompt}
               logoUrl={logoUrl}
               onLogoUrlChange={setLogoUrl}

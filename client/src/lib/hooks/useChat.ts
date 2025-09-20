@@ -41,13 +41,6 @@ export const useChat = () => {
   const { images: apiImages } = useImagesApi()
   const { user } = useUser()
 
-  const mockImagePrompts = [
-    "Banner promocional con jackpot de $1M",
-    "Tarjeta de fidelidad VIP dorada",
-    "Banner de bonificación de bienvenida",
-    "Promoción de slots con premios",
-    "Evento especial de blackjack",
-  ]
 
 
   // Calcular estadísticas basadas en las imágenes de la API
@@ -132,7 +125,6 @@ export const useChat = () => {
     isGenerating,
     inputValue,
     setInputValue,
-    mockImagePrompts,
     chatStats,
     sendMessage,
     setQuickPrompt,

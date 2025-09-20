@@ -1,18 +1,20 @@
 "use client"
 
 import { AppLayout } from "@/components/layout/AppLayout"
-import { useRewards } from "@/lib/hooks/useRewards"
+import { useRewardsData } from "@/lib/hooks/useRewardsData"
 import { CountdownTimer } from "@/components/rewards/CountdownTimer"
 import { RecentWinners } from "@/components/rewards/RecentWinners"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Gift, Trophy, Clock, Star } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { RewardsBanner } from "@/components/rewards/RewardsBanner"
-import { useRewardsSettings } from "@/lib/hooks/useRewardsSettings"
+import { useAdminRewardsSettings } from "@/lib/hooks/useAdminRewardsSettings"
 
 export default function RewardsPage() {
-  const { nextDailyPrize, nextMonthlyPrize, recentWinners, isLoading } = useRewards()
-  const { settings: bannerSettings } = useRewardsSettings()
+  const { nextDailyPrize, nextMonthlyPrize, recentWinners, isLoading, error } = useRewardsData()
+  const { settings: bannerSettings, isLoaded: settingsLoaded } = useAdminRewardsSettings()
+  
+  console.log('🎁 Rewards page loaded with:', { winnersCount: recentWinners.length, settingsLoaded })
 
   return (
     <AppLayout
@@ -25,7 +27,15 @@ export default function RewardsPage() {
       }}
     >
       <div className="container mx-auto p-6 space-y-8">
-        <RewardsBanner settings={bannerSettings} />
+        {settingsLoaded && <RewardsBanner settings={bannerSettings} />}
+
+        {error && (
+          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+            <p className="text-sm">
+              <strong>Error de conexión:</strong> {error}
+            </p>
+          </div>
+        )}
 
         {/* Header con información general */}
         <div className="text-center space-y-4">

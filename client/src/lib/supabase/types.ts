@@ -106,3 +106,262 @@ export interface NewReferralTracking {
   status?: string
   completed_at?: string | null
 }
+
+export interface RewardWinner {
+  id: number
+  created_at: string
+  updated_at: string
+  name: string
+  user_email?: string | null
+  avatar?: string | null
+  prize: string
+  prize_amount?: number | null
+  type: 'daily' | 'monthly'
+  won_at: string
+  is_active: boolean
+}
+
+export interface NewRewardWinner {
+  name: string
+  user_email?: string | null
+  avatar?: string | null
+  prize: string
+  prize_amount?: number | null
+  type: 'daily' | 'monthly'
+  won_at?: string
+  is_active?: boolean
+}
+
+export interface RewardSettings {
+  id: number
+  created_at: string
+  updated_at: string
+  banner_enabled: boolean
+  banner_title: string
+  banner_description: string
+  banner_cta_label: string
+  banner_cta_url: string
+  banner_theme: 'emerald' | 'indigo' | 'amber'
+  daily_prize_amount: string
+  monthly_prize_amount: string
+  rules_text?: string | null
+}
+
+export interface NewRewardSettings {
+  banner_enabled?: boolean
+  banner_title?: string
+  banner_description?: string
+  banner_cta_label?: string
+  banner_cta_url?: string
+  banner_theme?: 'emerald' | 'indigo' | 'amber'
+  daily_prize_amount?: string
+  monthly_prize_amount?: string
+  rules_text?: string | null
+}
+
+export interface RewardImages {
+  id: number
+  created_at: string
+  updated_at: string
+  name: string
+  description?: string | null
+  image_url: string
+  image_type: 'winner_avatar' | 'banner_image' | 'prize_image'
+  uploaded_by?: string | null
+  is_active: boolean
+}
+
+export interface NewRewardImages {
+  name: string
+  description?: string | null
+  image_url: string
+  image_type: 'winner_avatar' | 'banner_image' | 'prize_image'
+  uploaded_by?: string | null
+  is_active?: boolean
+}
+
+// =============================================
+// CASINO SYSTEM TYPES
+// =============================================
+
+// Base interfaces for casino database tables
+export interface Casino {
+  id: string
+  name: string
+  logo?: string | null
+  plataforma: string
+  tiempo: string
+  potencial_value: 'high' | 'medium' | 'low'
+  potencial_color: 'green' | 'yellow' | 'red'
+  potencial_label: string
+  similar?: string | null
+  is_top_three: boolean
+  top_three_position?: number | null
+  image_url?: string | null
+  is_active: boolean
+  created_at: string
+  updated_at: string
+}
+
+export interface NewCasino {
+  name: string
+  logo?: string | null
+  plataforma: string
+  tiempo: string
+  potencial_value: 'high' | 'medium' | 'low'
+  potencial_color: 'green' | 'yellow' | 'red'
+  potencial_label: string
+  similar?: string | null
+  is_top_three?: boolean
+  top_three_position?: number | null
+  image_url?: string | null
+  is_active?: boolean
+}
+
+export interface CasinoField {
+  id: string
+  name: string
+  field_type: 'text' | 'number' | 'badge' | 'percentage'
+  is_required: boolean
+  display_order: number
+  is_active: boolean
+  created_at: string
+  updated_at: string
+}
+
+export interface NewCasinoField {
+  name: string
+  field_type: 'text' | 'number' | 'badge' | 'percentage'
+  is_required?: boolean
+  display_order?: number
+  is_active?: boolean
+}
+
+export interface CasinoFieldValue {
+  id: string
+  casino_id: string
+  field_id: string
+  text_value?: string | null
+  number_value?: number | null
+  badge_value?: string | null
+  badge_color?: 'red' | 'yellow' | 'green' | null
+  badge_label?: string | null
+  created_at: string
+  updated_at: string
+}
+
+export interface NewCasinoFieldValue {
+  casino_id: string
+  field_id: string
+  text_value?: string | null
+  number_value?: number | null
+  badge_value?: string | null
+  badge_color?: 'red' | 'yellow' | 'green' | null
+  badge_label?: string | null
+}
+
+export interface CasinoConfig {
+  id: string
+  config_key: string
+  config_value: any // JSONB field
+  description?: string | null
+  created_at: string
+  updated_at: string
+}
+
+export interface NewCasinoConfig {
+  config_key: string
+  config_value: any
+  description?: string | null
+}
+
+// Enhanced interfaces for frontend use (matching the existing casino types)
+export interface CasinoBadgeValue {
+  value: string
+  color: 'red' | 'yellow' | 'green'
+  label: string
+}
+
+export interface CasinoFieldValueFormatted {
+  fieldId: string
+  fieldName: string
+  fieldType: 'text' | 'number' | 'badge' | 'percentage'
+  value: string | number | CasinoBadgeValue
+}
+
+export interface CasinoWithFields {
+  id: string
+  name: string
+  logo?: string | null
+  plataforma: string
+  tiempo: string
+  potencial: CasinoBadgeValue
+  similar?: string | null
+  customFields: CasinoFieldValueFormatted[]
+  isTopThree: boolean
+  topThreePosition?: number | null
+  imageUrl?: string | null
+  createdAt: string
+  updatedAt: string
+}
+
+export interface TopCasino {
+  id: string
+  name: string
+  plataforma: string
+  imageUrl: string
+  potencial: CasinoBadgeValue
+  position: number
+}
+
+export interface CasinoConfigFormatted {
+  customFields: CasinoField[]
+  topThreeIds: string[]
+  settings: Record<string, any>
+}
+
+// API Response types
+export interface CasinosApiResponse {
+  success: boolean
+  data: CasinoWithFields[]
+  meta?: {
+    total: number
+    page: number
+    perPage: number
+    totalPages: number
+  }
+}
+
+export interface CasinoApiResponse {
+  success: boolean
+  data: CasinoWithFields
+}
+
+export interface CasinoFieldsApiResponse {
+  success: boolean
+  data: CasinoField[]
+}
+
+export interface CasinoConfigApiResponse {
+  success: boolean
+  data: CasinoConfigFormatted
+}
+
+// Default values for casino potential
+export const CASINO_POTENCIAL_VALUES: Record<'high' | 'medium' | 'low', CasinoBadgeValue> = {
+  high: {
+    value: 'high',
+    color: 'green',
+    label: 'Alto'
+  },
+  medium: {
+    value: 'medium', 
+    color: 'yellow',
+    label: 'Medio'
+  },
+  low: {
+    value: 'low',
+    color: 'red', 
+    label: 'Bajo'
+  }
+}

@@ -1,9 +1,10 @@
 "use client"
 
-import { useReferrals } from '@/lib/hooks/useReferrals'
+import { useReferralsWithAutoSetup } from '@/lib/hooks/useReferralsWithAutoSetup'
 import { ReferralCodeDisplay } from './ReferralCodeDisplay'
 import { ReferralStats } from './ReferralStats'
 import { ReferralList } from './ReferralList'
+import { ReferralSetup } from './ReferralSetup'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { RefreshCw, AlertCircle } from 'lucide-react'
@@ -18,15 +19,40 @@ export function ReferralDashboard({ className }: ReferralDashboardProps) {
     stats,
     myReferrals,
     isLoading,
+    isSettingUp,
+    hasSetupError,
     error,
-    refreshStats
-  } = useReferrals()
+    refreshStats,
+    retrySetup
+  } = useReferralsWithAutoSetup()
+
+  console.log('📊 ReferralDashboard state:', {
+    isLoading,
+    isSettingUp,
+    hasSetupError,
+    hasStats: !!stats
+  })
 
   const handleRefresh = async () => {
     await refreshStats()
   }
 
-  if (error && !stats) {
+  // Mostrar componente de setup durante configuración inicial o errores
+  if (isSettingUp || hasSetupError) {
+    return (
+      <div className={cn('flex items-center justify-center min-h-[50vh]', className)}>
+        <ReferralSetup
+          isSettingUp={isSettingUp}
+          hasSetupError={hasSetupError}
+          error={error}
+          onRetry={retrySetup}
+        />
+      </div>
+    )
+  }
+
+  // Error general (después de setup exitoso)
+  if (error && !stats && !isLoading) {
     return (
       <Card className={className}>
         <CardHeader>

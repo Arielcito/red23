@@ -16,10 +16,12 @@ import { WinnerBanner } from "@/components/ui/winner-banner"
 import { useWinnersApi } from "@/lib/hooks/useWinnersApi"
 import { useImagesApi } from "@/lib/hooks/useImagesApi"
 import { useStatsApi } from "@/lib/hooks/useStatsApi"
+import { useCasinosData } from "@/lib/hooks/useCasinosData"
 export default function Dashboard() {
   const { images: apiImages } = useImagesApi()
   const { winners } = useWinnersApi()
   const { stats } = useStatsApi()
+  const { topThree, casinos } = useCasinosData()
 
   // Usar el primer ganador de la API o un fallback
   const dailyWinner = winners.length > 0 ? {
@@ -162,6 +164,105 @@ export default function Dashboard() {
               <CardContent>
                 <div className="text-xl sm:text-2xl font-bold mb-2">$5,000 - $15,000</div>
                 <p className="text-xs text-muted-foreground">Gran sorteo mensual</p>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+
+        {/* Top Casinos Section */}
+        <div>
+          <div className="flex items-center justify-between mb-3 sm:mb-4">
+            <h2 className="text-lg font-semibold">Mejores Casinos</h2>
+            <Link href="/admin/casinos">
+              <Button variant="outline" size="sm" className="text-xs sm:text-sm">
+                Gestionar casinos
+              </Button>
+            </Link>
+          </div>
+          
+          {/* Top 3 Casinos */}
+          {topThree.length > 0 && (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4 lg:gap-6 mb-6">
+              {topThree.map((casino, index) => (
+                <Card key={casino.id} className="h-full relative overflow-hidden">
+                  <div className={`absolute top-0 right-0 w-8 h-8 flex items-center justify-center text-white text-xs font-bold ${
+                    index === 0 ? 'bg-yellow-500' : 
+                    index === 1 ? 'bg-gray-400' : 
+                    'bg-orange-500'
+                  } rounded-bl-lg`}>
+                    #{index + 1}
+                  </div>
+                  <CardHeader className="pb-2">
+                    <div className="flex items-center gap-3">
+                      <div className="w-12 h-12 rounded-lg bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
+                        {casino.imageUrl && casino.imageUrl !== '/placeholder-casino.svg' ? (
+                          <img 
+                            src={casino.imageUrl} 
+                            alt={casino.name}
+                            className="w-full h-full object-cover rounded-lg"
+                          />
+                        ) : (
+                          <span className="text-lg font-bold">
+                            {casino.name.charAt(0)}
+                          </span>
+                        )}
+                      </div>
+                      <div className="flex-1">
+                        <CardTitle className="text-base">{casino.name}</CardTitle>
+                        <CardDescription className="text-sm">{casino.plataforma}</CardDescription>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="flex items-center justify-between">
+                      <div className={`px-2 py-1 rounded-full text-xs font-medium ${
+                        casino.potencial.color === 'green' ? 'bg-green-100 text-green-800' :
+                        casino.potencial.color === 'yellow' ? 'bg-yellow-100 text-yellow-800' :
+                        'bg-red-100 text-red-800'
+                      }`}>
+                        Potencial {casino.potencial.label}
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
+          
+          {/* Casino Stats */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4 lg:gap-6">
+            <Card className="h-full">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Total Casinos</CardTitle>
+                <TrendingUp className="h-4 w-4 text-primary-500" />
+              </CardHeader>
+              <CardContent className="pt-0">
+                <div className="text-xl sm:text-2xl font-bold mb-1">{casinos.length}</div>
+                <p className="text-xs text-muted-foreground">Casinos disponibles</p>
+              </CardContent>
+            </Card>
+
+            <Card className="h-full">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Alto Potencial</CardTitle>
+                <Sparkles className="h-4 w-4 text-green-600" />
+              </CardHeader>
+              <CardContent className="pt-0">
+                <div className="text-xl sm:text-2xl font-bold mb-1">
+                  {casinos.filter(c => c.potencial.value === 'high').length}
+                </div>
+                <p className="text-xs text-muted-foreground">Con alto potencial</p>
+              </CardContent>
+            </Card>
+
+            <Card className="h-full">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Top 3 Activos</CardTitle>
+                <Sparkles className="h-4 w-4 text-yellow-600" />
+              </CardHeader>
+              <CardContent className="pt-0">
+                <div className="text-xl sm:text-2xl font-bold mb-1">{topThree.length}</div>
+                <p className="text-xs text-muted-foreground">En ranking principal</p>
               </CardContent>
             </Card>
           </div>

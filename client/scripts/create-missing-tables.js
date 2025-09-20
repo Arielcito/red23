@@ -86,7 +86,70 @@ async function checkTables() {
       console.log('✅ telegram_winners table exists, found', winners?.length || 0, 'records');
     }
 
-    console.log('🎉 Database check completed!');
+    // Check reward system tables
+    console.log('🏆 Checking for reward_winners table...');
+    const { data: rewardWinners, error: rewardWinnersError } = await supabase
+      .from('reward_winners')
+      .select('*')
+      .limit(1);
+
+    if (rewardWinnersError) {
+      console.log('❌ reward_winners table does not exist:', rewardWinnersError.message);
+    } else {
+      console.log('✅ reward_winners table exists, found', rewardWinners?.length || 0, 'records');
+    }
+
+    console.log('⚙️ Checking for reward_settings table...');
+    const { data: rewardSettings, error: rewardSettingsError } = await supabase
+      .from('reward_settings')
+      .select('*')
+      .limit(1);
+
+    if (rewardSettingsError) {
+      console.log('❌ reward_settings table does not exist:', rewardSettingsError.message);
+    } else {
+      console.log('✅ reward_settings table exists, found', rewardSettings?.length || 0, 'records');
+    }
+
+    console.log('🖼️ Checking for reward_images table...');
+    const { data: rewardImages, error: rewardImagesError } = await supabase
+      .from('reward_images')
+      .select('*')
+      .limit(1);
+
+    if (rewardImagesError) {
+      console.log('❌ reward_images table does not exist:', rewardImagesError.message);
+    } else {
+      console.log('✅ reward_images table exists, found', rewardImages?.length || 0, 'records');
+    }
+
+    // Check Supabase Storage bucket
+    console.log('📦 Checking rewards-images storage bucket...');
+    try {
+      const { data: bucketData, error: bucketError } = await supabase.storage.getBucket('rewards-images');
+      
+      if (bucketError) {
+        console.log('❌ rewards-images bucket does not exist:', bucketError.message);
+        console.log('💡 Create bucket in Supabase Dashboard > Storage > New Bucket > "rewards-images" (public)');
+      } else {
+        console.log('✅ rewards-images bucket exists:', bucketData.name);
+        
+        // Test bucket permissions
+        const { data: filesData, error: filesError } = await supabase.storage
+          .from('rewards-images')
+          .list('', { limit: 1 });
+        
+        if (filesError) {
+          console.log('⚠️ bucket permissions issue:', filesError.message);
+        } else {
+          console.log('✅ bucket is accessible, found', filesData?.length || 0, 'files');
+        }
+      }
+    } catch (bucketCheckError) {
+      console.log('⚠️ could not check bucket:', bucketCheckError.message);
+    }
+
+    console.log('🎉 Database and storage check completed!');
 
   } catch (error) {
     console.error('❌ Unexpected error:', error);

@@ -12,7 +12,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea"
 import { Switch } from "@/components/ui/switch"
 import { useCasinosData } from "@/lib/hooks/useCasinosData"
-import { Casino, CasinoField, POTENCIAL_VALUES } from "@/lib/types/casino"
+import type { CasinoWithFields, CasinoField } from "@/lib/supabase/types"
+import { CASINO_POTENCIAL_VALUES } from "@/lib/supabase/types"
 import { 
   Settings, 
   Plus, 
@@ -41,12 +42,21 @@ export default function AdminCasinosPage() {
     addCustomField,
     updateCustomField,
     deleteCustomField,
-    createCasino
+    createCasino,
+    deleteCasino
   } = useCasinosData()
 
-  const [editingCasino, setEditingCasino] = useState<Casino | null>(null)
+  const [editingCasino, setEditingCasino] = useState<CasinoWithFields | null>(null)
   const [newFieldName, setNewFieldName] = useState("")
   const [newFieldType, setNewFieldType] = useState<"text" | "number" | "badge" | "percentage">("text")
+  const [showCreateForm, setShowCreateForm] = useState(false)
+  const [newCasinoForm, setNewCasinoForm] = useState({
+    name: '',
+    plataforma: '',
+    tiempo: '',
+    potencial_value: 'medium' as 'high' | 'medium' | 'low',
+    similar: ''
+  })
   const [imageUploading, setImageUploading] = useState(false)
 
   // Mock image upload - en producción se conectaría a un servicio real
@@ -71,14 +81,63 @@ export default function AdminCasinosPage() {
     try {
       await addCustomField({
         name: newFieldName,
-        type: newFieldType,
-        required: false,
-        order: config.customFields.length + 1
+        field_type: newFieldType,
+        is_required: false,
+        display_order: config.customFields.length + 1,
+        is_active: true
       })
       setNewFieldName("")
       setNewFieldType("text")
     } catch (err) {
       console.error('❌ Error agregando campo:', err)
+    }
+  }
+
+  const handleCreateCasino = async () => {
+    if (!newCasinoForm.name.trim() || !newCasinoForm.plataforma.trim() || !newCasinoForm.tiempo.trim()) {
+      console.error('❌ Faltan campos requeridos')
+      return
+    }
+
+    try {
+      const potencialConfig = CASINO_POTENCIAL_VALUES[newCasinoForm.potencial_value]
+      
+      await createCasino({
+        name: newCasinoForm.name,
+        plataforma: newCasinoForm.plataforma,
+        tiempo: newCasinoForm.tiempo,
+        potencial: potencialConfig,
+        similar: newCasinoForm.similar || null,
+        customFields: [],
+        isTopThree: false
+      })
+      
+      // Reset form
+      setNewCasinoForm({
+        name: '',
+        plataforma: '',
+        tiempo: '',
+        potencial_value: 'medium',
+        similar: ''
+      })
+      setShowCreateForm(false)
+      
+      console.log('✅ Casino creado exitosamente')
+    } catch (err) {
+      console.error('❌ Error creando casino:', err)
+    }
+  }
+
+  const handleDeleteCasino = async (casinoId: string) => {
+    if (!confirm('¿Estás seguro de que quieres eliminar este casino?')) {
+      return
+    }
+
+    try {
+      await deleteCasino(casinoId)
+      console.log('✅ Casino eliminado exitosamente')
+    } catch (err) {
+      console.error('❌ Error eliminando casino:', err)
     }
   }
 
@@ -326,7 +385,7 @@ export default function AdminCasinosPage() {
                       <div>
                         <h3 className="font-medium">{field.name}</h3>
                         <p className="text-sm text-muted-foreground capitalize">
-                          Tipo: {field.type} • Orden: {field.order}
+                          Tipo: {field.field_type} • Orden: {field.display_order}
                         </p>
                       </div>
                       <div className="flex items-center gap-2">
@@ -359,16 +418,147 @@ export default function AdminCasinosPage() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  <Button className="w-full md:w-auto">
+                  <Button 
+                    className="w-full md:w-auto"
+                    onClick={() => setShowCreateForm(!showCreateForm)}
+                  >
                     <Plus className="h-4 w-4 mr-2" />
-                    Agregar Nuevo Casino
+                    {showCreateForm ? 'Cancelar' : 'Agregar Nuevo Casino'}
                   </Button>
                   
-                  <div className="text-center py-8 text-muted-foreground">
-                    <Settings className="h-12 w-12 mx-auto mb-2" />
-                    <p className="text-sm">Funcionalidad de edición avanzada</p>
-                    <p className="text-xs">Próximamente disponible</p>
+                  {/* Formulario de creación */}
+                  {showCreateForm && (
+                    <Card>
+                      <CardHeader>
+                        <CardTitle>Crear Nuevo Casino</CardTitle>
+                      </CardHeader>
+                      <CardContent className="space-y-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div>
+                            <Label htmlFor="casino-name">Nombre del Casino</Label>
+                            <Input
+                              id="casino-name"
+                              placeholder="Ej: Casino Royal"
+                              value={newCasinoForm.name}
+                              onChange={(e) => setNewCasinoForm(prev => ({ ...prev, name: e.target.value }))}
+                            />
+                          </div>
+                          <div>
+                            <Label htmlFor="casino-plataforma">Plataforma</Label>
+                            <Input
+                              id="casino-plataforma"
+                              placeholder="Ej: Web/Mobile"
+                              value={newCasinoForm.plataforma}
+                              onChange={(e) => setNewCasinoForm(prev => ({ ...prev, plataforma: e.target.value }))}
+                            />
+                          </div>
+                          <div>
+                            <Label htmlFor="casino-tiempo">Tiempo de Implementación</Label>
+                            <Input
+                              id="casino-tiempo"
+                              placeholder="Ej: 2-4 semanas"
+                              value={newCasinoForm.tiempo}
+                              onChange={(e) => setNewCasinoForm(prev => ({ ...prev, tiempo: e.target.value }))}
+                            />
+                          </div>
+                          <div>
+                            <Label htmlFor="casino-potencial">Potencial</Label>
+                            <Select 
+                              value={newCasinoForm.potencial_value} 
+                              onValueChange={(value: 'high' | 'medium' | 'low') => 
+                                setNewCasinoForm(prev => ({ ...prev, potencial_value: value }))
+                              }
+                            >
+                              <SelectTrigger>
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="high">Alto</SelectItem>
+                                <SelectItem value="medium">Medio</SelectItem>
+                                <SelectItem value="low">Bajo</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          <div className="md:col-span-2">
+                            <Label htmlFor="casino-similar">Casinos Similares</Label>
+                            <Input
+                              id="casino-similar"
+                              placeholder="Ej: Bet365, 888casino"
+                              value={newCasinoForm.similar}
+                              onChange={(e) => setNewCasinoForm(prev => ({ ...prev, similar: e.target.value }))}
+                            />
+                          </div>
+                        </div>
+                        <div className="flex gap-2">
+                          <Button onClick={handleCreateCasino}>
+                            <Save className="h-4 w-4 mr-2" />
+                            Crear Casino
+                          </Button>
+                          <Button variant="outline" onClick={() => setShowCreateForm(false)}>
+                            Cancelar
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  )}
+                  
+                  {/* Lista de casinos existentes */}
+                  <div className="space-y-3">
+                    {casinos.map((casino) => (
+                      <div key={casino.id} className="flex items-center justify-between p-4 border rounded-lg">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-lg bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
+                            <span className="text-sm font-bold">
+                              {casino.name.charAt(0)}
+                            </span>
+                          </div>
+                          <div>
+                            <h3 className="font-medium">{casino.name}</h3>
+                            <p className="text-sm text-muted-foreground">
+                              {casino.plataforma} • {casino.tiempo}
+                            </p>
+                            {casino.isTopThree && (
+                              <Badge variant="outline" className="text-xs mt-1">
+                                <Crown className="h-3 w-3 mr-1" />
+                                Top #{casino.topThreePosition}
+                              </Badge>
+                            )}
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Badge 
+                            variant="outline"
+                            className={cn(
+                              "text-xs",
+                              casino.potencial.color === 'green' ? 'bg-green-100 text-green-800 border-green-200' :
+                              casino.potencial.color === 'yellow' ? 'bg-yellow-100 text-yellow-800 border-yellow-200' :
+                              'bg-red-100 text-red-800 border-red-200'
+                            )}
+                          >
+                            {casino.potencial.label}
+                          </Badge>
+                          <Button variant="outline" size="sm">
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            onClick={() => handleDeleteCasino(casino.id)}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
                   </div>
+                  
+                  {casinos.length === 0 && !isLoading && (
+                    <div className="text-center py-8 text-muted-foreground">
+                      <Settings className="h-12 w-12 mx-auto mb-2" />
+                      <p className="text-sm">No hay casinos registrados</p>
+                      <p className="text-xs">Crea tu primer casino para comenzar</p>
+                    </div>
+                  )}
                 </div>
               </CardContent>
             </Card>
