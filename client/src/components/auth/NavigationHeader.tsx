@@ -62,9 +62,6 @@ export function NavigationHeader({
       .slice(0, 2)
   }
 
-  if (!isAuthenticated) {
-    return null
-  }
 
   return (
     <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-3 sm:px-4 md:px-6 py-2 sm:py-3 md:py-4">
@@ -96,9 +93,16 @@ export function NavigationHeader({
           )}
 
           <div className="min-w-0 flex-1">
-            <h1 className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold text-gray-900 dark:text-white truncate">
-              {title}
-            </h1>
+            <div className="flex items-center gap-2 mb-1">
+              <h1 className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold text-gray-900 dark:text-white truncate">
+                {title}
+              </h1>
+              {badge && (
+                <Badge variant={badge.variant} className={badge.className}>
+                  {badge.text}
+                </Badge>
+              )}
+            </div>
             {subtitle && (
               <p className="text-xs sm:text-sm md:text-base text-gray-600 dark:text-gray-300 truncate sm:block">
                 {subtitle}
@@ -113,11 +117,14 @@ export function NavigationHeader({
             <ThemeToggle />
           </div>
 
-          {/* Notifications */}
-          <NotificationDropdown />
+          {/* Mostrar solo cuando esté autenticado */}
+          {isAuthenticated && (
+            <>
+              {/* Notifications */}
+              <NotificationDropdown />
 
-          {/* User Menu */}
-          <DropdownMenu>
+              {/* User Menu */}
+              <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
                 variant="ghost"
@@ -190,6 +197,8 @@ export function NavigationHeader({
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
+            </>
+          )}
         </div>
       </div>
     </header>
