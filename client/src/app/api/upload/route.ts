@@ -1,15 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { auth } from '@clerk/nextjs/server'
 import { ImageUploadService } from '@/lib/services/imageUploadService'
-import { writeFile, mkdir } from 'fs/promises'
-import { join } from 'path'
-import { nanoid } from 'nanoid'
-
-const MAX_FILE_SIZE = 10 * 1024 * 1024 // 10MB
-const ALLOWED_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp']
+import { validateFile, uploadFile } from '@/lib/services/supabaseStorageService'
 
 export async function POST(request: NextRequest) {
   try {
-    console.log('📤 Iniciando proceso de upload de imagen')
+    console.log('📤 Iniciando proceso de upload de imagen con Supabase Storage')
+
+    // Verificar autenticación con Clerk
+    const { userId } = await auth()
+    if (!userId) {
+      return NextResponse.json(
+        { success: false, error: 'Usuario no autenticado' },
+        { status: 401 }
+      )
+    }
 
     const formData = await request.formData()
     const files = formData.getAll('files') as File[]
@@ -41,6 +46,7 @@ export async function POST(request: NextRequest) {
     }
 
     const uploadedImages = []
+    const errors = []
 
     for (const file of files) {
       console.log('📁 Procesando archivo:', {
@@ -49,101 +55,81 @@ export async function POST(request: NextRequest) {
         type: file.type
       })
 
-      // Validar tipo de archivo
-      if (!ALLOWED_TYPES.includes(file.type)) {
-        return NextResponse.json(
-          { 
-            success: false, 
-            error: `Tipo de archivo no soportado: ${file.type}. Formatos permitidos: JPG, PNG, GIF, WebP` 
-          },
-          { status: 400 }
-        )
-      }
-
-      // Validar tamaño
-      if (file.size > MAX_FILE_SIZE) {
-        return NextResponse.json(
-          { 
-            success: false, 
-            error: `Archivo demasiado grande: ${(file.size / 1024 / 1024).toFixed(2)}MB. Máximo permitido: 10MB` 
-          },
-          { status: 400 }
-        )
-      }
-
-      // Generar nombre único para el archivo
-      const fileExtension = file.name.split('.').pop()
-      const uniqueFileName = `${nanoid()}.${fileExtension}`
-      
-      // Guardar archivo en el sistema de archivos
-      const bytes = await file.arrayBuffer()
-      const buffer = Buffer.from(bytes)
-      
-      // Crear directorio de uploads si no existe
-      const uploadsDir = join(process.cwd(), 'public', 'uploads')
-      const filePath = join(uploadsDir, uniqueFileName)
-
       try {
-        await mkdir(uploadsDir, { recursive: true })
-        await writeFile(filePath, buffer)
-        console.log('💾 Archivo guardado en:', filePath)
-      } catch (fsError) {
-        console.error('❌ Error guardando archivo:', fsError)
-        return NextResponse.json(
-          { success: false, error: 'Error guardando el archivo en el servidor' },
-          { status: 500 }
-        )
-      }
+        // Validate file using SupabaseStorageService
+        const validation = validateFile(file)
+        if (!validation.valid) {
+          errors.push(`${file.name}: ${validation.error}`)
+          continue
+        }
 
-      // Crear URL pública para el archivo
-      const publicUrl = `/uploads/${uniqueFileName}`
+        // Upload to Supabase Storage
+        const uploadResult = await uploadFile(file, user_email)
 
-      // Guardar en la base de datos
-      try {
+        // Save to database with Supabase Storage URL
         const savedImage = await ImageUploadService.saveImage({
           user_email,
           prompt: title || `Imagen subida: ${file.name}`,
-          result: publicUrl,
+          result: uploadResult.publicUrl,
           tokens: 0
         })
 
         uploadedImages.push({
           id: savedImage.id,
-          filename: file.name,
-          url: publicUrl,
-          size: file.size,
-          type: file.type,
-          created_at: savedImage.created_at
+          filename: uploadResult.name,
+          url: uploadResult.publicUrl,
+          size: uploadResult.size,
+          type: uploadResult.type,
+          created_at: savedImage.created_at,
+          storage_path: uploadResult.path
         })
 
         console.log('✅ Imagen procesada exitosamente:', {
           id: savedImage.id,
-          filename: file.name,
-          url: publicUrl
+          filename: uploadResult.name,
+          url: uploadResult.publicUrl,
+          storage_path: uploadResult.path
         })
-      } catch (dbError) {
-        console.error('❌ Error guardando en DB:', dbError)
-        return NextResponse.json(
-          { success: false, error: 'Error guardando la información de la imagen' },
-          { status: 500 }
-        )
+
+      } catch (fileError) {
+        console.error(`❌ Error procesando archivo ${file.name}:`, fileError)
+        errors.push(`${file.name}: ${fileError instanceof Error ? fileError.message : 'Error desconocido'}`)
+        continue
       }
     }
 
-    console.log('🎉 Upload completado exitosamente:', {
+    // If no files were uploaded successfully
+    if (uploadedImages.length === 0) {
+      return NextResponse.json(
+        { 
+          success: false, 
+          error: `No se pudieron subir las imágenes. Errores: ${errors.join(', ')}` 
+        },
+        { status: 400 }
+      )
+    }
+
+    const successMessage = `${uploadedImages.length} imagen${uploadedImages.length !== 1 ? 'es' : ''} subida${uploadedImages.length !== 1 ? 's' : ''} exitosamente`
+    const finalMessage = errors.length > 0 
+      ? `${successMessage}. Algunos archivos tuvieron errores: ${errors.join(', ')}`
+      : successMessage
+
+    console.log('🎉 Upload completado:', {
       totalImages: uploadedImages.length,
+      errors: errors.length,
       user_email
     })
 
     return NextResponse.json({
       success: true,
       data: {
-        message: `${uploadedImages.length} imagen${uploadedImages.length !== 1 ? 'es' : ''} subida${uploadedImages.length !== 1 ? 's' : ''} exitosamente`,
+        message: finalMessage,
         images: uploadedImages,
         metadata: {
           title,
           description,
-          tags: tags ? tags.split(',').map(tag => tag.trim()) : []
+          tags: tags ? tags.split(',').map(tag => tag.trim()) : [],
+          errors: errors.length > 0 ? errors : undefined
         }
       }
     })

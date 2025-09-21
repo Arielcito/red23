@@ -14,6 +14,7 @@ import {
   Settings,
   Megaphone,
   Users,
+  Newspaper,
 } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
@@ -61,7 +62,9 @@ export function Sidebar({ className }: SidebarProps) {
   // IDs de usuarios admin autorizados
   const adminUserIds = [
     'user_31DCO0Te7aX1F7a8KOO7CZwNbTA',
-    'user_32TNG7qogCbcPn03Ad1BS95i3Pf'
+    'user_32TNG7qogCbcPn03Ad1BS95i3Pf',
+    'user_32zPCd7JmFUeJvJPAB0ksLcbD4k'
+
   ]
 
   const isAdminUser = user && adminUserIds.includes(user.id)
@@ -100,6 +103,13 @@ export function Sidebar({ className }: SidebarProps) {
       description: "Configurar WhatsApp"
     },
     */
+    {
+      title: "Novedades",
+      href: "/novedades",
+      icon: Newspaper,
+      badge: "Nuevo",
+      description: "Últimas noticias y casinos"
+    },
     {
       title: "Premios",
       href: "/rewards",

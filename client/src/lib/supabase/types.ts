@@ -365,3 +365,67 @@ export const CASINO_POTENCIAL_VALUES: Record<'high' | 'medium' | 'low', CasinoBa
     label: 'Bajo'
   }
 }
+
+// =============================================
+// NEWS SYSTEM TYPES  
+// =============================================
+
+export interface News {
+  id: string
+  title: string
+  excerpt?: string | null
+  content?: string | null
+  image_url?: string | null
+  author: string
+  category: string
+  is_featured: boolean
+  is_published: boolean
+  publish_date: string
+  created_at: string
+  updated_at: string
+}
+
+export interface NewNews {
+  title: string
+  excerpt?: string | null
+  content?: string | null
+  image_url?: string | null
+  author?: string
+  category?: string
+  is_featured?: boolean
+  is_published?: boolean
+  publish_date?: string
+}
+
+// Enhanced interfaces for frontend use
+export interface NewsFormatted {
+  id: string
+  title: string
+  excerpt?: string | null
+  content?: string | null
+  imageUrl?: string | null
+  author: string
+  category: string
+  isFeatured: boolean
+  isPublished: boolean
+  publishDate: string
+  createdAt: string
+  updatedAt: string
+}
+
+// API Response types
+export interface NewsApiResponse {
+  success: boolean
+  data: NewsFormatted[]
+  meta?: {
+    total: number
+    page: number
+    perPage: number
+    totalPages: number
+  }
+}
+
+export interface SingleNewsApiResponse {
+  success: boolean
+  data: NewsFormatted
+}

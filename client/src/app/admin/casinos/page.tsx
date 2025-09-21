@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { AppLayout } from "@/components/layout/AppLayout"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -12,8 +12,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea"
 import { Switch } from "@/components/ui/switch"
 import { useCasinosData } from "@/lib/hooks/useCasinosData"
-import type { CasinoWithFields, CasinoField } from "@/lib/supabase/types"
+import type { CasinoWithFields, CasinoField, NewsFormatted } from "@/lib/supabase/types"
 import { CASINO_POTENCIAL_VALUES } from "@/lib/supabase/types"
+import { NewsService } from "@/lib/services/newsService"
 import { 
   Settings, 
   Plus, 
@@ -24,7 +25,12 @@ import {
   Crown,
   Table2,
   Columns3,
-  AlertCircle
+  AlertCircle,
+  Newspaper,
+  Star,
+  Calendar,
+  Eye,
+  EyeOff
 } from "lucide-react"
 import Image from "next/image"
 import { cn } from "@/lib/utils"
@@ -58,6 +64,21 @@ export default function AdminCasinosPage() {
     similar: ''
   })
   const [imageUploading, setImageUploading] = useState(false)
+  
+  // News management state
+  const [news, setNews] = useState<NewsFormatted[]>([])
+  const [newsLoading, setNewsLoading] = useState(false)
+  const [showCreateNewsForm, setShowCreateNewsForm] = useState(false)
+  const [newNewsForm, setNewNewsForm] = useState({
+    title: '',
+    excerpt: '',
+    content: '',
+    imageUrl: '',
+    author: 'Admin',
+    category: 'general',
+    isFeatured: false,
+    isPublished: true
+  })
 
   // Mock image upload - en producción se conectaría a un servicio real
   const handleImageUpload = async (casinoId: string, file: File) => {
@@ -141,6 +162,98 @@ export default function AdminCasinosPage() {
     }
   }
 
+  // News management functions
+  const loadNews = async () => {
+    try {
+      setNewsLoading(true)
+      const newsData = await NewsService.getAllNewsForAdmin()
+      setNews(newsData)
+    } catch (err) {
+      console.error('❌ Error cargando noticias:', err)
+    } finally {
+      setNewsLoading(false)
+    }
+  }
+
+  // Load news on component mount
+  useEffect(() => {
+    loadNews()
+  }, [])
+
+  const handleCreateNews = async () => {
+    if (!newNewsForm.title.trim()) {
+      console.error('❌ El título es requerido')
+      return
+    }
+
+    try {
+      await NewsService.createNews({
+        title: newNewsForm.title,
+        excerpt: newNewsForm.excerpt || null,
+        content: newNewsForm.content || null,
+        image_url: newNewsForm.imageUrl || null,
+        author: newNewsForm.author,
+        category: newNewsForm.category,
+        is_featured: newNewsForm.isFeatured,
+        is_published: newNewsForm.isPublished
+      })
+      
+      // Reset form
+      setNewNewsForm({
+        title: '',
+        excerpt: '',
+        content: '',
+        imageUrl: '',
+        author: 'Admin',
+        category: 'general',
+        isFeatured: false,
+        isPublished: true
+      })
+      setShowCreateNewsForm(false)
+      
+      // Reload news
+      await loadNews()
+      
+      console.log('✅ Noticia creada exitosamente')
+    } catch (err) {
+      console.error('❌ Error creando noticia:', err)
+    }
+  }
+
+  const handleDeleteNews = async (newsId: string) => {
+    if (!confirm('¿Estás seguro de que quieres eliminar esta noticia?')) {
+      return
+    }
+
+    try {
+      await NewsService.deleteNews(newsId)
+      await loadNews()
+      console.log('✅ Noticia eliminada exitosamente')
+    } catch (err) {
+      console.error('❌ Error eliminando noticia:', err)
+    }
+  }
+
+  const handleToggleNewsStatus = async (newsId: string, currentStatus: boolean) => {
+    try {
+      await NewsService.updateNews(newsId, { isPublished: !currentStatus })
+      await loadNews()
+      console.log(`✅ Noticia ${!currentStatus ? 'publicada' : 'despublicada'} exitosamente`)
+    } catch (err) {
+      console.error('❌ Error actualizando estado de noticia:', err)
+    }
+  }
+
+  const handleToggleNewsFeatured = async (newsId: string, currentStatus: boolean) => {
+    try {
+      await NewsService.updateNews(newsId, { isFeatured: !currentStatus })
+      await loadNews()
+      console.log(`✅ Noticia ${!currentStatus ? 'marcada como destacada' : 'desmarcada como destacada'} exitosamente`)
+    } catch (err) {
+      console.error('❌ Error actualizando estado destacado de noticia:', err)
+    }
+  }
+
   const handleUpdateTopThree = async (casinoIds: string[]) => {
     try {
       await setTopThree(casinoIds)
@@ -181,7 +294,7 @@ export default function AdminCasinosPage() {
     >
       <div className="p-6 space-y-6">
         <Tabs defaultValue="top-three" className="w-full">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="top-three" className="gap-2">
               <Crown className="h-4 w-4" />
               Top 3
@@ -197,6 +310,10 @@ export default function AdminCasinosPage() {
             <TabsTrigger value="casinos" className="gap-2">
               <Settings className="h-4 w-4" />
               Casinos
+            </TabsTrigger>
+            <TabsTrigger value="news" className="gap-2">
+              <Newspaper className="h-4 w-4" />
+              Noticias
             </TabsTrigger>
           </TabsList>
 
@@ -559,6 +676,218 @@ export default function AdminCasinosPage() {
                       <p className="text-xs">Crea tu primer casino para comenzar</p>
                     </div>
                   )}
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* News Management */}
+          <TabsContent value="news" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Gestión de Noticias</CardTitle>
+                <CardDescription>
+                  Crear y administrar noticias para la página de novedades
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <Button 
+                    className="w-full md:w-auto"
+                    onClick={() => setShowCreateNewsForm(!showCreateNewsForm)}
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
+                    {showCreateNewsForm ? 'Cancelar' : 'Agregar Nueva Noticia'}
+                  </Button>
+                  
+                  {/* Formulario de creación */}
+                  {showCreateNewsForm && (
+                    <Card>
+                      <CardHeader>
+                        <CardTitle>Crear Nueva Noticia</CardTitle>
+                      </CardHeader>
+                      <CardContent className="space-y-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div className="md:col-span-2">
+                            <Label htmlFor="news-title">Título de la Noticia</Label>
+                            <Input
+                              id="news-title"
+                              placeholder="Ej: Nuevos casinos agregados"
+                              value={newNewsForm.title}
+                              onChange={(e) => setNewNewsForm(prev => ({ ...prev, title: e.target.value }))}
+                            />
+                          </div>
+                          <div className="md:col-span-2">
+                            <Label htmlFor="news-excerpt">Extracto</Label>
+                            <Textarea
+                              id="news-excerpt"
+                              placeholder="Breve descripción de la noticia..."
+                              value={newNewsForm.excerpt}
+                              onChange={(e) => setNewNewsForm(prev => ({ ...prev, excerpt: e.target.value }))}
+                              rows={2}
+                            />
+                          </div>
+                          <div className="md:col-span-2">
+                            <Label htmlFor="news-content">Contenido</Label>
+                            <Textarea
+                              id="news-content"
+                              placeholder="Contenido completo de la noticia..."
+                              value={newNewsForm.content}
+                              onChange={(e) => setNewNewsForm(prev => ({ ...prev, content: e.target.value }))}
+                              rows={4}
+                            />
+                          </div>
+                          <div>
+                            <Label htmlFor="news-category">Categoría</Label>
+                            <Select 
+                              value={newNewsForm.category} 
+                              onValueChange={(value) => 
+                                setNewNewsForm(prev => ({ ...prev, category: value }))
+                              }
+                            >
+                              <SelectTrigger>
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="general">General</SelectItem>
+                                <SelectItem value="announcements">Anuncios</SelectItem>
+                                <SelectItem value="guides">Guías</SelectItem>
+                                <SelectItem value="promotions">Promociones</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          <div>
+                            <Label htmlFor="news-author">Autor</Label>
+                            <Input
+                              id="news-author"
+                              placeholder="Autor de la noticia"
+                              value={newNewsForm.author}
+                              onChange={(e) => setNewNewsForm(prev => ({ ...prev, author: e.target.value }))}
+                            />
+                          </div>
+                          <div>
+                            <Label htmlFor="news-image">URL de Imagen</Label>
+                            <Input
+                              id="news-image"
+                              placeholder="https://..."
+                              value={newNewsForm.imageUrl}
+                              onChange={(e) => setNewNewsForm(prev => ({ ...prev, imageUrl: e.target.value }))}
+                            />
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <Switch
+                              id="news-featured"
+                              checked={newNewsForm.isFeatured}
+                              onCheckedChange={(checked) => 
+                                setNewNewsForm(prev => ({ ...prev, isFeatured: checked }))
+                              }
+                            />
+                            <Label htmlFor="news-featured">Noticia Destacada</Label>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <Switch
+                              id="news-published"
+                              checked={newNewsForm.isPublished}
+                              onCheckedChange={(checked) => 
+                                setNewNewsForm(prev => ({ ...prev, isPublished: checked }))
+                              }
+                            />
+                            <Label htmlFor="news-published">Publicar Inmediatamente</Label>
+                          </div>
+                        </div>
+                        <div className="flex gap-2">
+                          <Button onClick={handleCreateNews}>
+                            <Save className="h-4 w-4 mr-2" />
+                            Crear Noticia
+                          </Button>
+                          <Button variant="outline" onClick={() => setShowCreateNewsForm(false)}>
+                            Cancelar
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  )}
+                  
+                  {/* Lista de noticias existentes */}
+                  <div className="space-y-3">
+                    {newsLoading ? (
+                      <div className="text-center py-4">
+                        <p>Cargando noticias...</p>
+                      </div>
+                    ) : news.length === 0 ? (
+                      <div className="text-center py-8 text-muted-foreground">
+                        <Newspaper className="h-12 w-12 mx-auto mb-2" />
+                        <p className="text-sm">No hay noticias registradas</p>
+                        <p className="text-xs">Crea tu primera noticia para comenzar</p>
+                      </div>
+                    ) : (
+                      news.map((article) => (
+                        <div key={article.id} className="flex items-center justify-between p-4 border rounded-lg">
+                          <div className="flex items-center gap-3 flex-1">
+                            <div className="w-10 h-10 rounded-lg bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
+                              <Newspaper className="h-5 w-5" />
+                            </div>
+                            <div className="flex-1">
+                              <h3 className="font-medium">{article.title}</h3>
+                              <p className="text-sm text-muted-foreground line-clamp-1">
+                                {article.excerpt || 'Sin extracto'}
+                              </p>
+                              <div className="flex items-center gap-2 mt-1">
+                                <Badge variant="outline" className="text-xs">
+                                  {article.category}
+                                </Badge>
+                                {article.isFeatured && (
+                                  <Badge variant="outline" className="text-xs bg-yellow-100 text-yellow-800 border-yellow-200">
+                                    <Star className="h-3 w-3 mr-1" />
+                                    Destacada
+                                  </Badge>
+                                )}
+                                <Badge 
+                                  variant="outline" 
+                                  className={cn(
+                                    "text-xs",
+                                    article.isPublished 
+                                      ? "bg-green-100 text-green-800 border-green-200" 
+                                      : "bg-gray-100 text-gray-800 border-gray-200"
+                                  )}
+                                >
+                                  {article.isPublished ? 'Publicada' : 'Borrador'}
+                                </Badge>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Button 
+                              variant="outline" 
+                              size="sm"
+                              onClick={() => handleToggleNewsFeatured(article.id, article.isFeatured)}
+                              title={article.isFeatured ? 'Quitar de destacadas' : 'Marcar como destacada'}
+                            >
+                              <Star className={cn("h-4 w-4", article.isFeatured && "fill-yellow-400 text-yellow-400")} />
+                            </Button>
+                            <Button 
+                              variant="outline" 
+                              size="sm"
+                              onClick={() => handleToggleNewsStatus(article.id, article.isPublished)}
+                              title={article.isPublished ? 'Despublicar' : 'Publicar'}
+                            >
+                              {article.isPublished ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                            </Button>
+                            <Button variant="outline" size="sm">
+                              <Edit className="h-4 w-4" />
+                            </Button>
+                            <Button 
+                              variant="outline" 
+                              size="sm"
+                              onClick={() => handleDeleteNews(article.id)}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </div>
+                      ))
+                    )}
+                  </div>
                 </div>
               </CardContent>
             </Card>
