@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import {
   MessageCircle,
@@ -9,6 +10,11 @@ import {
   GalleryThumbnailsIcon as Gallery,
   TrendingUp,
   Sparkles,
+  Clock,
+  Trophy,
+  Star,
+  Award,
+  Target,
 } from "lucide-react"
 import Link from "next/link"
 import { AppLayout } from "@/components/layout/AppLayout"
@@ -17,11 +23,14 @@ import { useWinnersApi } from "@/lib/hooks/useWinnersApi"
 import { useImagesApi } from "@/lib/hooks/useImagesApi"
 import { useStatsApi } from "@/lib/hooks/useStatsApi"
 import { useCasinosData } from "@/lib/hooks/useCasinosData"
+import { useRewardsData } from "@/lib/hooks/useRewardsData"
+import { CountdownTimer } from "@/components/rewards/CountdownTimer"
 export default function Dashboard() {
   const { images: apiImages } = useImagesApi()
   const { winners } = useWinnersApi()
   const { stats } = useStatsApi()
-  const { topThree, casinos } = useCasinosData()
+  const { topThree } = useCasinosData()
+  const { nextDailyPrize, nextMonthlyPrize } = useRewardsData()
 
   // Usar el primer ganador de la API o un fallback
   const dailyWinner = winners.length > 0 ? {
@@ -34,21 +43,24 @@ export default function Dashboard() {
 
   const quickActions = [
     {
-      title: "Generar Imagen",
+      title: "Generar",
+      mobileTitle: "Generar Imagen",
       description: "Usa el chatbot IA para crear nuevas imágenes",
       icon: MessageCircle,
       href: "/chat",
       color: "bg-primary-500",
     },
     {
-      title: "Ver Galería",
+      title: "Galería",
+      mobileTitle: "Ver Galería",
       description: "Explora todas tus imágenes creadas",
       icon: Gallery,
       href: "/gallery",
       color: "bg-secondary-500",
     },
     {
-      title: "Subir Imagen",
+      title: "Subir",
+      mobileTitle: "Subir Imagen",
       description: "Sube tus propias imágenes",
       icon: Image,
       href: "/upload",
@@ -82,7 +94,7 @@ export default function Dashboard() {
         <WinnerBanner winner={dailyWinner} />
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4 lg:gap-6">
+        <div className="grid grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4 lg:gap-6">
           <Card className="h-full">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Imágenes Generadas</CardTitle>
@@ -117,7 +129,7 @@ export default function Dashboard() {
         {/* Quick Actions */}
         <div>
           <h2 className="text-lg font-semibold mb-3 sm:mb-4">Acciones Rápidas</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
+          <div className="grid grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
             {quickActions.map((action) => (
               <Link key={action.href} href={action.href}>
                 <Card className="hover:shadow-md transition-shadow cursor-pointer h-full">
@@ -125,8 +137,11 @@ export default function Dashboard() {
                     <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-lg ${action.color} flex items-center justify-center mb-2`}>
                       <action.icon className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
                     </div>
-                    <CardTitle className="text-sm sm:text-base">{action.title}</CardTitle>
-                    <CardDescription className="text-xs sm:text-sm">{action.description}</CardDescription>
+                    <CardTitle className="text-sm sm:text-base">
+                      <span className="sm:hidden">{action.title}</span>
+                      <span className="hidden sm:inline">{action.mobileTitle}</span>
+                    </CardTitle>
+                    <CardDescription className="hidden sm:block text-xs sm:text-sm">{action.description}</CardDescription>
                   </CardHeader>
                 </Card>
               </Link>
@@ -145,25 +160,51 @@ export default function Dashboard() {
             </Link>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 lg:gap-6">
-            <Card className="h-full">
-              <CardHeader>
-                <CardTitle className="text-base sm:text-lg">Premio Diario</CardTitle>
-                <CardDescription>Participa cada día para ganar</CardDescription>
+            <Card className="relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-primary/20" />
+              <CardHeader className="relative">
+                <div className="flex items-center gap-2">
+                  <Clock className="h-5 w-5 text-primary" />
+                  <CardTitle className="text-base sm:text-lg">Premio Diario</CardTitle>
+                </div>
+                <CardDescription>
+                  Sorteo automático cada día a las 00:00
+                </CardDescription>
               </CardHeader>
-              <CardContent>
-                <div className="text-xl sm:text-2xl font-bold mb-2">$500 - $1,500</div>
-                <p className="text-xs text-muted-foreground">Sorteo automático cada día</p>
+              <CardContent className="relative">
+                <CountdownTimer
+                  targetDate={nextDailyPrize}
+                  label="Tiempo restante"
+                  className="mb-4"
+                />
+                <div className="flex items-center gap-2">
+                  <Star className="h-4 w-4 text-yellow-500" />
+                  <span className="text-sm font-medium">Premio: $500 - $1,500 USD</span>
+                </div>
               </CardContent>
             </Card>
 
-            <Card className="h-full">
-              <CardHeader>
-                <CardTitle className="text-base sm:text-lg">Premio Mensual</CardTitle>
-                <CardDescription>Gran premio del mes</CardDescription>
+            <Card className="relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-br from-secondary/5 to-secondary/20" />
+              <CardHeader className="relative">
+                <div className="flex items-center gap-2">
+                  <Trophy className="h-5 w-5 text-secondary" />
+                  <CardTitle className="text-base sm:text-lg">Premio Mensual</CardTitle>
+                </div>
+                <CardDescription>
+                  Gran sorteo al final de cada mes
+                </CardDescription>
               </CardHeader>
-              <CardContent>
-                <div className="text-xl sm:text-2xl font-bold mb-2">$5,000 - $15,000</div>
-                <p className="text-xs text-muted-foreground">Gran sorteo mensual</p>
+              <CardContent className="relative">
+                <CountdownTimer
+                  targetDate={nextMonthlyPrize}
+                  label="Tiempo restante"
+                  className="mb-4"
+                />
+                <div className="flex items-center gap-2">
+                  <Star className="h-4 w-4 text-yellow-500" />
+                  <span className="text-sm font-medium">Premio: $5,000 - $15,000 USD</span>
+                </div>
               </CardContent>
             </Card>
           </div>
@@ -229,43 +270,6 @@ export default function Dashboard() {
             </div>
           )}
           
-          {/* Casino Stats */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4 lg:gap-6">
-            <Card className="h-full">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Total Casinos</CardTitle>
-                <TrendingUp className="h-4 w-4 text-primary-500" />
-              </CardHeader>
-              <CardContent className="pt-0">
-                <div className="text-xl sm:text-2xl font-bold mb-1">{casinos.length}</div>
-                <p className="text-xs text-muted-foreground">Casinos disponibles</p>
-              </CardContent>
-            </Card>
-
-            <Card className="h-full">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Alto Potencial</CardTitle>
-                <Sparkles className="h-4 w-4 text-green-600" />
-              </CardHeader>
-              <CardContent className="pt-0">
-                <div className="text-xl sm:text-2xl font-bold mb-1">
-                  {casinos.filter(c => c.potencial.value === 'high').length}
-                </div>
-                <p className="text-xs text-muted-foreground">Con alto potencial</p>
-              </CardContent>
-            </Card>
-
-            <Card className="h-full">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Top 3 Activos</CardTitle>
-                <Sparkles className="h-4 w-4 text-yellow-600" />
-              </CardHeader>
-              <CardContent className="pt-0">
-                <div className="text-xl sm:text-2xl font-bold mb-1">{topThree.length}</div>
-                <p className="text-xs text-muted-foreground">En ranking principal</p>
-              </CardContent>
-            </Card>
-          </div>
         </div>
 
         {/* Learning Tutorials */}
@@ -279,35 +283,43 @@ export default function Dashboard() {
             </Link>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 lg:gap-6">
-            <Card className="h-full">
-              <CardHeader>
-                <CardTitle className="text-base sm:text-lg">Ruta Principiante</CardTitle>
-                <CardDescription>Fundamentos del Marketing Digital</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2">
-                  <p className="text-sm">• Conceptos básicos</p>
-                  <p className="text-sm">• Herramientas esenciales</p>
-                  <p className="text-sm">• Primeras estrategias</p>
-                  <p className="text-sm font-medium text-primary-600">4 cursos • 20 horas</p>
+            <Link href="/tutorials/fundamentos-marketing">
+              <Card className="p-4 border-2 border-dashed border-primary-200 hover:border-primary-400 transition-colors cursor-pointer h-full">
+                <div className="flex items-center justify-between mb-3">
+                  <Badge variant="outline" className="text-primary-600 border-primary-300">
+                    Principiante
+                  </Badge>
+                  <Award className="h-5 w-5 text-primary-500" />
                 </div>
-              </CardContent>
-            </Card>
+                <h4 className="font-semibold mb-2">Fundamentos del Marketing Digital</h4>
+                <p className="text-sm text-gray-600 dark:text-gray-300 mb-3">
+                  Conceptos básicos, herramientas esenciales y primeras estrategias
+                </p>
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-gray-500">4 cursos • 20 horas</span>
+                  <Button size="sm" variant="outline">Ver Ruta</Button>
+                </div>
+              </Card>
+            </Link>
 
-            <Card className="h-full">
-              <CardHeader>
-                <CardTitle className="text-base sm:text-lg">Ruta Avanzada</CardTitle>
-                <CardDescription>Especialista en Casinos Online</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2">
-                  <p className="text-sm">• Estrategias avanzadas</p>
-                  <p className="text-sm">• Compliance y regulaciones</p>
-                  <p className="text-sm">• Optimización de conversiones</p>
-                  <p className="text-sm font-medium text-secondary-600">6 cursos • 35 horas</p>
+            <Link href="/tutorials/casinos-online">
+              <Card className="p-4 border-2 border-dashed border-tertiary-200 hover:border-tertiary-400 transition-colors cursor-pointer h-full">
+                <div className="flex items-center justify-between mb-3">
+                  <Badge variant="outline" className="text-tertiary-600 border-tertiary-300">
+                    Avanzado
+                  </Badge>
+                  <Target className="h-5 w-5 text-tertiary-500" />
                 </div>
-              </CardContent>
-            </Card>
+                <h4 className="font-semibold mb-2">Especialista en Casinos Online</h4>
+                <p className="text-sm text-gray-600 dark:text-gray-300 mb-3">
+                  Estrategias avanzadas, compliance y optimización de conversiones
+                </p>
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-gray-500">6 cursos • 35 horas</span>
+                  <Button size="sm" variant="outline">Ver Ruta</Button>
+                </div>
+              </Card>
+            </Link>
           </div>
         </div>
 
