@@ -148,11 +148,63 @@ export function useReferrals(): UseReferralsReturn {
     await fetchReferralData()
   }, [fetchReferralData])
 
+  // Función para completar vinculación con usuario pendiente
+  const linkPendingUser = useCallback(async () => {
+    if (!user?.id || !user?.primaryEmailAddress?.emailAddress) {
+      return
+    }
+
+    try {
+      console.log('[Referrals Hook] Verificando usuario pendiente para:', user.primaryEmailAddress.emailAddress)
+      
+      const response = await fetch('/api/referrals/pending-user', {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: user.primaryEmailAddress.emailAddress,
+          clerkUserId: user.id
+        }),
+      })
+
+      const data = await response.json()
+      
+      if (data.success) {
+        console.log('[Referrals Hook] Usuario pendiente vinculado exitosamente:', data.data)
+        
+        // Si el usuario tenía un código de referido, registrarlo en el sistema de referidos
+        if (data.data.referredByCode) {
+          console.log('[Referrals Hook] Registrando usuario en sistema de referidos con código:', data.data.referredByCode)
+          await registerWithReferral(data.data.referredByCode)
+        } else {
+          // Si no tenía código, registrar sin código
+          await registerWithReferral()
+        }
+        
+        // Refrescar datos después de la vinculación
+        await fetchReferralData()
+      } else if (response.status === 404) {
+        // No hay usuario pendiente, proceder normalmente
+        console.log('[Referrals Hook] No hay usuario pendiente para vincular')
+      } else {
+        console.error('[Referrals Hook] Error vinculando usuario pendiente:', data.error)
+      }
+    } catch (error) {
+      console.error('[Referrals Hook] Error en vinculación de usuario pendiente:', error)
+    }
+  }, [user?.id, user?.primaryEmailAddress?.emailAddress, registerWithReferral, fetchReferralData])
+
   useEffect(() => {
     if (!authLoading) {
       fetchReferralData()
+      
+      // Verificar si hay que vincular usuario pendiente
+      if (isAuthenticated && user?.id && user?.primaryEmailAddress?.emailAddress) {
+        linkPendingUser()
+      }
     }
-  }, [fetchReferralData, authLoading])
+  }, [fetchReferralData, authLoading, isAuthenticated, user?.id, user?.primaryEmailAddress?.emailAddress, linkPendingUser])
 
   return {
     stats,

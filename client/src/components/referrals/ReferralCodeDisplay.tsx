@@ -29,22 +29,38 @@ export function ReferralCodeDisplay({
   }
 
   const handleShare = async () => {
-    const shareText = `¡Únete con mi código de referido: ${code}!`
-    const shareUrl = `${window.location.origin}?ref=${code}`
+    const shareText = `¡Únete a Red23 con mi código de referido: ${code}!`
+    const shareUrl = `${window.location.origin}/login?ref=${code}`
     
     if (navigator.share) {
       try {
         await navigator.share({
-          title: 'Código de Referido',
+          title: 'Únete a Red23 - Código de Referido',
           text: shareText,
           url: shareUrl
         })
       } catch (error) {
         console.error('Error compartiendo:', error)
-        handleCopy()
+        // En caso de error, copiamos el link completo al portapapeles
+        try {
+          await navigator.clipboard.writeText(`${shareText}\n${shareUrl}`)
+          setCopied(true)
+          onCopy?.()
+          setTimeout(() => setCopied(false), 2000)
+        } catch (clipboardError) {
+          console.error('Error copiando al portapapeles:', clipboardError)
+        }
       }
     } else {
-      handleCopy()
+      // Si no hay API de share nativa, copiamos el link completo
+      try {
+        await navigator.clipboard.writeText(`${shareText}\n${shareUrl}`)
+        setCopied(true)
+        onCopy?.()
+        setTimeout(() => setCopied(false), 2000)
+      } catch (error) {
+        console.error('Error copiando link:', error)
+      }
     }
   }
 

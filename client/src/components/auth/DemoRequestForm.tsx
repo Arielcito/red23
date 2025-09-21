@@ -1,34 +1,57 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { MessageCircle } from "lucide-react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { FlagIcon } from "@/components/ui/flag-icon"
 
 const WHATSAPP_CLOSER_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_CLOSER || "59899123456"
-const COUNTRIES = ["Paraguay", "México", "Uruguay"] as const
+const COUNTRIES = [
+  "Argentina",
+  "Brasil", 
+  "Paraguay",
+  "Uruguay",
+  "México",
+  "Colombia",
+  "Chile",
+  "Perú",
+  "Ecuador",
+  "Venezuela",
+  "Bolivia"
+] as const
 
 interface ContactFormData {
   name: string
   email: string
   telegram: string
   country: string
+  referralCode: string
 }
 
 interface DemoRequestFormProps {
   onSubmitSuccess: () => void
+  referralCode?: string
 }
 
-export function DemoRequestForm({ onSubmitSuccess }: DemoRequestFormProps) {
+export function DemoRequestForm({ onSubmitSuccess, referralCode }: DemoRequestFormProps) {
   const [contactFormData, setContactFormData] = useState<ContactFormData>({
     name: "",
     email: "",
     telegram: "",
     country: "",
+    referralCode: referralCode || "",
   })
   const [isLoading, setIsLoading] = useState(false)
+
+  // Actualizar código de referido cuando cambie la prop
+  useEffect(() => {
+    if (referralCode && referralCode !== contactFormData.referralCode) {
+      setContactFormData(prev => ({ ...prev, referralCode }))
+    }
+  }, [referralCode, contactFormData.referralCode])
 
   const handleContactInputChange = (field: keyof ContactFormData, value: string) => {
     setContactFormData((prev) => ({ ...prev, [field]: value }))
@@ -47,14 +70,46 @@ export function DemoRequestForm({ onSubmitSuccess }: DemoRequestFormProps) {
     const whatsappMessage = `Hola, soy ${contactFormData.name}. Me gustaría solicitar una demo de la plataforma Red23.\n\n` +
       `Correo: ${contactFormData.email}\n` +
       `Telegram: ${contactFormData.telegram}\n` +
-      `País: ${contactFormData.country}`
+      `País: ${contactFormData.country}` +
+      (contactFormData.referralCode ? `\nCódigo de referido: ${contactFormData.referralCode}` : '')
 
     const whatsappUrl = `https://wa.me/${WHATSAPP_CLOSER_NUMBER}?text=${encodeURIComponent(whatsappMessage)}`
 
     try {
-      window.open(whatsappUrl, "_blank")
+      // Primero crear el registro de usuario pendiente
+      const pendingUserResponse = await fetch('/api/referrals/pending-user', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: contactFormData.email,
+          name: contactFormData.name,
+          telegram: contactFormData.telegram,
+          country: contactFormData.country,
+          referralCode: contactFormData.referralCode || undefined,
+          whatsappMessage
+        }),
+      })
+
+      const pendingUserData = await pendingUserResponse.json()
+      
+      if (pendingUserData.success) {
+        console.log('✅ Usuario pendiente creado:', pendingUserData.data)
+        // Si se creó exitosamente, abrir WhatsApp
+        window.open(whatsappUrl, "_blank")
+      } else {
+        console.error('Error creando usuario pendiente:', pendingUserData.error)
+        // Aún así abrir WhatsApp, pero mostrar advertencia
+        if (pendingUserData.error.includes('ya existe una solicitud pendiente')) {
+          alert('Ya tienes una solicitud pendiente. Te contactaremos pronto.')
+        }
+        window.open(whatsappUrl, "_blank")
+      }
     } catch (error) {
-      console.error("No se pudo abrir WhatsApp", error)
+      console.error("Error en el proceso:", error)
+      // En caso de error, aún abrir WhatsApp
+      window.open(whatsappUrl, "_blank")
     } finally {
       setTimeout(() => {
         setIsLoading(false)
@@ -131,12 +186,37 @@ export function DemoRequestForm({ onSubmitSuccess }: DemoRequestFormProps) {
                 <SelectContent>
                   {COUNTRIES.map((country) => (
                     <SelectItem key={country} value={country}>
-                      {country}
+                      <div className="flex items-center gap-2">
+                        <FlagIcon country={country} size="sm" />
+                        {country}
+                      </div>
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
+          </div>
+        </div>
+
+        {/* Campo de código de referido */}
+        <div className="space-y-4">
+          <h4 className="font-semibold text-gray-900 dark:text-white">Código de Referido</h4>
+          <div className="space-y-2">
+            <Label htmlFor="referral-code">
+              Código de Referido (Opcional)
+            </Label>
+            <Input
+              id="referral-code"
+              placeholder="Ingresa tu código de referido"
+              value={contactFormData.referralCode}
+              onChange={(e) => handleContactInputChange("referralCode", e.target.value)}
+              className={referralCode ? "border-green-500 bg-green-50 dark:bg-green-950" : ""}
+            />
+            {referralCode && (
+              <p className="text-sm text-green-600 dark:text-green-400">
+                ✅ Código de referido detectado automáticamente
+              </p>
+            )}
           </div>
         </div>
 

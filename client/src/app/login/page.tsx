@@ -1,6 +1,7 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -13,8 +14,20 @@ import { AuthHeader } from "@/components/auth/AuthHeader"
 import { SuccessMessage } from "@/components/auth/SuccessMessage"
 
 export default function AuthPage() {
+  const searchParams = useSearchParams()
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [activeTab, setActiveTab] = useState("login")
+  const [referralCode, setReferralCode] = useState<string>("")
+
+  useEffect(() => {
+    const refParam = searchParams.get('ref')
+    if (refParam) {
+      setReferralCode(refParam)
+      console.log('[AuthPage] Código de referido detectado:', refParam)
+      // Auto-cambiar a la tab de demo si viene con código de referido
+      setActiveTab("demo")
+    }
+  }, [searchParams])
 
   if (isSubmitted) {
     return <SuccessMessage />
@@ -53,7 +66,10 @@ export default function AuthPage() {
               </TabsContent>
 
               <TabsContent value="demo" className="space-y-6 mt-6">
-                <DemoRequestForm onSubmitSuccess={() => setIsSubmitted(true)} />
+                <DemoRequestForm 
+                  onSubmitSuccess={() => setIsSubmitted(true)} 
+                  referralCode={referralCode}
+                />
               </TabsContent>
             </Tabs>
           </CardContent>
