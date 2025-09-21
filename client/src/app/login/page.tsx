@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, Suspense } from "react"
 import { useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -13,7 +13,7 @@ import { DemoRequestForm } from "@/components/auth/DemoRequestForm"
 import { AuthHeader } from "@/components/auth/AuthHeader"
 import { SuccessMessage } from "@/components/auth/SuccessMessage"
 
-export default function AuthPage() {
+function AuthPageContent() {
   const searchParams = useSearchParams()
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [activeTab, setActiveTab] = useState("login")
@@ -76,5 +76,13 @@ export default function AuthPage() {
         </Card>
       </div>
     </div>
+  )
+}
+
+export default function AuthPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Cargando...</div>}>
+      <AuthPageContent />
+    </Suspense>
   )
 }
