@@ -1,6 +1,6 @@
 "use client"
 
-import { Winner } from "@/lib/hooks/useRewards"
+import { Winner } from "@/lib/hooks/useRewardsData"
 import { Trophy, Calendar } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 
@@ -65,17 +65,17 @@ export function RecentWinners({ winners, isLoading, className }: RecentWinnersPr
       </div>
       
       <div className="space-y-2">
-        {winners.map((winner) => (
-          <div key={winner.id} className="flex items-center gap-3 p-2 rounded-lg bg-muted/20 hover:bg-muted/30 transition-colors">
+        {winners.slice(0, 3).map((winner) => (
+          <div key={winner.id} className="flex items-center gap-2 p-1.5 rounded-lg bg-muted/20 hover:bg-muted/30 transition-colors">
             <div className="flex-shrink-0">
               {winner.avatar ? (
                 <img
                   src={winner.avatar}
                   alt={winner.name}
-                  className="h-6 w-6 rounded-full object-cover"
+                  className="h-5 w-5 rounded-full object-cover"
                 />
               ) : (
-                <div className="h-6 w-6 rounded-full bg-primary/10 flex items-center justify-center">
+                <div className="h-5 w-5 rounded-full bg-primary/10 flex items-center justify-center">
                   <span className="text-xs font-medium text-primary">
                     {getInitials(winner.name)}
                   </span>

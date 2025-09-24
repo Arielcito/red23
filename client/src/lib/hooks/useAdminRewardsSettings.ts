@@ -10,6 +10,7 @@ export interface RewardsBannerSettings {
   ctaLabel: string
   ctaUrl: string
   theme: RewardsBannerTheme
+  imageId?: number | null
 }
 
 interface UseAdminRewardsSettingsReturn {
@@ -29,31 +30,34 @@ export function useAdminRewardsSettings(): UseAdminRewardsSettingsReturn {
     description: "Cada semana seleccionamos ganadores en Paraguay, México y Uruguay. Aumenta tus chances usando Red23.",
     ctaLabel: "Ver reglas",
     ctaUrl: "#reglas-premios",
-    theme: "emerald"
+    theme: "emerald",
+    imageId: null
   })
   const [isLoaded, setIsLoaded] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   // Transform database settings to frontend format
-  const transformToFrontend = (dbSettings: RewardSettings): RewardsBannerSettings => ({
+  const transformToFrontend = useCallback((dbSettings: RewardSettings): RewardsBannerSettings => ({
     enabled: dbSettings.banner_enabled,
     title: dbSettings.banner_title,
     description: dbSettings.banner_description,
     ctaLabel: dbSettings.banner_cta_label,
     ctaUrl: dbSettings.banner_cta_url,
-    theme: dbSettings.banner_theme
-  })
+    theme: dbSettings.banner_theme,
+    imageId: dbSettings.banner_image_id
+  }), [])
 
   // Transform frontend settings to database format
-  const transformToDatabase = (frontendSettings: Partial<RewardsBannerSettings>) => ({
+  const transformToDatabase = useCallback((frontendSettings: Partial<RewardsBannerSettings>) => ({
     banner_enabled: frontendSettings.enabled,
     banner_title: frontendSettings.title,
     banner_description: frontendSettings.description,
     banner_cta_label: frontendSettings.ctaLabel,
     banner_cta_url: frontendSettings.ctaUrl,
-    banner_theme: frontendSettings.theme
-  })
+    banner_theme: frontendSettings.theme,
+    banner_image_id: frontendSettings.imageId
+  }), [])
 
   const fetchSettings = useCallback(async () => {
     try {
@@ -81,7 +85,7 @@ export function useAdminRewardsSettings(): UseAdminRewardsSettingsReturn {
     } finally {
       setIsLoading(false)
     }
-  }, [])
+  }, [transformToFrontend])
 
   const updateSettings = useCallback(async (updates: Partial<RewardsBannerSettings>) => {
     try {
@@ -116,7 +120,7 @@ export function useAdminRewardsSettings(): UseAdminRewardsSettingsReturn {
       setError(errorMessage)
       throw err
     }
-  }, [])
+  }, [transformToDatabase, transformToFrontend])
 
   const resetSettings = useCallback(async () => {
     const defaultSettings: RewardsBannerSettings = {
@@ -125,7 +129,8 @@ export function useAdminRewardsSettings(): UseAdminRewardsSettingsReturn {
       description: "Cada semana seleccionamos ganadores en Paraguay, México y Uruguay. Aumenta tus chances usando Red23.",
       ctaLabel: "Ver reglas",
       ctaUrl: "#reglas-premios",
-      theme: "emerald"
+      theme: "emerald",
+      imageId: null
     }
     
     await updateSettings(defaultSettings)

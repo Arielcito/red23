@@ -142,6 +142,7 @@ export interface RewardSettings {
   banner_cta_label: string
   banner_cta_url: string
   banner_theme: 'emerald' | 'indigo' | 'amber'
+  banner_image_id?: number | null
   daily_prize_amount: string
   monthly_prize_amount: string
   rules_text?: string | null
@@ -154,6 +155,7 @@ export interface NewRewardSettings {
   banner_cta_label?: string
   banner_cta_url?: string
   banner_theme?: 'emerald' | 'indigo' | 'amber'
+  banner_image_id?: number | null
   daily_prize_amount?: string
   monthly_prize_amount?: string
   rules_text?: string | null

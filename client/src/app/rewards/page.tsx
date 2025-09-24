@@ -9,12 +9,14 @@ import { Gift, Trophy, Clock, Star } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { RewardsBanner } from "@/components/rewards/RewardsBanner"
 import { useAdminRewardsSettings } from "@/lib/hooks/useAdminRewardsSettings"
+import { useBannerImage } from "@/lib/hooks/useBannerImage"
 
 export default function RewardsPage() {
   const { nextDailyPrize, nextMonthlyPrize, recentWinners, isLoading, error } = useRewardsData()
   const { settings: bannerSettings, isLoaded: settingsLoaded } = useAdminRewardsSettings()
+  const { bannerImage } = useBannerImage(bannerSettings.imageId)
   
-  console.log('🎁 Rewards page loaded with:', { winnersCount: recentWinners.length, settingsLoaded })
+  console.log('🎁 Rewards page loaded with:', { winnersCount: recentWinners.length, settingsLoaded, bannerImage })
 
   return (
     <AppLayout
@@ -26,8 +28,8 @@ export default function RewardsPage() {
         className: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
       }}
     >
-      <div className="container mx-auto p-6 space-y-8">
-        {settingsLoaded && <RewardsBanner settings={bannerSettings} />}
+      <div className="container mx-auto p-4 space-y-6">
+        {settingsLoaded && <RewardsBanner settings={bannerSettings} bannerImage={bannerImage} />}
 
         {error && (
           <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
@@ -38,25 +40,25 @@ export default function RewardsPage() {
         )}
 
         {/* Header con información general */}
-        <div className="text-center space-y-4">
+        <div className="text-center space-y-2">
           <div className="flex items-center justify-center gap-2">
-            <Gift className="h-8 w-8 text-primary" />
-            <h1 className="text-3xl font-bold">¡Gana premios increíbles!</h1>
+            <Gift className="h-6 w-6 text-primary" />
+            <h1 className="text-2xl font-bold">¡Gana premios increíbles!</h1>
           </div>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Participa automáticamente en nuestros sorteos usando la plataforma. 
+          <p className="text-sm text-muted-foreground max-w-2xl mx-auto">
+            Participa automáticamente en nuestros sorteos usando la plataforma.
             Cada interacción te da más oportunidades de ganar.
           </p>
         </div>
 
         {/* Countdowns de premios */}
-        <div className="grid md:grid-cols-2 gap-6">
+        <div className="grid md:grid-cols-2 gap-4">
           <Card className="relative overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-primary/20" />
             <CardHeader className="relative">
               <div className="flex items-center gap-2">
-                <Clock className="h-5 w-5 text-primary" />
-                <CardTitle className="text-xl">Premio Diario</CardTitle>
+                <Clock className="h-4 w-4 text-primary" />
+                <CardTitle className="text-lg">Premio Diario</CardTitle>
               </div>
               <CardDescription>
                 Sorteo automático cada día a las 00:00
@@ -79,9 +81,9 @@ export default function RewardsPage() {
             <div className="absolute inset-0 bg-gradient-to-br from-secondary/5 to-secondary/20" />
             <CardHeader className="relative">
               <div className="flex items-center gap-2">
-                <Trophy className="h-5 w-5 text-secondary" />
-                <CardTitle className="text-xl">Premio Mensual</CardTitle>
-                <Badge variant="secondary">Premium</Badge>
+                <Trophy className="h-4 w-4 text-secondary" />
+                <CardTitle className="text-lg">Premio Mensual</CardTitle>
+                <Badge variant="secondary" className="text-xs">Premium</Badge>
               </div>
               <CardDescription>
                 Gran sorteo al final de cada mes
@@ -105,38 +107,29 @@ export default function RewardsPage() {
         <Card id="reglas-premios">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Gift className="h-5 w-5" />
+              <Gift className="h-4 w-4" />
               ¿Cómo participar?
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-3 gap-4">
               <div className="text-center space-y-3">
-                <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
-                  <span className="text-xl font-bold text-primary">1</span>
+                <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
+                  <span className="text-base font-bold text-primary">1</span>
                 </div>
-                <h3 className="font-semibold">Usa la plataforma</h3>
-                <p className="text-sm text-muted-foreground">
-                  Cada imagen generada, subida o programada te da puntos
-                </p>
+                <h3 className="font-semibold text-sm">Usa la plataforma</h3>
               </div>
               <div className="text-center space-y-3">
-                <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
-                  <span className="text-xl font-bold text-primary">2</span>
+                <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
+                  <span className="text-base font-bold text-primary">2</span>
                 </div>
-                <h3 className="font-semibold">Acumula puntos</h3>
-                <p className="text-sm text-muted-foreground">
-                  Más actividad = más oportunidades de ganar
-                </p>
+                <h3 className="font-semibold text-sm">Acumula puntos</h3>
               </div>
               <div className="text-center space-y-3">
-                <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
-                  <span className="text-xl font-bold text-primary">3</span>
+                <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
+                  <span className="text-base font-bold text-primary">3</span>
                 </div>
-                <h3 className="font-semibold">¡Gana premios!</h3>
-                <p className="text-sm text-muted-foreground">
-                  Los sorteos son automáticos, no necesitas hacer nada más
-                </p>
+                <h3 className="font-semibold text-sm">¡Gana premios!</h3>
               </div>
             </div>
           </CardContent>
@@ -146,7 +139,7 @@ export default function RewardsPage() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Trophy className="h-5 w-5" />
+              <Trophy className="h-4 w-4" />
               Ganadores Recientes
             </CardTitle>
             <CardDescription>

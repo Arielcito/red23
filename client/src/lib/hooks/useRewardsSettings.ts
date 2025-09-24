@@ -11,6 +11,7 @@ export interface RewardsBannerSettings {
   ctaLabel: string
   ctaUrl: string
   theme: RewardsBannerTheme
+  imageId?: number | null
 }
 
 interface UseRewardsSettingsReturn {
@@ -28,7 +29,8 @@ const DEFAULT_SETTINGS: RewardsBannerSettings = {
   description: "Cada semana seleccionamos ganadores en Paraguay, México y Uruguay. Aumenta tus chances usando Red23.",
   ctaLabel: "Ver reglas",
   ctaUrl: "#reglas-premios",
-  theme: "emerald"
+  theme: "emerald",
+  imageId: null
 }
 
 const isBrowser = typeof window !== "undefined"

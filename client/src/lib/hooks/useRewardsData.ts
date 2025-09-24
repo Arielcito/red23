@@ -84,7 +84,7 @@ export function useRewardsData(): UseRewardsDataReturn {
   }
 
   useEffect(() => {
-    fetchRewards()
+    fetchRewards(undefined, 3)
   }, [])
 
   return {

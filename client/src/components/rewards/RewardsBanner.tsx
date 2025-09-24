@@ -1,6 +1,6 @@
 "use client"
 
-import { RewardsBannerSettings, RewardsBannerTheme } from "@/lib/hooks/useRewardsSettings"
+import type { RewardsBannerSettings, RewardsBannerTheme } from "@/lib/hooks/useRewardsSettings"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Sparkles } from "lucide-react"
@@ -29,16 +29,25 @@ const THEME_STYLES: Record<RewardsBannerTheme, { container: string; badge: strin
 interface RewardsBannerProps {
   settings: RewardsBannerSettings
   forceVisible?: boolean
+  bannerImage?: string | null
 }
 
-export function RewardsBanner({ settings, forceVisible = false }: RewardsBannerProps) {
+export function RewardsBanner({ settings, forceVisible = false, bannerImage }: RewardsBannerProps) {
   if (!settings.enabled && !forceVisible) return null
 
-  const theme = THEME_STYLES[settings.theme]
+  // Ensure theme is valid, fallback to emerald if invalid
+  const themeKey = (settings.theme && THEME_STYLES[settings.theme]) ? settings.theme : 'emerald'
+  const theme = THEME_STYLES[themeKey]
 
   return (
-    <Card className={cn("border-0 shadow-lg overflow-hidden", theme.container)}>
-      <CardContent className="p-6 sm:p-8">
+    <Card className={cn("border-0 shadow-lg overflow-hidden relative", theme.container)}>
+      {bannerImage && (
+        <div 
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-20"
+          style={{ backgroundImage: `url(${bannerImage})` }}
+        />
+      )}
+      <CardContent className="p-6 sm:p-8 relative z-10">
         <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
           <div className="flex-1 space-y-3">
             <div className="flex items-center gap-2 text-sm font-medium uppercase tracking-wider">

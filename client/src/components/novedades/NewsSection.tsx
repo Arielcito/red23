@@ -1,7 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Newspaper, Star, Calendar, ExternalLink, User } from "lucide-react"
+import { Newspaper, Star, Calendar, ExternalLink } from "lucide-react"
 import Image from "next/image"
 import { cn } from "@/lib/utils"
 import type { NewsFormatted } from "@/lib/supabase/types"
@@ -90,7 +90,7 @@ export function NewsSection({ featuredNews, recentNews }: NewsSectionProps) {
                   >
                     <CardContent className="p-0">
                       {/* Article Image */}
-                      <div className="relative h-48 w-full bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900">
+                      <div className="relative h-32 w-full bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900">
                         {article.imageUrl ? (
                           <Image
                             src={article.imageUrl}
@@ -110,7 +110,7 @@ export function NewsSection({ featuredNews, recentNews }: NewsSectionProps) {
                           "absolute inset-0 flex items-center justify-center",
                           article.imageUrl && "hidden"
                         )}>
-                          <Newspaper className="h-16 w-16 text-gray-400" />
+                          <Newspaper className="h-10 w-10 text-gray-400" />
                         </div>
 
                         {/* Featured Badge */}
@@ -133,9 +133,9 @@ export function NewsSection({ featuredNews, recentNews }: NewsSectionProps) {
                       </div>
 
                       {/* Article Content */}
-                      <div className="p-6 space-y-4">
+                      <div className="p-4 space-y-3">
                         <div className="space-y-2">
-                          <h4 className="text-xl font-bold leading-tight line-clamp-2 group-hover:text-primary transition-colors">
+                          <h4 className="text-lg font-bold leading-tight line-clamp-2 group-hover:text-primary transition-colors">
                             {article.title}
                           </h4>
                           {article.excerpt && (
@@ -146,26 +146,12 @@ export function NewsSection({ featuredNews, recentNews }: NewsSectionProps) {
                         </div>
 
                         {/* Article Meta */}
-                        <div className="flex items-center justify-between text-xs text-muted-foreground">
-                          <div className="flex items-center gap-1">
-                            <User className="h-3 w-3" />
-                            <span>{article.author}</span>
-                          </div>
+                        <div className="flex items-center justify-start text-xs text-muted-foreground">
                           <div className="flex items-center gap-1">
                             <Calendar className="h-3 w-3" />
                             <span>{formatDate(article.publishDate)}</span>
                           </div>
                         </div>
-
-                        {/* Read More Button */}
-                        <Button 
-                          variant="outline" 
-                          size="sm" 
-                          className="w-full mt-4 transition-all duration-200 hover:scale-105 active:scale-95"
-                        >
-                          <ExternalLink className="h-3 w-3 mr-2" />
-                          Leer Más
-                        </Button>
                       </div>
                     </CardContent>
                   </Card>
@@ -190,7 +176,7 @@ export function NewsSection({ featuredNews, recentNews }: NewsSectionProps) {
                   >
                     <CardContent className="p-0">
                       {/* Article Image */}
-                      <div className="relative h-40 w-full bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900">
+                      <div className="relative h-28 w-full bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900">
                         {article.imageUrl ? (
                           <Image
                             src={article.imageUrl}
@@ -210,7 +196,7 @@ export function NewsSection({ featuredNews, recentNews }: NewsSectionProps) {
                           "absolute inset-0 flex items-center justify-center",
                           article.imageUrl && "hidden"
                         )}>
-                          <Newspaper className="h-12 w-12 text-gray-400" />
+                          <Newspaper className="h-8 w-8 text-gray-400" />
                         </div>
 
                         {/* Category Badge */}
@@ -225,7 +211,7 @@ export function NewsSection({ featuredNews, recentNews }: NewsSectionProps) {
                       </div>
 
                       {/* Article Content */}
-                      <div className="p-5 space-y-3">
+                      <div className="p-4 space-y-3">
                         <div className="space-y-2">
                           <h4 className="font-semibold leading-tight line-clamp-2 group-hover:text-primary transition-colors">
                             {article.title}
@@ -238,26 +224,12 @@ export function NewsSection({ featuredNews, recentNews }: NewsSectionProps) {
                         </div>
 
                         {/* Article Meta */}
-                        <div className="flex items-center justify-between text-xs text-muted-foreground">
-                          <div className="flex items-center gap-1">
-                            <User className="h-3 w-3" />
-                            <span>{article.author}</span>
-                          </div>
+                        <div className="flex items-center justify-start text-xs text-muted-foreground">
                           <div className="flex items-center gap-1">
                             <Calendar className="h-3 w-3" />
                             <span>{formatDate(article.publishDate)}</span>
                           </div>
                         </div>
-
-                        {/* Read More Button */}
-                        <Button 
-                          variant="outline" 
-                          size="sm" 
-                          className="w-full mt-3 text-xs transition-all duration-200 hover:scale-105 active:scale-95"
-                        >
-                          <ExternalLink className="h-3 w-3 mr-1" />
-                          Leer Más
-                        </Button>
                       </div>
                     </CardContent>
                   </Card>
