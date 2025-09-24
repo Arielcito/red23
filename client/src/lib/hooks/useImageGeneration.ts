@@ -46,7 +46,8 @@ export const useImageGeneration = (): ImageGenerationHook => {
           logo: validatedRequest.logo,
           position: validatedRequest.position,
           tokens: 1,
-          user_email: validatedRequest.user_email
+          user_email: validatedRequest.user_email,
+          aspect_ratio: validatedRequest.aspect_ratio
         }),
         signal: controller.signal
       })

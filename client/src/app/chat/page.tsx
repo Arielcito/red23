@@ -25,6 +25,7 @@ export default function ChatPage() {
 
   const [logoUrl, setLogoUrl] = useState("")
   const [logoPosition, setLogoPosition] = useState("")
+  const [aspectRatio, setAspectRatio] = useState<"9:16" | "16:9" | "1:1">("1:1")
   const { user } = useUser()
   const { prompts, isLoading: isLoadingPrompts } = useAdminPrompts()
   
@@ -59,7 +60,8 @@ export default function ChatPage() {
     await sendMessage(promptSections.join("\n"), {
       logoUrl: hasLogoUrl ? logoUrl.trim() : undefined,
       logoPosition: hasLogoPosition ? Number(logoPosition) : undefined,
-      userEmail: user?.email
+      userEmail: user?.email,
+      aspectRatio
     })
     setInputValue("")
     setLogoUrl("")
@@ -135,6 +137,8 @@ export default function ChatPage() {
               onLogoUrlChange={setLogoUrl}
               logoPosition={logoPosition}
               onLogoPositionChange={setLogoPosition}
+              aspectRatio={aspectRatio}
+              onAspectRatioChange={setAspectRatio}
             />
           </div>
         </div>

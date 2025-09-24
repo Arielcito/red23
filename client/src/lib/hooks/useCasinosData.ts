@@ -8,9 +8,205 @@ import type {
   CasinoField,
   NewCasino,
   NewCasinoField,
-  CasinoBadgeValue,
-  CASINO_POTENCIAL_VALUES
+  CasinoBadgeValue
 } from '@/lib/supabase/types'
+
+// Datos de mock para desarrollo
+const mockCasinos: CasinoWithFields[] = [
+  {
+    id: "mock-1",
+    name: "Bet365",
+    logo: null,
+    plataforma: "Evolution Gaming",
+    tiempo: "2-3 días",
+    potencial: { value: "high", label: "Alto", color: "green" },
+    similar: "William Hill",
+    isTopThree: true,
+    topThreePosition: 1,
+    imageUrl: "/placeholder-casino.svg",
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    customFields: [
+      { fieldId: "bonus", fieldName: "Bono de Bienvenida", fieldType: "badge", value: { value: "500", label: "Hasta $500", color: "green" } },
+      { fieldId: "vip", fieldName: "Programa VIP", fieldType: "badge", value: { value: "premium", label: "Premium", color: "green" } }
+    ]
+  },
+  {
+    id: "mock-2",
+    name: "888 Casino",
+    logo: null,
+    plataforma: "Playtech",
+    tiempo: "1-2 días",
+    potencial: { value: "very_high", label: "Muy Alto", color: "green" },
+    similar: "Paddy Power",
+    isTopThree: true,
+    topThreePosition: 2,
+    imageUrl: "/placeholder-casino.svg",
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    customFields: [
+      { fieldId: "bonus", fieldName: "Bono de Bienvenida", fieldType: "badge", value: { value: "300", label: "Hasta $300", color: "yellow" } },
+      { fieldId: "vip", fieldName: "Programa VIP", fieldType: "badge", value: { value: "gold", label: "Gold", color: "yellow" } }
+    ]
+  },
+  {
+    id: "mock-3",
+    name: "LeoVegas",
+    logo: null,
+    plataforma: "NetEnt",
+    tiempo: "3-5 días",
+    potencial: { value: "high", label: "Alto", color: "green" },
+    similar: "Casumo",
+    isTopThree: true,
+    topThreePosition: 3,
+    imageUrl: "/placeholder-casino.svg",
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    customFields: [
+      { fieldId: "bonus", fieldName: "Bono de Bienvenida", fieldType: "badge", value: { value: "200", label: "Hasta $200", color: "yellow" } },
+      { fieldId: "vip", fieldName: "Programa VIP", fieldType: "badge", value: { value: "silver", label: "Silver", color: "yellow" } }
+    ]
+  },
+  {
+    id: "mock-4",
+    name: "Unibet",
+    logo: null,
+    plataforma: "Evolution Gaming",
+    tiempo: "2-4 días",
+    potencial: { value: "medium", label: "Medio", color: "yellow" },
+    similar: "Betsson",
+    isTopThree: false,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    customFields: [
+      { fieldId: "bonus", fieldName: "Bono de Bienvenida", fieldType: "badge", value: { value: "150", label: "Hasta $150", color: "yellow" } },
+      { fieldId: "vip", fieldName: "Programa VIP", fieldType: "badge", value: { value: "bronze", label: "Bronze", color: "red" } }
+    ]
+  },
+  {
+    id: "mock-5",
+    name: "Bwin",
+    logo: null,
+    plataforma: "Playtech",
+    tiempo: "1-3 días",
+    potencial: { value: "high", label: "Alto", color: "green" },
+    similar: "Bet-at-home",
+    isTopThree: false,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    customFields: [
+      { fieldId: "bonus", fieldName: "Bono de Bienvenida", fieldType: "badge", value: { value: "400", label: "Hasta $400", color: "green" } },
+      { fieldId: "vip", fieldName: "Programa VIP", fieldType: "badge", value: { value: "diamond", label: "Diamond", color: "green" } }
+    ]
+  },
+  {
+    id: "mock-6",
+    name: "Royal Panda",
+    logo: null,
+    plataforma: "Microgaming",
+    tiempo: "4-6 días",
+    potencial: { value: "low", label: "Bajo", color: "red" },
+    similar: "Guts",
+    isTopThree: false,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    customFields: [
+      { fieldId: "bonus", fieldName: "Bono de Bienvenida", fieldType: "badge", value: { value: "100", label: "Hasta $100", color: "red" } },
+      { fieldId: "vip", fieldName: "Programa VIP", fieldType: "badge", value: { value: "basic", label: "Basic", color: "red" } }
+    ]
+  },
+  {
+    id: "mock-7",
+    name: "Vegas Hero",
+    logo: null,
+    plataforma: "NetEnt",
+    tiempo: "2-3 días",
+    potencial: { value: "medium", label: "Medio", color: "yellow" },
+    similar: "Thrills",
+    isTopThree: false,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    customFields: [
+      { fieldId: "bonus", fieldName: "Bono de Bienvenida", fieldType: "badge", value: { value: "250", label: "Hasta $250", color: "yellow" } },
+      { fieldId: "vip", fieldName: "Programa VIP", fieldType: "badge", value: { value: "silver", label: "Silver", color: "yellow" } }
+    ]
+  },
+  {
+    id: "mock-8",
+    name: "Mr Green",
+    logo: null,
+    plataforma: "Evolution Gaming",
+    tiempo: "3-4 días",
+    potencial: { value: "high", label: "Alto", color: "green" },
+    similar: "Casino Euro",
+    isTopThree: false,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    customFields: [
+      { fieldId: "bonus", fieldName: "Bono de Bienvenida", fieldType: "badge", value: { value: "350", label: "Hasta $350", color: "green" } },
+      { fieldId: "vip", fieldName: "Programa VIP", fieldType: "badge", value: { value: "gold", label: "Gold", color: "yellow" } }
+    ]
+  },
+  {
+    id: "mock-9",
+    name: "ComeOn",
+    logo: null,
+    plataforma: "Playtech",
+    tiempo: "1-2 días",
+    potencial: { value: "very_high", label: "Muy Alto", color: "green" },
+    similar: "Mobilebet",
+    isTopThree: false,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    customFields: [
+      { fieldId: "bonus", fieldName: "Bono de Bienvenida", fieldType: "badge", value: { value: "450", label: "Hasta $450", color: "green" } },
+      { fieldId: "vip", fieldName: "Programa VIP", fieldType: "badge", value: { value: "platinum", label: "Platinum", color: "green" } }
+    ]
+  },
+  {
+    id: "mock-10",
+    name: "Next Casino",
+    logo: null,
+    plataforma: "Microgaming",
+    tiempo: "5-7 días",
+    potencial: { value: "low", label: "Bajo", color: "red" },
+    similar: "VideoSlots",
+    isTopThree: false,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    customFields: [
+      { fieldId: "bonus", fieldName: "Bono de Bienvenida", fieldType: "badge", value: { value: "75", label: "Hasta $75", color: "red" } },
+      { fieldId: "vip", fieldName: "Programa VIP", fieldType: "badge", value: { value: "basic", label: "Basic", color: "red" } }
+    ]
+  }
+];
+
+const mockConfig: CasinoConfigFormatted = {
+  customFields: [
+    {
+      id: "bonus",
+      name: "Bono de Bienvenida",
+      field_type: "badge",
+      is_required: false,
+      display_order: 1,
+      is_active: true,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    },
+    {
+      id: "vip",
+      name: "Programa VIP",
+      field_type: "badge",
+      is_required: false,
+      display_order: 2,
+      is_active: true,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    }
+  ],
+  topThreeIds: ["mock-1", "mock-2", "mock-3"],
+  settings: {}
+};
 
 // Updated hook types for new API
 export interface CasinosDataHook {
@@ -64,34 +260,53 @@ export function useCasinosData(): CasinosDataHook {
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  // Cargar datos reales desde la API
+  // Cargar datos reales desde la API o usar mock como fallback
   const loadData = useCallback(async () => {
     try {
       setIsLoading(true)
       setError(null)
-      
+
       console.log('🎰 Cargando datos de casinos desde API...')
-      
-      // Cargar casinos y configuración en paralelo
-      const [casinosResponse, configResponse] = await Promise.all([
-        apiCall('/api/casinos'),
-        apiCall('/api/casinos/config')
-      ])
-      
-      if (casinosResponse.success) {
-        setCasinos(casinosResponse.data)
-        console.log('✅ Casinos cargados:', casinosResponse.data.length)
+
+      try {
+        // Cargar casinos y configuración en paralelo
+        const [casinosResponse, configResponse] = await Promise.all([
+          apiCall('/api/casinos'),
+          apiCall('/api/casinos/config')
+        ])
+
+        if (casinosResponse.success && casinosResponse.data.length > 0) {
+          setCasinos(casinosResponse.data)
+          console.log('✅ Casinos cargados desde API:', casinosResponse.data.length)
+        } else {
+          throw new Error('No hay datos de casinos disponibles')
+        }
+
+        if (configResponse.success) {
+          setConfig(configResponse.data)
+          console.log('✅ Configuración cargada desde API')
+        } else {
+          throw new Error('No hay configuración disponible')
+        }
+
+      } catch (apiError) {
+        console.warn('⚠️ API no disponible, usando datos de mock para desarrollo:', apiError)
+
+        // Simular tiempo de carga para datos de mock
+        await new Promise(resolve => setTimeout(resolve, 500))
+
+        setCasinos(mockCasinos)
+        setConfig(mockConfig)
+
+        console.log('🎭 Datos de mock cargados exitosamente')
+        console.log('📊 Mock casinos:', mockCasinos.length)
+        console.log('⚙️ Mock config cargada')
       }
-      
-      if (configResponse.success) {
-        setConfig(configResponse.data)
-        console.log('✅ Configuración cargada')
-      }
-      
+
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Error loading casino data'
       setError(errorMessage)
-      console.error('❌ Error cargando datos de casinos:', err)
+      console.error('❌ Error general cargando datos:', err)
     } finally {
       setIsLoading(false)
     }

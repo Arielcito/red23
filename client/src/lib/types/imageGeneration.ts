@@ -6,6 +6,7 @@ export interface GenerateImageRequest {
   position?: number
   tokens?: number
   user_email?: string
+  aspect_ratio?: "9:16" | "16:9" | "1:1"
 }
 
 export interface GenerateImageResponse {

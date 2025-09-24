@@ -15,7 +15,8 @@ export const generateImageRequestSchema = z.object({
   logo: z.string().url('El logo debe ser una URL válida').optional(),
   position: z.number().int().min(1).max(9).optional().default(9),
   tokens: z.number().int().min(0).optional().default(0),
-  user_email: z.string().email('El email debe ser válido').optional()
+  user_email: z.string().email('El email debe ser válido').optional(),
+  aspect_ratio: z.enum(['9:16', '16:9', '1:1']).optional().default('1:1')
 })
 
 // Validación para la respuesta de la API

@@ -63,7 +63,7 @@ export default function NovedadesPage() {
         className: "text-xs"
       }}
     >
-      <div className="space-y-12">
+      <div className="space-y-12 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20 -mx-6 px-6 -my-6 py-6">
         {/* Top 3 Section */}
         <TopThreeSection topThree={topThree} />
 

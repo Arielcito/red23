@@ -15,6 +15,7 @@ import {
   Megaphone,
   Users,
   Newspaper,
+  UserCog,
 } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
@@ -71,7 +72,7 @@ export function Sidebar({ className }: SidebarProps) {
 
   const menuItems: MenuItem[] = [
     {
-      title: "Dashboard",
+      title: "Home",
       href: "/dashboard",
       icon: Home,
       description: "Panel principal"
@@ -88,12 +89,6 @@ export function Sidebar({ className }: SidebarProps) {
       icon: Images,
       description: "Ver imágenes"
     },
-    {
-      title: "Subir",
-      href: "/upload",
-      icon: Upload,
-      description: "Subir imágenes"
-    },
     /* Temporalmente oculto
     {
       title: "WhatsApp",
@@ -107,7 +102,6 @@ export function Sidebar({ className }: SidebarProps) {
       title: "Novedades",
       href: "/novedades",
       icon: Newspaper,
-      badge: "Nuevo",
       description: "Últimas noticias y casinos"
     },
     {
@@ -120,7 +114,6 @@ export function Sidebar({ className }: SidebarProps) {
       title: "Tutoriales",
       href: "/tutorials",
       icon: GraduationCap,
-      badge: "Nuevo",
       description: "Cursos de marketing"
     },
     {
@@ -128,6 +121,12 @@ export function Sidebar({ className }: SidebarProps) {
       href: "/referrals",
       icon: Users,
       description: "Sistema de referidos"
+    },
+    {
+      title: "Perfil",
+      href: "/profile",
+      icon: UserCog,
+      description: "Configura tu cuenta"
     },
     {
       title: "Ayuda",
@@ -175,16 +174,18 @@ export function Sidebar({ className }: SidebarProps) {
   return (
     <SidebarComponent variant="inset" {...{ className }}>
       <SidebarHeader>
-        <div className="flex items-center gap-2 px-4 py-2">
-          <Image
-            src="/logo.png"
-            alt="Red23"
-            width={32}
-            height={32}
-            className="h-8 w-8"
-          />
-          <span className="font-bold text-lg">Red23</span>
-        </div>
+        <Link href="/gallery" className="cursor-pointer hover:opacity-80 transition-opacity">
+          <div className="flex items-center gap-2 px-4 py-2">
+            <Image
+              src="/logo.png"
+              alt="Red23"
+              width={32}
+              height={32}
+              className="h-8 w-8"
+            />
+            <span className="font-bold text-lg">Red23</span>
+          </div>
+        </Link>
       </SidebarHeader>
 
       <SidebarContent>

@@ -3,13 +3,9 @@
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Progress } from "@/components/ui/progress"
 import {
   MessageCircle,
-  Image,
   GalleryThumbnailsIcon as Gallery,
-  TrendingUp,
-  Sparkles,
   Clock,
   Trophy,
   Star,
@@ -20,15 +16,11 @@ import Link from "next/link"
 import { AppLayout } from "@/components/layout/AppLayout"
 import { WinnerBanner } from "@/components/ui/winner-banner"
 import { useWinnersApi } from "@/lib/hooks/useWinnersApi"
-import { useImagesApi } from "@/lib/hooks/useImagesApi"
-import { useStatsApi } from "@/lib/hooks/useStatsApi"
 import { useCasinosData } from "@/lib/hooks/useCasinosData"
 import { useRewardsData } from "@/lib/hooks/useRewardsData"
 import { CountdownTimer } from "@/components/rewards/CountdownTimer"
 export default function Dashboard() {
-  const { images: apiImages } = useImagesApi()
   const { winners } = useWinnersApi()
-  const { stats } = useStatsApi()
   const { topThree } = useCasinosData()
   const { nextDailyPrize, nextMonthlyPrize } = useRewardsData()
 
@@ -58,14 +50,6 @@ export default function Dashboard() {
       href: "/gallery",
       color: "bg-secondary-500",
     },
-    {
-      title: "Subir",
-      mobileTitle: "Subir Imagen",
-      description: "Sube tus propias imágenes",
-      icon: Image,
-      href: "/upload",
-      color: "bg-tertiary-500",
-    },
     /* Temporalmente oculto
     {
       title: "Configurar WhatsApp",
@@ -93,38 +77,6 @@ export default function Dashboard() {
         {/* Winner Banner */}
         <WinnerBanner winner={dailyWinner} />
 
-        {/* Stats Cards */}
-        <div className="grid grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4 lg:gap-6">
-          <Card className="h-full">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Imágenes Generadas</CardTitle>
-              <Sparkles className="h-4 w-4 text-primary-500" />
-            </CardHeader>
-            <CardContent className="pt-0">
-              <div className="text-xl sm:text-2xl font-bold mb-1">{apiImages.length}</div>
-              <p className="text-xs text-muted-foreground">Total generadas</p>
-            </CardContent>
-          </Card>
-
-          <Card className="h-full">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Uso Mensual</CardTitle>
-              <TrendingUp className="h-4 w-4 text-primary-600" />
-            </CardHeader>
-            <CardContent className="pt-0">
-              <div className="text-xl sm:text-2xl font-bold mb-2">
-                {Math.round((apiImages.length / stats.monthlyLimit) * 100)}%
-              </div>
-              <Progress
-                value={(apiImages.length / stats.monthlyLimit) * 100}
-                className="mb-2 [&>div]:bg-primary-500"
-              />
-              <p className="text-xs text-muted-foreground">
-                {apiImages.length} de {stats.monthlyLimit} imágenes
-              </p>
-            </CardContent>
-          </Card>
-        </div>
 
         {/* Quick Actions */}
         <div>

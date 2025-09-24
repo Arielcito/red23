@@ -33,31 +33,25 @@ export function TopThreeSection({ topThree }: TopThreeSectionProps) {
   }
 
   return (
-    <section className="py-12 bg-gradient-to-br from-yellow-50 to-orange-50 dark:from-yellow-950/20 dark:to-orange-950/20">
+    <section className="py-12">
       <div className="container mx-auto px-6">
-        <div className="text-center space-y-4 mb-12">
+        <div className="text-center space-y-4 pb-12">
           <div className="flex items-center justify-center gap-2">
             <Crown className="h-8 w-8 text-yellow-500" />
-            <h2 className="text-3xl font-bold">Top 3 Casinos</h2>
+            <h2 className="text-2xl font-bold">Top 3 Casinos</h2>
           </div>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
-            Los mejores casinos seleccionados por nuestro equipo de expertos, 
+          <p className="text-muted-foreground text-sm max-w-2xl mx-auto">
+            Los mejores casinos seleccionados por nuestro equipo de expertos,
             evaluados por su calidad, seguridad y experiencia de usuario
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+        <div className="grid grid-cols-3 gap-6 max-w-6xl mx-auto">
           {topThree.map((casino, index) => (
-            <Card 
-              key={casino.id} 
-              className={cn(
-                "relative overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-xl",
-                index === 0 && "ring-2 ring-yellow-400 shadow-lg"
-              )}
-            >
-              {/* Position Badge */}
+            <div key={casino.id} className="relative">
+              {/* Position Badge - Outside Card */}
               <div className={cn(
-                "absolute top-4 left-4 w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-lg z-10 shadow-lg",
+                "absolute -top-6 left-1/2 transform -translate-x-1/2 w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-lg z-20 shadow-lg",
                 index === 0 ? "bg-gradient-to-br from-yellow-400 to-yellow-600" :
                 index === 1 ? "bg-gradient-to-br from-gray-300 to-gray-500" :
                 "bg-gradient-to-br from-orange-400 to-orange-600"
@@ -65,19 +59,15 @@ export function TopThreeSection({ topThree }: TopThreeSectionProps) {
                 #{casino.position}
               </div>
 
-              {/* Winner Badge for First Place */}
-              {index === 0 && (
-                <div className="absolute top-4 right-4 z-10">
-                  <Badge className="bg-yellow-500 hover:bg-yellow-600 text-white">
-                    <Crown className="h-3 w-3 mr-1" />
-                    Ganador
-                  </Badge>
-                </div>
-              )}
-
-              <CardContent className="p-0">
+              <Card
+                className={cn(
+                  "relative overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-xl",
+                  index === 0 && "ring-2 ring-yellow-400 shadow-lg"
+                )}
+              >
+                <CardContent className="p-0">
                 {/* Casino Image */}
-                <div className="relative h-48 w-full bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900">
+                <div className="relative aspect-square w-full bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900">
                   <Image
                     src={casino.imageUrl || '/placeholder-casino.svg'}
                     alt={casino.name}
@@ -92,15 +82,19 @@ export function TopThreeSection({ topThree }: TopThreeSectionProps) {
                   <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
                 </div>
 
-                {/* Casino Info */}
-                <div className="p-6 space-y-4">
-                  <div className="space-y-2">
-                    <h3 className="text-xl font-bold">{casino.name}</h3>
-                    <p className="text-muted-foreground">{casino.plataforma}</p>
+                {/* Casino Name */}
+                <div className="p-3 text-center">
+                  <h3 className="text-sm md:text-lg font-bold text-gray-900 dark:text-white">{casino.name}</h3>
+                </div>
+
+                {/* Casino Info - Hidden on Mobile */}
+                <div className="hidden md:block p-4 space-y-3">
+                  <div className="space-y-1">
+                    <p className="text-muted-foreground text-sm">{casino.plataforma}</p>
                   </div>
 
                   <div className="flex items-center justify-between">
-                    <Badge 
+                    <Badge
                       variant="outline"
                       className={cn(
                         "font-medium",
@@ -123,7 +117,8 @@ export function TopThreeSection({ topThree }: TopThreeSectionProps) {
 
                 </div>
               </CardContent>
-            </Card>
+              </Card>
+            </div>
           ))}
         </div>
       </div>

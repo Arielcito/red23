@@ -24,6 +24,7 @@ interface SendMessageOptions {
   userEmail?: string
   images?: string[]
   tokens?: number
+  aspectRatio?: "9:16" | "16:9" | "1:1"
 }
 
 export const useChat = () => {
@@ -85,7 +86,8 @@ export const useChat = () => {
       position: normalizedPosition,
       user_email: normalizedEmail,
       images: filteredImages,
-      tokens: options.tokens
+      tokens: options.tokens,
+      aspect_ratio: options.aspectRatio || "1:1"
     })
     
     let aiMessage: Message

@@ -3,14 +3,16 @@
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Card, CardContent } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Search, Download, ArrowLeft, Grid3X3, List, Calendar, Trash2 } from "lucide-react"
+import { Progress } from "@/components/ui/progress"
+import { Search, Download, ArrowLeft, Grid3X3, List, Calendar, Trash2, Sparkles, TrendingUp } from "lucide-react"
 import Link from "next/link"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { ImageScheduler, type ScheduleData } from "@/components/schedule/ImageScheduler"
 import { useScheduledImages } from "@/lib/hooks/useScheduledImages"
 import { useImagesApi } from "@/lib/hooks/useImagesApi"
+import { useStatsApi } from "@/lib/hooks/useStatsApi"
 import { useImageDownload } from "@/lib/hooks/useImageDownload"
 // import { useImageStorage } from "@/lib/hooks/useImageStorage" // No se usa más
 import type { ImageRecord } from "@/lib/types/imageGeneration"
@@ -82,6 +84,7 @@ export default function GalleryPage() {
   const { scheduleImage } = useScheduledImages()
   const { images: apiImages, isLoading: apiLoading, error: apiError, refreshImages } = useImagesApi()
   const { downloadImage, isDownloading } = useImageDownload()
+  const { stats } = useStatsApi()
 
   // Convertir imágenes de la API al formato GalleryImage
   const galleryImages: GalleryImage[] = apiImages.map(convertApiImageToGalleryImage)
@@ -138,11 +141,46 @@ export default function GalleryPage() {
 
   return (
     <AppLayout
-      title="Galería"
+      title="Home"
       subtitle={`${filteredImages.length} imágenes (API)`}
       showBackButton={true}
       backHref="/dashboard"
     >
+      {/* Stats Cards */}
+      <div className="p-3 sm:p-4 lg:p-6">
+        <div className="grid grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4 lg:gap-6 mb-6">
+          <Card className="h-full">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Imágenes Generadas</CardTitle>
+              <Sparkles className="h-4 w-4 text-primary-500" />
+            </CardHeader>
+            <CardContent className="pt-0">
+              <div className="text-xl sm:text-2xl font-bold mb-1">{apiImages.length}</div>
+              <p className="text-xs text-muted-foreground">Total generadas</p>
+            </CardContent>
+          </Card>
+
+          <Card className="h-full">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Uso Mensual</CardTitle>
+              <TrendingUp className="h-4 w-4 text-primary-600" />
+            </CardHeader>
+            <CardContent className="pt-0">
+              <div className="text-xl sm:text-2xl font-bold mb-2">
+                {Math.round((apiImages.length / stats.monthlyLimit) * 100)}%
+              </div>
+              <Progress
+                value={(apiImages.length / stats.monthlyLimit) * 100}
+                className="mb-2 [&>div]:bg-primary-500"
+              />
+              <p className="text-xs text-muted-foreground">
+                {apiImages.length} de {stats.monthlyLimit} imágenes
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+
       {/* View Controls */}
       <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 sm:px-6 py-2">
         <div className="flex justify-end space-x-2">
