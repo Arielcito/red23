@@ -186,19 +186,19 @@ export interface NewRewardImages {
 // CASINO SYSTEM TYPES
 // =============================================
 
+// Price options type
+export type PrecioValue = 'medio' | 'barato' | 'muy barato'
+
 // Base interfaces for casino database tables
 export interface Casino {
   id: string
-  name: string
+  casino_name: string
   logo?: string | null
-  plataforma: string
-  tiempo: string
-  potencial_value: 'high' | 'medium' | 'low'
-  potencial_color: 'green' | 'yellow' | 'red'
-  potencial_label: string
-  similar?: string | null
-  is_top_three: boolean
-  top_three_position?: number | null
+  antiguedad: string
+  precio: PrecioValue
+  rtp: number
+  plat_similar?: string | null
+  position?: number | null
   image_url?: string | null
   is_active: boolean
   created_at: string
@@ -206,60 +206,15 @@ export interface Casino {
 }
 
 export interface NewCasino {
-  name: string
+  casino_name: string
   logo?: string | null
-  plataforma: string
-  tiempo: string
-  potencial_value: 'high' | 'medium' | 'low'
-  potencial_color: 'green' | 'yellow' | 'red'
-  potencial_label: string
-  similar?: string | null
-  is_top_three?: boolean
-  top_three_position?: number | null
+  antiguedad: string
+  precio: PrecioValue
+  rtp: number
+  plat_similar?: string | null
+  position?: number | null
   image_url?: string | null
   is_active?: boolean
-}
-
-export interface CasinoField {
-  id: string
-  name: string
-  field_type: 'text' | 'number' | 'badge' | 'percentage'
-  is_required: boolean
-  display_order: number
-  is_active: boolean
-  created_at: string
-  updated_at: string
-}
-
-export interface NewCasinoField {
-  name: string
-  field_type: 'text' | 'number' | 'badge' | 'percentage'
-  is_required?: boolean
-  display_order?: number
-  is_active?: boolean
-}
-
-export interface CasinoFieldValue {
-  id: string
-  casino_id: string
-  field_id: string
-  text_value?: string | null
-  number_value?: number | null
-  badge_value?: string | null
-  badge_color?: 'red' | 'yellow' | 'green' | null
-  badge_label?: string | null
-  created_at: string
-  updated_at: string
-}
-
-export interface NewCasinoFieldValue {
-  casino_id: string
-  field_id: string
-  text_value?: string | null
-  number_value?: number | null
-  badge_value?: string | null
-  badge_color?: 'red' | 'yellow' | 'green' | null
-  badge_label?: string | null
 }
 
 export interface CasinoConfig {
@@ -277,31 +232,22 @@ export interface NewCasinoConfig {
   description?: string | null
 }
 
-// Enhanced interfaces for frontend use (matching the existing casino types)
-export interface CasinoBadgeValue {
-  value: string
-  color: 'red' | 'yellow' | 'green'
+// Enhanced interfaces for frontend use
+export interface PrecioBadgeValue {
+  value: PrecioValue
+  color: 'green' | 'yellow' | 'red'
   label: string
-}
-
-export interface CasinoFieldValueFormatted {
-  fieldId: string
-  fieldName: string
-  fieldType: 'text' | 'number' | 'badge' | 'percentage'
-  value: string | number | CasinoBadgeValue
 }
 
 export interface CasinoWithFields {
   id: string
-  name: string
+  casinoName: string
   logo?: string | null
-  plataforma: string
-  tiempo: string
-  potencial: CasinoBadgeValue
-  similar?: string | null
-  customFields: CasinoFieldValueFormatted[]
-  isTopThree: boolean
-  topThreePosition?: number | null
+  antiguedad: string
+  precio: PrecioValue
+  rtp: number
+  platSimilar?: string | null
+  position?: number | null
   imageUrl?: string | null
   createdAt: string
   updatedAt: string
@@ -309,15 +255,15 @@ export interface CasinoWithFields {
 
 export interface TopCasino {
   id: string
-  name: string
-  plataforma: string
+  casinoName: string
+  antiguedad: string
+  precio: PrecioValue
+  rtp: number
   imageUrl: string
-  potencial: CasinoBadgeValue
   position: number
 }
 
 export interface CasinoConfigFormatted {
-  customFields: CasinoField[]
   topThreeIds: string[]
   settings: Record<string, any>
 }
@@ -339,32 +285,27 @@ export interface CasinoApiResponse {
   data: CasinoWithFields
 }
 
-export interface CasinoFieldsApiResponse {
-  success: boolean
-  data: CasinoField[]
-}
-
 export interface CasinoConfigApiResponse {
   success: boolean
   data: CasinoConfigFormatted
 }
 
-// Default values for casino potential
-export const CASINO_POTENCIAL_VALUES: Record<'high' | 'medium' | 'low', CasinoBadgeValue> = {
-  high: {
-    value: 'high',
+// Default values for casino price options
+export const CASINO_PRECIO_VALUES: Record<PrecioValue, PrecioBadgeValue> = {
+  'muy barato': {
+    value: 'muy barato',
     color: 'green',
-    label: 'Alto'
+    label: 'Muy Barato'
   },
-  medium: {
-    value: 'medium', 
-    color: 'yellow',
+  'barato': {
+    value: 'barato',
+    color: 'yellow', 
+    label: 'Barato'
+  },
+  'medio': {
+    value: 'medio',
+    color: 'red',
     label: 'Medio'
-  },
-  low: {
-    value: 'low',
-    color: 'red', 
-    label: 'Bajo'
   }
 }
 
@@ -430,4 +371,78 @@ export interface NewsApiResponse {
 export interface SingleNewsApiResponse {
   success: boolean
   data: NewsFormatted
+}
+
+// =============================================
+// LEARNING PATHS SYSTEM TYPES
+// =============================================
+
+export interface LearningPath {
+  id: string
+  title: string
+  description: string
+  level: 'Principiante' | 'Intermedio' | 'Avanzado'
+  duration: string
+  course_count: number
+  icon: string
+  color_scheme: 'primary' | 'secondary' | 'tertiary'
+  slug: string
+  image_url?: string | null
+  is_featured: boolean
+  is_active: boolean
+  display_order: number
+  created_at: string
+  updated_at: string
+}
+
+export interface NewLearningPath {
+  title: string
+  description: string
+  level: 'Principiante' | 'Intermedio' | 'Avanzado'
+  duration: string
+  course_count: number
+  icon: string
+  color_scheme: 'primary' | 'secondary' | 'tertiary'
+  slug: string
+  image_url?: string | null
+  is_featured?: boolean
+  is_active?: boolean
+  display_order?: number
+}
+
+// Enhanced interfaces for frontend use
+export interface LearningPathFormatted {
+  id: string
+  title: string
+  description: string
+  level: 'Principiante' | 'Intermedio' | 'Avanzado'
+  duration: string
+  courseCount: number
+  icon: string
+  colorScheme: 'primary' | 'secondary' | 'tertiary'
+  slug: string
+  imageUrl?: string | null
+  isFeatured: boolean
+  isActive: boolean
+  displayOrder: number
+  createdAt: string
+  updatedAt: string
+  href: string
+}
+
+// API Response types
+export interface LearningPathsApiResponse {
+  success: boolean
+  data: LearningPathFormatted[]
+  meta?: {
+    total: number
+    page: number
+    perPage: number
+    totalPages: number
+  }
+}
+
+export interface LearningPathApiResponse {
+  success: boolean
+  data: LearningPathFormatted
 }

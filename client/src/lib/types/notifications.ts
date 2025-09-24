@@ -10,6 +10,7 @@ export interface Notification {
     prizeName?: string
     prizeValue?: number
     actionUrl?: string
+    actionLabel?: string
     [key: string]: any
   }
 }

@@ -16,21 +16,22 @@ export function ReferralCodeDisplay({
 
   const handleCopy = async () => {
     try {
-      await navigator.clipboard.writeText(code)
+      const referralUrl = `${window.location.origin}/login?referral=${code}`
+      await navigator.clipboard.writeText(referralUrl)
       setCopied(true)
       onCopy?.()
-      
+
       setTimeout(() => {
         setCopied(false)
       }, 2000)
     } catch (error) {
-      console.error('Error copiando código:', error)
+      console.error('Error copiando URL de referido:', error)
     }
   }
 
   const handleShare = async () => {
     const shareText = `¡Únete a Red23 con mi código de referido: ${code}!`
-    const shareUrl = `${window.location.origin}/login?ref=${code}`
+    const shareUrl = `${window.location.origin}/login?referral=${code}`
     
     if (navigator.share) {
       try {
@@ -67,9 +68,9 @@ export function ReferralCodeDisplay({
   return (
     <Card className={cn('w-full', className)}>
       <CardHeader className="text-center">
-        <CardTitle className="text-xl">Tu Código de Referido</CardTitle>
+        <CardTitle className="text-xl">Tu Enlace de Referido</CardTitle>
         <CardDescription>
-          Comparte este código con tus amigos para ganar recompensas
+          Comparte este enlace con tus amigos para ganar recompensas
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -96,7 +97,7 @@ export function ReferralCodeDisplay({
             ) : (
               <>
                 <Copy className="h-4 w-4 mr-2" />
-                Copiar
+                Copiar Enlace
               </>
             )}
           </Button>

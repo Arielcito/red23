@@ -74,16 +74,13 @@ export async function PUT(request: NextRequest, context: RouteParamsContext) {
     // Preparar datos de actualización (solo campos que se envían)
     const updateData: Partial<NewCasino> = {}
 
-    if (body.name !== undefined) updateData.name = body.name.trim()
+    if (body.casino_name !== undefined) updateData.casino_name = body.casino_name.trim()
     if (body.logo !== undefined) updateData.logo = body.logo
-    if (body.plataforma !== undefined) updateData.plataforma = body.plataforma.trim()
-    if (body.tiempo !== undefined) updateData.tiempo = body.tiempo.trim()
-    if (body.potencial_value !== undefined) updateData.potencial_value = body.potencial_value
-    if (body.potencial_color !== undefined) updateData.potencial_color = body.potencial_color
-    if (body.potencial_label !== undefined) updateData.potencial_label = body.potencial_label
-    if (body.similar !== undefined) updateData.similar = body.similar?.trim() || null
-    if (body.is_top_three !== undefined) updateData.is_top_three = body.is_top_three
-    if (body.top_three_position !== undefined) updateData.top_three_position = body.top_three_position
+    if (body.antiguedad !== undefined) updateData.antiguedad = body.antiguedad.trim()
+    if (body.precio !== undefined) updateData.precio = body.precio
+    if (body.rtp !== undefined) updateData.rtp = body.rtp
+    if (body.plat_similar !== undefined) updateData.plat_similar = body.plat_similar?.trim() || null
+    if (body.position !== undefined) updateData.position = body.position
     if (body.image_url !== undefined) updateData.image_url = body.image_url
     if (body.is_active !== undefined) updateData.is_active = body.is_active
 

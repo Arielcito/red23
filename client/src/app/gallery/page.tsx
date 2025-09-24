@@ -147,59 +147,37 @@ export default function GalleryPage() {
       backHref="/dashboard"
     >
       {/* Stats Cards */}
-      <div className="p-3 sm:p-4 lg:p-6">
-        <div className="grid grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4 lg:gap-6 mb-6">
+      <div className="pt-4 p-4 sm:pt-6 sm:p-2 lg:pt-8 lg:p-3">
+        <div className="grid grid-cols-2 xl:grid-cols-3 gap-5 sm:gap-2 lg:gap-2 mb-2">
           <Card className="h-full">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Imágenes Generadas</CardTitle>
-              <Sparkles className="h-4 w-4 text-primary-500" />
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-0.5 px-2 py-1">
+              <CardTitle className="text-xs font-medium">Imágenes Generadas</CardTitle>
+              <Sparkles className="h-3 w-3 text-primary-500" />
             </CardHeader>
-            <CardContent className="pt-0">
-              <div className="text-xl sm:text-2xl font-bold mb-1">{apiImages.length}</div>
+            <CardContent className="pt-0 px-2 pb-1">
+              <div className="text-sm sm:text-base font-bold mb-0.5">{apiImages.length}</div>
               <p className="text-xs text-muted-foreground">Total generadas</p>
             </CardContent>
           </Card>
 
           <Card className="h-full">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Uso Mensual</CardTitle>
-              <TrendingUp className="h-4 w-4 text-primary-600" />
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-0.5 px-2 py-1">
+              <CardTitle className="text-xs font-medium">Uso Mensual</CardTitle>
+              <TrendingUp className="h-3 w-3 text-primary-600" />
             </CardHeader>
-            <CardContent className="pt-0">
-              <div className="text-xl sm:text-2xl font-bold mb-2">
+            <CardContent className="pt-0 px-2 pb-1">
+              <div className="text-sm sm:text-base font-bold mb-0.5">
                 {Math.round((apiImages.length / stats.monthlyLimit) * 100)}%
               </div>
               <Progress
                 value={(apiImages.length / stats.monthlyLimit) * 100}
-                className="mb-2 [&>div]:bg-primary-500"
+                className="mb-0.5 h-1 [&>div]:bg-primary-500"
               />
               <p className="text-xs text-muted-foreground">
                 {apiImages.length} de {stats.monthlyLimit} imágenes
               </p>
             </CardContent>
           </Card>
-        </div>
-      </div>
-
-      {/* View Controls */}
-      <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 sm:px-6 py-2">
-        <div className="flex justify-end space-x-2">
-          <Button
-            variant={viewMode === "grid" ? "default" : "outline"}
-            size="sm"
-            onClick={() => setViewMode("grid")}
-            className={viewMode === "grid" ? "bg-primary-600 hover:bg-primary-700" : ""}
-          >
-            <Grid3X3 className="h-3 w-3 sm:h-4 sm:w-4" />
-          </Button>
-          <Button
-            variant={viewMode === "list" ? "default" : "outline"}
-            size="sm"
-            onClick={() => setViewMode("list")}
-            className={viewMode === "list" ? "bg-primary-600 hover:bg-primary-700" : ""}
-          >
-            <List className="h-3 w-3 sm:h-4 sm:w-4" />
-          </Button>
         </div>
       </div>
 
@@ -213,7 +191,7 @@ export default function GalleryPage() {
                 placeholder="Buscar por título, prompt o etiquetas..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
+                className="pl-10 placeholder:text-xs"
               />
             </div>
           </div>

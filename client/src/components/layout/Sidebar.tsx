@@ -123,12 +123,6 @@ export function Sidebar({ className }: SidebarProps) {
       description: "Sistema de referidos"
     },
     {
-      title: "Perfil",
-      href: "/profile",
-      icon: UserCog,
-      description: "Configura tu cuenta"
-    },
-    {
       title: "Ayuda",
       href: "/help",
       icon: HelpCircle,

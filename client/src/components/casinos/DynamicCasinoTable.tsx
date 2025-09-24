@@ -1,6 +1,7 @@
 "use client"
 
-import type { CasinoWithFields, CasinoField, CasinoBadgeValue } from '@/lib/supabase/types'
+import type { CasinoWithFields } from '@/lib/supabase/types'
+import { CASINO_PRECIO_VALUES } from '@/lib/supabase/types'
 import { Badge } from '@/components/ui/badge'
 import {
   Table,
@@ -14,81 +15,27 @@ import { cn } from '@/lib/utils'
 
 interface DynamicCasinoTableProps {
   casinos: CasinoWithFields[]
-  customFields: CasinoField[]
   className?: string
 }
 
-export function DynamicCasinoTable({ casinos, customFields, className }: DynamicCasinoTableProps) {
-  const getBadgeColor = (color: string) => {
-    switch (color) {
-      case 'green':
+export function DynamicCasinoTable({ casinos, className }: DynamicCasinoTableProps) {
+  const getBadgeColor = (precio: 'medio' | 'barato' | 'muy barato') => {
+    switch (precio) {
+      case 'muy barato':
         return 'bg-green-100 text-green-800 border-green-200 dark:bg-green-900 dark:text-green-300 dark:border-green-800'
-      case 'yellow': 
+      case 'barato': 
         return 'bg-yellow-100 text-yellow-800 border-yellow-200 dark:bg-yellow-900 dark:text-yellow-300 dark:border-yellow-800'
-      case 'red':
+      case 'medio':
         return 'bg-red-100 text-red-800 border-red-200 dark:bg-red-900 dark:text-red-300 dark:border-red-800'
       default:
         return 'bg-gray-100 text-gray-800 border-gray-200 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-800'
     }
   }
 
-  const renderCellContent = (field: CasinoField, casino: CasinoWithFields) => {
-    const fieldValue = casino.customFields.find(cf => cf.fieldId === field.id)
-    
-    if (!fieldValue) {
-      return <span className="text-muted-foreground">-</span>
-    }
-
-    switch (field.field_type) {
-      case 'badge':
-        const badgeValue = fieldValue.value as CasinoBadgeValue
-        return (
-          <Badge 
-            variant="outline"
-            className={cn(
-              'text-xs font-medium',
-              getBadgeColor(badgeValue.color)
-            )}
-          >
-            {badgeValue.label}
-          </Badge>
-        )
-      case 'percentage':
-        const percentValue = Number(fieldValue.value)
-        return (
-          <div className="flex items-center gap-2">
-            <span className="text-sm font-medium">
-              {percentValue}%
-            </span>
-            <div className="w-16 h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-              <div 
-                className="h-full bg-primary-500 transition-all duration-300"
-                style={{ width: `${Math.min(100, Math.max(0, percentValue))}%` }}
-              />
-            </div>
-          </div>
-        )
-      case 'number':
-        return (
-          <span className="text-sm font-medium text-foreground">
-            {String(fieldValue.value)}
-          </span>
-        )
-      case 'text':
-      default:
-        return (
-          <span className="text-sm text-foreground">
-            {String(fieldValue.value)}
-          </span>
-        )
-    }
-  }
-
   // Filtrar solo casinos que no son top 3 para la tabla
-  const tableCasinos = casinos.filter(casino => !casino.isTopThree)
-
-  // Ordenar campos personalizados por display_order
-  const sortedFields = [...customFields].sort((a, b) => a.display_order - b.display_order)
+  const tableCasinos = casinos.filter(casino => 
+    casino.position === null || casino.position === undefined || casino.position > 3
+  )
 
   return (
     <div className={cn('w-full overflow-auto', className)}>
@@ -96,25 +43,20 @@ export function DynamicCasinoTable({ casinos, customFields, className }: Dynamic
         <TableHeader>
           <TableRow className="border-border">
             <TableHead className="font-semibold text-foreground">
-              Plataforma
+              Casino
             </TableHead>
             <TableHead className="font-semibold text-foreground">
-              Tiempo
+              Antigüedad
             </TableHead>
             <TableHead className="font-semibold text-foreground">
-              Potencial
+              Precio
             </TableHead>
             <TableHead className="font-semibold text-foreground">
-              Similar
+              RTP
             </TableHead>
-            {sortedFields.map(field => (
-              <TableHead 
-                key={field.id}
-                className="font-semibold text-foreground"
-              >
-                {field.name}
-              </TableHead>
-            ))}
+            <TableHead className="font-semibold text-foreground">
+              Plat. Similar
+            </TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -129,7 +71,7 @@ export function DynamicCasinoTable({ casinos, customFields, className }: Dynamic
                     <div className="w-8 h-8 rounded-md overflow-hidden bg-gray-100 dark:bg-gray-800 flex-shrink-0">
                       <img
                         src={casino.logo}
-                        alt={casino.name}
+                        alt={casino.casinoName}
                         className="w-full h-full object-cover"
                         onError={(e) => {
                           const target = e.target as HTMLImageElement
@@ -140,38 +82,48 @@ export function DynamicCasinoTable({ casinos, customFields, className }: Dynamic
                   )}
                   <div>
                     <div className="font-medium text-foreground">
-                      {casino.name}
+                      {casino.casinoName}
                     </div>
-                    <div className="text-xs text-muted-foreground">
-                      {casino.plataforma}
-                    </div>
+                    {casino.position && (
+                      <div className="text-xs text-muted-foreground">
+                        Posición #{casino.position}
+                      </div>
+                    )}
                   </div>
                 </div>
               </TableCell>
-              <TableCell className="text-sm text-muted-foreground">
-                {casino.tiempo}
+              <TableCell className="text-sm text-foreground">
+                {casino.antiguedad}
               </TableCell>
               <TableCell>
                 <Badge 
                   variant="outline"
                   className={cn(
                     'text-xs font-medium',
-                    getBadgeColor(casino.potencial.color)
+                    getBadgeColor(casino.precio)
                   )}
                 >
-                  {casino.potencial.label}
+                  {CASINO_PRECIO_VALUES[casino.precio].label}
                 </Badge>
               </TableCell>
-              <TableCell className="text-sm text-muted-foreground max-w-xs">
-                <div className="truncate" title={casino.similar || undefined}>
-                  {casino.similar || '-'}
+              <TableCell>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-medium">
+                    {casino.rtp}%
+                  </span>
+                  <div className="w-16 h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                    <div 
+                      className="h-full bg-primary-500 transition-all duration-300"
+                      style={{ width: `${Math.min(100, Math.max(0, casino.rtp))}%` }}
+                    />
+                  </div>
                 </div>
               </TableCell>
-              {sortedFields.map(field => (
-                <TableCell key={field.id}>
-                  {renderCellContent(field, casino)}
-                </TableCell>
-              ))}
+              <TableCell className="text-sm text-foreground max-w-xs">
+                <div className="truncate" title={casino.platSimilar || undefined}>
+                  {casino.platSimilar || '-'}
+                </div>
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>

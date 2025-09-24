@@ -11,57 +11,67 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
 import { Switch } from "@/components/ui/switch"
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet"
 import { useCasinosData } from "@/lib/hooks/useCasinosData"
-import type { CasinoWithFields, CasinoField, NewsFormatted } from "@/lib/supabase/types"
-import { CASINO_POTENCIAL_VALUES } from "@/lib/supabase/types"
+import type { CasinoWithFields, NewsFormatted } from "@/lib/supabase/types"
+import { CASINO_PRECIO_VALUES } from "@/lib/supabase/types"
 import { NewsService } from "@/lib/services/newsService"
-import { 
-  Settings, 
-  Plus, 
-  Edit, 
-  Trash2, 
-  Save, 
-  Upload, 
+import {
+  Settings,
+  Plus,
+  Edit,
+  Trash2,
+  Save,
+  Upload,
   Crown,
-  Table2,
-  Columns3,
   AlertCircle,
   Newspaper,
   Star,
-  Calendar,
   Eye,
-  EyeOff
+  EyeOff,
+  ArrowUpDown
 } from "lucide-react"
 import Image from "next/image"
 import { cn } from "@/lib/utils"
+import { useNotifications } from "@/lib/hooks/useNotifications"
+
+const getCasinoInitial = (name?: string | null) => {
+  if (!name) return "?"
+  const initial = name.trim().charAt(0)
+  return initial ? initial.toUpperCase() : "?"
+}
 
 export default function AdminCasinosPage() {
   const { 
     casinos, 
     topThree, 
-    config, 
     isLoading, 
     error,
     updateCasino,
-    setTopThree,
     updateTopThreeImage,
-    addCustomField,
-    updateCustomField,
-    deleteCustomField,
     createCasino,
     deleteCasino
   } = useCasinosData()
 
   const [editingCasino, setEditingCasino] = useState<CasinoWithFields | null>(null)
-  const [newFieldName, setNewFieldName] = useState("")
-  const [newFieldType, setNewFieldType] = useState<"text" | "number" | "badge" | "percentage">("text")
+  const [isEditing, setIsEditing] = useState(false)
+  const [editFormErrors, setEditFormErrors] = useState<Record<string, string>>({})
   const [showCreateForm, setShowCreateForm] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [formErrors, setFormErrors] = useState<Record<string, string>>({})
   const [newCasinoForm, setNewCasinoForm] = useState({
-    name: '',
-    plataforma: '',
-    tiempo: '',
-    potencial_value: 'medium' as 'high' | 'medium' | 'low',
-    similar: ''
+    casinoName: '',
+    antiguedad: '',
+    precio: 'medio' as 'medio' | 'barato' | 'muy barato',
+    rtp: 0,
+    platSimilar: '',
+    position: null as number | null
   })
   const [imageUploading, setImageUploading] = useState(false)
   
@@ -80,6 +90,8 @@ export default function AdminCasinosPage() {
     isPublished: true
   })
 
+  const { createNotification } = useNotifications()
+
   // Mock image upload - en producción se conectaría a un servicio real
   const handleImageUpload = async (casinoId: string, file: File) => {
     setImageUploading(true)
@@ -96,56 +108,59 @@ export default function AdminCasinosPage() {
     }
   }
 
-  const handleAddCustomField = async () => {
-    if (!newFieldName.trim()) return
+
+  const validateForm = () => {
+    const errors: Record<string, string> = {}
     
-    try {
-      await addCustomField({
-        name: newFieldName,
-        field_type: newFieldType,
-        is_required: false,
-        display_order: config.customFields.length + 1,
-        is_active: true
-      })
-      setNewFieldName("")
-      setNewFieldType("text")
-    } catch (err) {
-      console.error('❌ Error agregando campo:', err)
+    if (!newCasinoForm.casinoName.trim()) {
+      errors.casinoName = 'El nombre del casino es requerido'
     }
+    if (!newCasinoForm.antiguedad.trim()) {
+      errors.antiguedad = 'La antigüedad es requerida'
+    }
+    if (newCasinoForm.rtp < 0 || newCasinoForm.rtp > 100) {
+      errors.rtp = 'El RTP debe estar entre 0 y 100'
+    }
+    
+    setFormErrors(errors)
+    return Object.keys(errors).length === 0
   }
 
   const handleCreateCasino = async () => {
-    if (!newCasinoForm.name.trim() || !newCasinoForm.plataforma.trim() || !newCasinoForm.tiempo.trim()) {
-      console.error('❌ Faltan campos requeridos')
+    if (!validateForm()) {
+      console.error('❌ Errores en el formulario')
       return
     }
 
+    setIsSubmitting(true)
     try {
-      const potencialConfig = CASINO_POTENCIAL_VALUES[newCasinoForm.potencial_value]
-      
       await createCasino({
-        name: newCasinoForm.name,
-        plataforma: newCasinoForm.plataforma,
-        tiempo: newCasinoForm.tiempo,
-        potencial: potencialConfig,
-        similar: newCasinoForm.similar || null,
-        customFields: [],
-        isTopThree: false
+        casinoName: newCasinoForm.casinoName,
+        antiguedad: newCasinoForm.antiguedad,
+        precio: newCasinoForm.precio,
+        rtp: newCasinoForm.rtp,
+        platSimilar: newCasinoForm.platSimilar || null,
+        position: newCasinoForm.position
       })
       
       // Reset form
       setNewCasinoForm({
-        name: '',
-        plataforma: '',
-        tiempo: '',
-        potencial_value: 'medium',
-        similar: ''
+        casinoName: '',
+        antiguedad: '',
+        precio: 'medio',
+        rtp: 0,
+        platSimilar: '',
+        position: null
       })
+      setFormErrors({})
       setShowCreateForm(false)
       
       console.log('✅ Casino creado exitosamente')
     } catch (err) {
       console.error('❌ Error creando casino:', err)
+      setFormErrors({ general: 'Error al crear el casino. Intenta nuevamente.' })
+    } finally {
+      setIsSubmitting(false)
     }
   }
 
@@ -187,7 +202,7 @@ export default function AdminCasinosPage() {
     }
 
     try {
-      await NewsService.createNews({
+      const createdNews = await NewsService.createNews({
         title: newNewsForm.title,
         excerpt: newNewsForm.excerpt || null,
         content: newNewsForm.content || null,
@@ -197,6 +212,16 @@ export default function AdminCasinosPage() {
         is_featured: newNewsForm.isFeatured,
         is_published: newNewsForm.isPublished
       })
+
+      createNotification(
+        'info',
+        'Nueva novedad publicada',
+        `Ya podés leer "${createdNews.title}"`,
+        {
+          actionUrl: `/novedades/${createdNews.id}`,
+          actionLabel: 'Ver noticia'
+        }
+      )
       
       // Reset form
       setNewNewsForm({
@@ -254,13 +279,78 @@ export default function AdminCasinosPage() {
     }
   }
 
-  const handleUpdateTopThree = async (casinoIds: string[]) => {
+
+  const handleEditCasino = (casino: CasinoWithFields) => {
+    setEditingCasino(casino)
+    setEditFormErrors({})
+  }
+
+  const validateEditForm = (casino: CasinoWithFields) => {
+    const errors: Record<string, string> = {}
+    
+    if (!casino.casinoName.trim()) {
+      errors.casinoName = 'El nombre del casino es requerido'
+    }
+    if (!casino.antiguedad.trim()) {
+      errors.antiguedad = 'La antigüedad es requerida'
+    }
+    if (casino.rtp < 0 || casino.rtp > 100) {
+      errors.rtp = 'El RTP debe estar entre 0 y 100'
+    }
+    
+    setEditFormErrors(errors)
+    return Object.keys(errors).length === 0
+  }
+
+  const handleSaveCasino = async () => {
+    if (!editingCasino) return
+    
+    if (!validateEditForm(editingCasino)) {
+      console.error('❌ Errores en el formulario de edición')
+      return
+    }
+
+    setIsEditing(true)
     try {
-      await setTopThree(casinoIds)
+      await updateCasino(editingCasino.id, {
+        casinoName: editingCasino.casinoName,
+        antiguedad: editingCasino.antiguedad,
+        precio: editingCasino.precio,
+        rtp: editingCasino.rtp,
+        platSimilar: editingCasino.platSimilar,
+        position: editingCasino.position
+      })
+      setEditingCasino(null)
+      setEditFormErrors({})
+      console.log('✅ Casino actualizado exitosamente')
     } catch (err) {
-      console.error('❌ Error actualizando top 3:', err)
+      console.error('❌ Error actualizando casino:', err)
+      setEditFormErrors({ general: 'Error al actualizar el casino. Intenta nuevamente.' })
+    } finally {
+      setIsEditing(false)
     }
   }
+
+  const handleSwapTopThreePositions = async (casino1: any, casino2: any) => {
+    try {
+      const pos1 = casino1.position
+      const pos2 = casino2.position
+      
+      // Intercambiar posiciones
+      await updateCasino(casino1.id, {
+        position: pos2
+      })
+      
+      await updateCasino(casino2.id, {
+        position: pos1
+      })
+      
+      console.log('✅ Posiciones intercambiadas exitosamente')
+    } catch (err) {
+      console.error('❌ Error intercambiando posiciones:', err)
+    }
+  }
+
 
   if (error) {
     return (
@@ -294,18 +384,10 @@ export default function AdminCasinosPage() {
     >
       <div className="p-6 space-y-6">
         <Tabs defaultValue="top-three" className="w-full">
-          <TabsList className="grid w-full grid-cols-5">
+          <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="top-three" className="gap-2">
               <Crown className="h-4 w-4" />
               Top 3
-            </TabsTrigger>
-            <TabsTrigger value="table" className="gap-2">
-              <Table2 className="h-4 w-4" />
-              Tabla
-            </TabsTrigger>
-            <TabsTrigger value="fields" className="gap-2">
-              <Columns3 className="h-4 w-4" />
-              Campos
             </TabsTrigger>
             <TabsTrigger value="casinos" className="gap-2">
               <Settings className="h-4 w-4" />
@@ -344,7 +426,7 @@ export default function AdminCasinosPage() {
                     <div className="relative w-20 h-20 rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800">
                       <Image
                         src={casino.imageUrl}
-                        alt={casino.name}
+                        alt={casino.casinoName}
                         fill
                         className="object-cover"
                         onError={(e) => {
@@ -355,43 +437,78 @@ export default function AdminCasinosPage() {
                     </div>
                     
                     <div className="flex-1">
-                      <h3 className="font-medium">{casino.name}</h3>
-                      <p className="text-sm text-muted-foreground">{casino.plataforma}</p>
-                      <Badge 
-                        variant="outline"
-                        className={cn(
-                          "text-xs mt-1",
-                          casino.potencial.color === 'green' ? 'bg-green-100 text-green-800 border-green-200' :
-                          casino.potencial.color === 'yellow' ? 'bg-yellow-100 text-yellow-800 border-yellow-200' :
-                          'bg-red-100 text-red-800 border-red-200'
-                        )}
-                      >
-                        {casino.potencial.label}
-                      </Badge>
+                      <h3 className="font-medium">{casino.casinoName}</h3>
+                      <p className="text-sm text-muted-foreground">Antigüedad: {casino.antiguedad}</p>
+                      <div className="flex gap-2 mt-1">
+                        <Badge 
+                          variant="outline"
+                          className={cn(
+                            "text-xs",
+                            casino.precio === 'muy barato' ? 'bg-green-100 text-green-800 border-green-200' :
+                            casino.precio === 'barato' ? 'bg-yellow-100 text-yellow-800 border-yellow-200' :
+                            'bg-red-100 text-red-800 border-red-200'
+                          )}
+                        >
+                          {CASINO_PRECIO_VALUES[casino.precio].label}
+                        </Badge>
+                        <Badge variant="secondary" className="text-xs">
+                          RTP: {casino.rtp}%
+                        </Badge>
+                      </div>
                     </div>
                     
-                    <div className="space-y-2">
-                      <Input
-                        type="file"
-                        accept="image/*"
-                        className="w-40"
-                        disabled={imageUploading}
-                        onChange={async (e) => {
-                          const file = e.target.files?.[0]
-                          if (file) {
-                            await handleImageUpload(casino.id, file)
-                          }
-                        }}
-                      />
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        disabled={imageUploading}
-                        className="w-40"
-                      >
-                        <Upload className="h-4 w-4 mr-2" />
-                        {imageUploading ? "Subiendo..." : "Cambiar imagen"}
-                      </Button>
+                    <div className="flex items-center gap-2">
+                      <div className="space-y-2">
+                        <Input
+                          type="file"
+                          accept="image/*"
+                          className="w-40"
+                          disabled={imageUploading}
+                          onChange={async (e) => {
+                            const file = e.target.files?.[0]
+                            if (file) {
+                              await handleImageUpload(casino.id, file)
+                            }
+                          }}
+                        />
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          disabled={imageUploading}
+                          className="w-40"
+                        >
+                          <Upload className="h-4 w-4 mr-2" />
+                          {imageUploading ? "Subiendo..." : "Cambiar imagen"}
+                        </Button>
+                      </div>
+                      
+                      {/* Botones de reordenamiento */}
+                      <div className="flex flex-col gap-1">
+                        {index > 0 && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => {
+                              const prevCasino = topThree[index - 1]
+                              handleSwapTopThreePositions(casino, prevCasino)
+                            }}
+                            className="p-2"
+                          >
+                            <ArrowUpDown className="h-3 w-3" />
+                          </Button>
+                        )}
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            const casinoToEdit = casinos.find(c => c.id === casino.id)
+                            if (casinoToEdit) handleEditCasino(casinoToEdit)
+                          }}
+                          className="p-2"
+                        >
+                          <Edit className="h-3 w-3" />
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -399,130 +516,7 @@ export default function AdminCasinosPage() {
             </Card>
           </TabsContent>
 
-          {/* Table Data Management */}
-          <TabsContent value="table" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Casinos en Tabla Comparativa</CardTitle>
-                <CardDescription>
-                  Gestionar casinos que aparecen en la tabla de comparación
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {casinos.filter(c => !c.isTopThree).map((casino) => (
-                    <div key={casino.id} className="flex items-center justify-between p-4 border rounded-lg">
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-lg bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
-                          <span className="text-sm font-bold">
-                            {casino.name.charAt(0)}
-                          </span>
-                        </div>
-                        <div>
-                          <h3 className="font-medium">{casino.name}</h3>
-                          <p className="text-sm text-muted-foreground">
-                            {casino.plataforma} • {casino.tiempo}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Badge 
-                          variant="outline"
-                          className={cn(
-                            "text-xs",
-                            casino.potencial.color === 'green' ? 'bg-green-100 text-green-800 border-green-200' :
-                            casino.potencial.color === 'yellow' ? 'bg-yellow-100 text-yellow-800 border-yellow-200' :
-                            'bg-red-100 text-red-800 border-red-200'
-                          )}
-                        >
-                          {casino.potencial.label}
-                        </Badge>
-                        <Button variant="outline" size="sm">
-                          <Edit className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
 
-          {/* Custom Fields Management */}
-          <TabsContent value="fields" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Campos Personalizados</CardTitle>
-                <CardDescription>
-                  Agregar y configurar campos dinámicos para la tabla
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                {/* Add new field */}
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-4 p-4 border-2 border-dashed rounded-lg">
-                  <div>
-                    <Label htmlFor="field-name">Nombre del campo</Label>
-                    <Input
-                      id="field-name"
-                      placeholder="Ej: Bonos, Rating..."
-                      value={newFieldName}
-                      onChange={(e) => setNewFieldName(e.target.value)}
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="field-type">Tipo</Label>
-                    <Select value={newFieldType} onValueChange={(value: any) => setNewFieldType(value)}>
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="text">Texto</SelectItem>
-                        <SelectItem value="number">Número</SelectItem>
-                        <SelectItem value="badge">Badge</SelectItem>
-                        <SelectItem value="percentage">Porcentaje</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="md:col-span-2 flex items-end">
-                    <Button 
-                      onClick={handleAddCustomField}
-                      disabled={!newFieldName.trim()}
-                      className="w-full"
-                    >
-                      <Plus className="h-4 w-4 mr-2" />
-                      Agregar Campo
-                    </Button>
-                  </div>
-                </div>
-
-                {/* Existing fields */}
-                <div className="space-y-3">
-                  {config.customFields.map((field) => (
-                    <div key={field.id} className="flex items-center justify-between p-4 border rounded-lg">
-                      <div>
-                        <h3 className="font-medium">{field.name}</h3>
-                        <p className="text-sm text-muted-foreground capitalize">
-                          Tipo: {field.field_type} • Orden: {field.display_order}
-                        </p>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Button variant="outline" size="sm">
-                          <Edit className="h-4 w-4" />
-                        </Button>
-                        <Button 
-                          variant="outline" 
-                          size="sm"
-                          onClick={() => deleteCustomField(field.id)}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
 
           {/* Casino Management */}
           <TabsContent value="casinos" className="space-y-6">
@@ -552,66 +546,126 @@ export default function AdminCasinosPage() {
                       <CardContent className="space-y-4">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           <div>
-                            <Label htmlFor="casino-name">Nombre del Casino</Label>
+                            <Label htmlFor="casino-name">Nombre del Casino *</Label>
                             <Input
                               id="casino-name"
                               placeholder="Ej: Casino Royal"
-                              value={newCasinoForm.name}
-                              onChange={(e) => setNewCasinoForm(prev => ({ ...prev, name: e.target.value }))}
+                              value={newCasinoForm.casinoName}
+                              onChange={(e) => {
+                                setNewCasinoForm(prev => ({ ...prev, casinoName: e.target.value }))
+                                if (formErrors.casinoName) {
+                                  setFormErrors(prev => ({ ...prev, casinoName: '' }))
+                                }
+                              }}
+                              className={formErrors.casinoName ? 'border-red-500' : ''}
                             />
+                            {formErrors.casinoName && <p className="text-red-500 text-sm mt-1">{formErrors.casinoName}</p>}
                           </div>
                           <div>
-                            <Label htmlFor="casino-plataforma">Plataforma</Label>
+                            <Label htmlFor="casino-antiguedad">Antigüedad *</Label>
                             <Input
-                              id="casino-plataforma"
-                              placeholder="Ej: Web/Mobile"
-                              value={newCasinoForm.plataforma}
-                              onChange={(e) => setNewCasinoForm(prev => ({ ...prev, plataforma: e.target.value }))}
+                              id="casino-antiguedad"
+                              placeholder="Ej: 5 años"
+                              value={newCasinoForm.antiguedad}
+                              onChange={(e) => {
+                                setNewCasinoForm(prev => ({ ...prev, antiguedad: e.target.value }))
+                                if (formErrors.antiguedad) {
+                                  setFormErrors(prev => ({ ...prev, antiguedad: '' }))
+                                }
+                              }}
+                              className={formErrors.antiguedad ? 'border-red-500' : ''}
                             />
+                            {formErrors.antiguedad && <p className="text-red-500 text-sm mt-1">{formErrors.antiguedad}</p>}
                           </div>
                           <div>
-                            <Label htmlFor="casino-tiempo">Tiempo de Implementación</Label>
-                            <Input
-                              id="casino-tiempo"
-                              placeholder="Ej: 2-4 semanas"
-                              value={newCasinoForm.tiempo}
-                              onChange={(e) => setNewCasinoForm(prev => ({ ...prev, tiempo: e.target.value }))}
-                            />
-                          </div>
-                          <div>
-                            <Label htmlFor="casino-potencial">Potencial</Label>
+                            <Label htmlFor="casino-precio">Precio *</Label>
                             <Select 
-                              value={newCasinoForm.potencial_value} 
-                              onValueChange={(value: 'high' | 'medium' | 'low') => 
-                                setNewCasinoForm(prev => ({ ...prev, potencial_value: value }))
+                              value={newCasinoForm.precio} 
+                              onValueChange={(value: 'medio' | 'barato' | 'muy barato') => 
+                                setNewCasinoForm(prev => ({ ...prev, precio: value }))
                               }
                             >
                               <SelectTrigger>
                                 <SelectValue />
                               </SelectTrigger>
                               <SelectContent>
-                                <SelectItem value="high">Alto</SelectItem>
-                                <SelectItem value="medium">Medio</SelectItem>
-                                <SelectItem value="low">Bajo</SelectItem>
+                                <SelectItem value="muy barato">Muy Barato</SelectItem>
+                                <SelectItem value="barato">Barato</SelectItem>
+                                <SelectItem value="medio">Medio</SelectItem>
                               </SelectContent>
                             </Select>
                           </div>
-                          <div className="md:col-span-2">
-                            <Label htmlFor="casino-similar">Casinos Similares</Label>
+                          <div>
+                            <Label htmlFor="casino-rtp">RTP (%) *</Label>
                             <Input
-                              id="casino-similar"
+                              id="casino-rtp"
+                              type="number"
+                              min="0"
+                              max="100"
+                              step="0.1"
+                              placeholder="Ej: 96.5"
+                              value={newCasinoForm.rtp}
+                              onChange={(e) => {
+                                const value = parseFloat(e.target.value) || 0
+                                setNewCasinoForm(prev => ({ ...prev, rtp: value }))
+                                if (formErrors.rtp) {
+                                  setFormErrors(prev => ({ ...prev, rtp: '' }))
+                                }
+                              }}
+                              className={formErrors.rtp ? 'border-red-500' : ''}
+                            />
+                            {formErrors.rtp && <p className="text-red-500 text-sm mt-1">{formErrors.rtp}</p>}
+                          </div>
+                          <div>
+                            <Label htmlFor="casino-position">Posición (Opcional)</Label>
+                            <Input
+                              id="casino-position"
+                              type="number"
+                              min="1"
+                              placeholder="Ej: 1, 2, 3..."
+                              value={newCasinoForm.position || ''}
+                              onChange={(e) => 
+                                setNewCasinoForm(prev => ({ 
+                                  ...prev, 
+                                  position: e.target.value ? parseInt(e.target.value) : null 
+                                }))
+                              }
+                            />
+                            <p className="text-sm text-muted-foreground mt-1">
+                              Los 3 casinos con menor posición aparecerán en el Top 3
+                            </p>
+                          </div>
+                          <div>
+                            <Label htmlFor="casino-plat-similar">Plat. Similar</Label>
+                            <Input
+                              id="casino-plat-similar"
                               placeholder="Ej: Bet365, 888casino"
-                              value={newCasinoForm.similar}
-                              onChange={(e) => setNewCasinoForm(prev => ({ ...prev, similar: e.target.value }))}
+                              value={newCasinoForm.platSimilar}
+                              onChange={(e) => setNewCasinoForm(prev => ({ ...prev, platSimilar: e.target.value }))}
                             />
                           </div>
                         </div>
+                        {formErrors.general && (
+                          <div className="p-3 bg-red-50 border border-red-200 rounded-md">
+                            <p className="text-red-600 text-sm">{formErrors.general}</p>
+                          </div>
+                        )}
                         <div className="flex gap-2">
-                          <Button onClick={handleCreateCasino}>
+                          <Button 
+                            onClick={handleCreateCasino}
+                            disabled={isSubmitting}
+                          >
                             <Save className="h-4 w-4 mr-2" />
-                            Crear Casino
+                            {isSubmitting ? 'Creando...' : 'Crear Casino'}
                           </Button>
-                          <Button variant="outline" onClick={() => setShowCreateForm(false)}>
+                          <Button 
+                            variant="outline" 
+                            onClick={() => {
+                              setShowCreateForm(false)
+                              setFormErrors({})
+                            }}
+                            disabled={isSubmitting}
+                          >
                             Cancelar
                           </Button>
                         </div>
@@ -626,18 +680,18 @@ export default function AdminCasinosPage() {
                         <div className="flex items-center gap-3">
                           <div className="w-10 h-10 rounded-lg bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
                             <span className="text-sm font-bold">
-                              {casino.name.charAt(0)}
+                              {getCasinoInitial(casino.casinoName)}
                             </span>
                           </div>
                           <div>
-                            <h3 className="font-medium">{casino.name}</h3>
+                            <h3 className="font-medium">{casino.casinoName}</h3>
                             <p className="text-sm text-muted-foreground">
-                              {casino.plataforma} • {casino.tiempo}
+                              Antigüedad: {casino.antiguedad} • RTP: {casino.rtp}%
                             </p>
-                            {casino.isTopThree && (
+                            {casino.position && (
                               <Badge variant="outline" className="text-xs mt-1">
                                 <Crown className="h-3 w-3 mr-1" />
-                                Top #{casino.topThreePosition}
+                                Posición #{casino.position}
                               </Badge>
                             )}
                           </div>
@@ -647,14 +701,18 @@ export default function AdminCasinosPage() {
                             variant="outline"
                             className={cn(
                               "text-xs",
-                              casino.potencial.color === 'green' ? 'bg-green-100 text-green-800 border-green-200' :
-                              casino.potencial.color === 'yellow' ? 'bg-yellow-100 text-yellow-800 border-yellow-200' :
+                              casino.precio === 'muy barato' ? 'bg-green-100 text-green-800 border-green-200' :
+                              casino.precio === 'barato' ? 'bg-yellow-100 text-yellow-800 border-yellow-200' :
                               'bg-red-100 text-red-800 border-red-200'
                             )}
                           >
-                            {casino.potencial.label}
+                            {CASINO_PRECIO_VALUES[casino.precio].label}
                           </Badge>
-                          <Button variant="outline" size="sm">
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            onClick={() => handleEditCasino(casino)}
+                          >
                             <Edit className="h-4 w-4" />
                           </Button>
                           <Button 
@@ -679,6 +737,7 @@ export default function AdminCasinosPage() {
                 </div>
               </CardContent>
             </Card>
+
           </TabsContent>
 
           {/* News Management */}
@@ -894,6 +953,157 @@ export default function AdminCasinosPage() {
           </TabsContent>
         </Tabs>
       </div>
+      
+      {/* Casino Edit Drawer */}
+      <Sheet open={!!editingCasino} onOpenChange={(open) => {
+        if (!open) {
+          setEditingCasino(null)
+          setEditFormErrors({})
+        }
+      }}>
+        <SheetContent className="w-[400px] sm:w-[540px]">
+          <SheetHeader>
+            <SheetTitle>Editar Casino</SheetTitle>
+            <SheetDescription>
+              {editingCasino?.casinoName}
+            </SheetDescription>
+          </SheetHeader>
+          
+          {editingCasino && (
+            <div className="space-y-4 py-4">
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor="edit-casino-name">Nombre del Casino *</Label>
+                  <Input
+                    id="edit-casino-name"
+                    value={editingCasino.casinoName}
+                    onChange={(e) => {
+                      setEditingCasino(prev => prev ? { ...prev, casinoName: e.target.value } : null)
+                      if (editFormErrors.casinoName) {
+                        setEditFormErrors(prev => ({ ...prev, casinoName: '' }))
+                      }
+                    }}
+                    className={editFormErrors.casinoName ? 'border-red-500' : ''}
+                  />
+                  {editFormErrors.casinoName && <p className="text-red-500 text-sm mt-1">{editFormErrors.casinoName}</p>}
+                </div>
+                
+                <div>
+                  <Label htmlFor="edit-casino-antiguedad">Antigüedad *</Label>
+                  <Input
+                    id="edit-casino-antiguedad"
+                    value={editingCasino.antiguedad}
+                    onChange={(e) => {
+                      setEditingCasino(prev => prev ? { ...prev, antiguedad: e.target.value } : null)
+                      if (editFormErrors.antiguedad) {
+                        setEditFormErrors(prev => ({ ...prev, antiguedad: '' }))
+                      }
+                    }}
+                    className={editFormErrors.antiguedad ? 'border-red-500' : ''}
+                  />
+                  {editFormErrors.antiguedad && <p className="text-red-500 text-sm mt-1">{editFormErrors.antiguedad}</p>}
+                </div>
+                
+                <div>
+                  <Label htmlFor="edit-casino-precio">Precio *</Label>
+                  <Select 
+                    value={editingCasino.precio} 
+                    onValueChange={(value: 'medio' | 'barato' | 'muy barato') => {
+                      setEditingCasino(prev => prev ? { ...prev, precio: value } : null)
+                    }}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="muy barato">Muy Barato</SelectItem>
+                      <SelectItem value="barato">Barato</SelectItem>
+                      <SelectItem value="medio">Medio</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <div>
+                  <Label htmlFor="edit-casino-rtp">RTP (%) *</Label>
+                  <Input
+                    id="edit-casino-rtp"
+                    type="number"
+                    min="0"
+                    max="100"
+                    step="0.1"
+                    value={editingCasino.rtp}
+                    onChange={(e) => {
+                      const value = parseFloat(e.target.value) || 0
+                      setEditingCasino(prev => prev ? { ...prev, rtp: value } : null)
+                      if (editFormErrors.rtp) {
+                        setEditFormErrors(prev => ({ ...prev, rtp: '' }))
+                      }
+                    }}
+                    className={editFormErrors.rtp ? 'border-red-500' : ''}
+                  />
+                  {editFormErrors.rtp && <p className="text-red-500 text-sm mt-1">{editFormErrors.rtp}</p>}
+                </div>
+                
+                <div>
+                  <Label htmlFor="edit-casino-position">Posición</Label>
+                  <Input
+                    id="edit-casino-position"
+                    type="number"
+                    min="1"
+                    placeholder="Ej: 1, 2, 3..."
+                    value={editingCasino.position || ''}
+                    onChange={(e) => 
+                      setEditingCasino(prev => prev ? { 
+                        ...prev, 
+                        position: e.target.value ? parseInt(e.target.value) : null
+                      } : null)
+                    }
+                  />
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Los 3 casinos con menor posición aparecerán en el Top 3
+                  </p>
+                </div>
+                
+                <div>
+                  <Label htmlFor="edit-casino-plat-similar">Plat. Similar</Label>
+                  <Input
+                    id="edit-casino-plat-similar"
+                    value={editingCasino.platSimilar || ''}
+                    onChange={(e) => setEditingCasino(prev => prev ? { ...prev, platSimilar: e.target.value } : null)}
+                  />
+                </div>
+              </div>
+              
+              {editFormErrors.general && (
+                <div className="p-3 bg-red-50 border border-red-200 rounded-md">
+                  <p className="text-red-600 text-sm">{editFormErrors.general}</p>
+                </div>
+              )}
+              
+              <div className="flex gap-2 pt-4">
+                <Button 
+                  onClick={handleSaveCasino}
+                  disabled={isEditing}
+                  className="flex-1"
+                >
+                  <Save className="h-4 w-4 mr-2" />
+                  {isEditing ? 'Guardando...' : 'Guardar Cambios'}
+                </Button>
+                <Button 
+                  variant="outline" 
+                  onClick={() => {
+                    setEditingCasino(null)
+                    setEditFormErrors({})
+                  }}
+                  disabled={isEditing}
+                >
+                  Cancelar
+                </Button>
+              </div>
+            </div>
+          )}
+        </SheetContent>
+      </Sheet>
     </AppLayout>
   )
 }

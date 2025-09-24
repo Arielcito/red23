@@ -134,7 +134,7 @@ export function NotificationItem({
                   className="inline-flex items-center px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white text-xs font-medium rounded-md transition-colors duration-200"
                   onClick={handleActionClick}
                 >
-                  {notification.type === 'prize' ? 'Reclamar Premio' : 'Ver Telegram'}
+                  {notification.data?.actionLabel ?? (notification.type === 'prize' ? 'Reclamar Premio' : 'Ver más')}
                   <ExternalLink className="h-3 w-3 ml-1" />
                 </a>
               ) : (
@@ -144,7 +144,7 @@ export function NotificationItem({
                     className="h-7 px-3 text-xs bg-green-600 hover:bg-green-700 transition-all duration-200 transform hover:scale-105"
                     onClick={handleActionClick}
                   >
-                    {notification.type === 'prize' ? 'Reclamar Premio' : 'Ver más'}
+                    {notification.data?.actionLabel ?? (notification.type === 'prize' ? 'Reclamar Premio' : 'Ver más')}
                   </Button>
                 </Link>
               )}

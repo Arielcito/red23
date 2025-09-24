@@ -2,15 +2,12 @@
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
 import {
   MessageCircle,
   GalleryThumbnailsIcon as Gallery,
   Clock,
   Trophy,
   Star,
-  Award,
-  Target,
 } from "lucide-react"
 import Link from "next/link"
 import { AppLayout } from "@/components/layout/AppLayout"
@@ -18,11 +15,15 @@ import { WinnerBanner } from "@/components/ui/winner-banner"
 import { useWinnersApi } from "@/lib/hooks/useWinnersApi"
 import { useCasinosData } from "@/lib/hooks/useCasinosData"
 import { useRewardsData } from "@/lib/hooks/useRewardsData"
+import { useLearningPaths } from "@/lib/hooks/useLearningPaths"
 import { CountdownTimer } from "@/components/rewards/CountdownTimer"
+import { TopThreeSection } from "@/components/novedades/TopThreeSection"
+import { LearningPathsSection } from "@/components/tutorials/LearningPathsSection"
 export default function Dashboard() {
   const { winners } = useWinnersApi()
   const { topThree } = useCasinosData()
   const { nextDailyPrize, nextMonthlyPrize } = useRewardsData()
+  const { featuredPaths } = useLearningPaths()
 
   // Usar el primer ganador de la API o un fallback
   const dailyWinner = winners.length > 0 ? {
@@ -66,11 +67,6 @@ export default function Dashboard() {
     <AppLayout
       title="Dashboard"
       subtitle="Bienvenido de vuelta"
-      badge={{
-        text: "Plan Pro",
-        variant: "outline",
-        className: "text-primary-600 border-primary-200 bg-primary-50 dark:bg-primary-900 dark:text-primary-300 dark:border-primary-800 text-xs sm:text-sm"
-      }}
     >
       <div className="p-3 sm:p-4 lg:p-6 space-y-3 sm:space-y-4 lg:space-y-6">
 
@@ -81,12 +77,12 @@ export default function Dashboard() {
         {/* Quick Actions */}
         <div>
           <h2 className="text-lg font-semibold mb-3 sm:mb-4">Acciones Rápidas</h2>
-          <div className="grid grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4 lg:gap-6">
             {quickActions.map((action) => (
               <Link key={action.href} href={action.href}>
                 <Card className="hover:shadow-md transition-shadow cursor-pointer h-full">
-                  <CardHeader className="pb-2 sm:pb-3 px-4 sm:px-6">
-                    <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-lg ${action.color} flex items-center justify-center mb-2`}>
+                  <CardHeader className="pb-2 sm:pb-3 px-4 sm:px-6 text-center">
+                    <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-lg ${action.color} flex items-center justify-center mb-2 mx-auto`}>
                       <action.icon className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
                     </div>
                     <CardTitle className="text-sm sm:text-base">
@@ -173,55 +169,7 @@ export default function Dashboard() {
             </Link>
           </div>
           
-          {/* Top 3 Casinos */}
-          {topThree.length > 0 && (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4 lg:gap-6 mb-6">
-              {topThree.map((casino, index) => (
-                <Card key={casino.id} className="h-full relative overflow-hidden">
-                  <div className={`absolute top-0 right-0 w-8 h-8 flex items-center justify-center text-white text-xs font-bold ${
-                    index === 0 ? 'bg-yellow-500' : 
-                    index === 1 ? 'bg-gray-400' : 
-                    'bg-orange-500'
-                  } rounded-bl-lg`}>
-                    #{index + 1}
-                  </div>
-                  <CardHeader className="pb-2">
-                    <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 rounded-lg bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
-                        {casino.imageUrl && casino.imageUrl !== '/placeholder-casino.svg' ? (
-                          <img 
-                            src={casino.imageUrl} 
-                            alt={casino.name}
-                            className="w-full h-full object-cover rounded-lg"
-                          />
-                        ) : (
-                          <span className="text-lg font-bold">
-                            {casino.name.charAt(0)}
-                          </span>
-                        )}
-                      </div>
-                      <div className="flex-1">
-                        <CardTitle className="text-base">{casino.name}</CardTitle>
-                        <CardDescription className="text-sm">{casino.plataforma}</CardDescription>
-                      </div>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="flex items-center justify-between">
-                      <div className={`px-2 py-1 rounded-full text-xs font-medium ${
-                        casino.potencial.color === 'green' ? 'bg-green-100 text-green-800' :
-                        casino.potencial.color === 'yellow' ? 'bg-yellow-100 text-yellow-800' :
-                        'bg-red-100 text-red-800'
-                      }`}>
-                        Potencial {casino.potencial.label}
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          )}
-          
+          <TopThreeSection topThree={topThree} />
         </div>
 
         {/* Learning Tutorials */}
@@ -234,45 +182,14 @@ export default function Dashboard() {
               </Button>
             </Link>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 lg:gap-6">
-            <Link href="/tutorials/fundamentos-marketing">
-              <Card className="p-4 border-2 border-dashed border-primary-200 hover:border-primary-400 transition-colors cursor-pointer h-full">
-                <div className="flex items-center justify-between mb-3">
-                  <Badge variant="outline" className="text-primary-600 border-primary-300">
-                    Principiante
-                  </Badge>
-                  <Award className="h-5 w-5 text-primary-500" />
-                </div>
-                <h4 className="font-semibold mb-2">Fundamentos del Marketing Digital</h4>
-                <p className="text-sm text-gray-600 dark:text-gray-300 mb-3">
-                  Conceptos básicos, herramientas esenciales y primeras estrategias
-                </p>
-                <div className="flex items-center justify-between">
-                  <span className="text-xs text-gray-500">4 cursos • 20 horas</span>
-                  <Button size="sm" variant="outline">Ver Ruta</Button>
-                </div>
-              </Card>
-            </Link>
-
-            <Link href="/tutorials/casinos-online">
-              <Card className="p-4 border-2 border-dashed border-tertiary-200 hover:border-tertiary-400 transition-colors cursor-pointer h-full">
-                <div className="flex items-center justify-between mb-3">
-                  <Badge variant="outline" className="text-tertiary-600 border-tertiary-300">
-                    Avanzado
-                  </Badge>
-                  <Target className="h-5 w-5 text-tertiary-500" />
-                </div>
-                <h4 className="font-semibold mb-2">Especialista en Casinos Online</h4>
-                <p className="text-sm text-gray-600 dark:text-gray-300 mb-3">
-                  Estrategias avanzadas, compliance y optimización de conversiones
-                </p>
-                <div className="flex items-center justify-between">
-                  <span className="text-xs text-gray-500">6 cursos • 35 horas</span>
-                  <Button size="sm" variant="outline">Ver Ruta</Button>
-                </div>
-              </Card>
-            </Link>
-          </div>
+          
+          <LearningPathsSection 
+            learningPaths={featuredPaths}
+            showHeader={false}
+            maxPaths={2}
+            gridCols={2}
+            className="py-0"
+          />
         </div>
 
 

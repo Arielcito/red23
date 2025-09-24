@@ -59,24 +59,21 @@ export async function POST(request: NextRequest) {
 
     // Preparar datos del casino
     const casinoData: NewCasino = {
-      name: body.name.trim(),
+      casino_name: body.casino_name.trim(),
       logo: body.logo || null,
-      plataforma: body.plataforma.trim(),
-      tiempo: body.tiempo.trim(),
-      potencial_value: body.potencial_value || 'medium',
-      potencial_color: body.potencial_color || 'yellow',
-      potencial_label: body.potencial_label || 'Medio',
-      similar: body.similar?.trim() || null,
-      is_top_three: body.is_top_three || false,
-      top_three_position: body.top_three_position || null,
+      antiguedad: body.antiguedad.trim(),
+      precio: body.precio || 'medio',
+      rtp: body.rtp || 0,
+      plat_similar: body.plat_similar?.trim() || null,
+      position: body.position || null,
       image_url: body.image_url || null,
       is_active: body.is_active !== undefined ? body.is_active : true
     }
 
     console.log('📝 Datos del casino a crear:', {
-      name: casinoData.name,
-      plataforma: casinoData.plataforma,
-      potencial: casinoData.potencial_value
+      casino_name: casinoData.casino_name,
+      antiguedad: casinoData.antiguedad,
+      precio: casinoData.precio
     })
 
     const newCasino = await CasinoService.createCasino(casinoData)

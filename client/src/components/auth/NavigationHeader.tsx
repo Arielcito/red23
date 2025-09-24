@@ -49,7 +49,7 @@ export function NavigationHeader({
   }
 
   const toggleTheme = () => {
-    setTheme(theme === "dark" ? "light" : "dark")
+    setTheme(theme === "light" ? "dark" : "light")
   }
 
   const getUserInitials = (name?: string | null) => {
@@ -64,7 +64,7 @@ export function NavigationHeader({
 
 
   return (
-    <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-3 sm:px-4 md:px-6 py-2 sm:py-3 md:py-4">
+    <header className="sticky top-0 z-50 bg-gradient-to-br from-primary/5 to-primary/20 border-b border-gray-200 dark:border-gray-700 px-3 sm:px-4 md:px-6 py-2 sm:py-3 md:py-4">
       <div className="flex flex-wrap items-center gap-2 sm:gap-3 lg:gap-4">
         <div className="flex items-center gap-2 sm:gap-3 lg:gap-4 min-w-0 flex-1">
           <SidebarTrigger className="h-9 w-9 sm:h-10 sm:w-10" />
@@ -150,15 +150,6 @@ export function NavigationHeader({
                 </div>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem asChild>
-                <Link
-                  href="/profile"
-                  className="cursor-pointer h-10 sm:h-11 px-3 sm:px-4 touch-manipulation flex items-center"
-                >
-                  <User className="mr-3 h-4 w-4 flex-shrink-0" />
-                  <span className="text-sm">Perfil</span>
-                </Link>
-              </DropdownMenuItem>
               <DropdownMenuItem asChild>
                 <Link
                   href="/settings"

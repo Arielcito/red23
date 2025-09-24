@@ -20,7 +20,7 @@ export function CasinoComparisonSection({
   className, 
   showAdminButton = false 
 }: CasinoComparisonSectionProps) {
-  const { topThree, casinos, config, isLoading, error, refreshData } = useCasinosData()
+  const { topThree, casinos, isLoading, error, refreshData } = useCasinosData()
 
   if (error) {
     return (
@@ -142,14 +142,13 @@ export function CasinoComparisonSection({
                   </CardDescription>
                 </div>
                 <Badge variant="outline" className="text-xs">
-                  {casinos.filter(c => !c.isTopThree).length} casinos
+                  {casinos.filter(c => !topThree.some(t => t.id === c.id)).length} casinos
                 </Badge>
               </div>
             </CardHeader>
             <CardContent className="p-0">
               <DynamicCasinoTable 
                 casinos={casinos}
-                customFields={config.customFields}
                 className="px-6 pb-6"
               />
             </CardContent>

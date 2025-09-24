@@ -9,26 +9,20 @@ import {
   Users,
   Star,
   Target,
-  TrendingUp,
-  Award,
 } from "lucide-react"
-import Link from "next/link"
 import { AppLayout } from "@/components/layout/AppLayout"
+import { useLearningPaths } from "@/lib/hooks/useLearningPaths"
+import { LearningPathsSection } from "@/components/tutorials/LearningPathsSection"
 
 export default function TutorialsPage() {
+  const { learningPaths, isLoading } = useLearningPaths()
 
   const stats = [
     {
       title: "Rutas Disponibles",
-      value: "3",
+      value: learningPaths.length.toString(),
       icon: Target,
       color: "text-primary-500"
-    },
-    {
-      title: "Estudiantes Activos",
-      value: "2,847",
-      icon: Users,
-      color: "text-secondary-500"
     },
     {
       title: "Horas de Contenido",
@@ -56,16 +50,14 @@ export default function TutorialsPage() {
     >
       <div className="p-4 sm:p-6 space-y-6">
         {/* Stats Section */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-3 gap-4">
           {stats.map((stat) => (
-            <Card key={stat.title}>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">{stat.title}</CardTitle>
-                <stat.icon className={`h-4 w-4 ${stat.color}`} />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{stat.value}</div>
-              </CardContent>
+            <Card key={stat.title} className="p-3">
+              <div className="flex flex-col items-center text-center space-y-2">
+                <stat.icon className={`h-5 w-5 ${stat.color}`} />
+                <div className="text-lg font-bold">{stat.value}</div>
+                <div className="text-xs font-medium text-gray-600 dark:text-gray-400">{stat.title}</div>
+              </div>
             </Card>
           ))}
         </div>
@@ -123,64 +115,24 @@ export default function TutorialsPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              <Link href="/tutorials/fundamentos-marketing">
-                <Card className="p-4 border-2 border-dashed border-primary-200 hover:border-primary-400 transition-colors cursor-pointer h-full">
-                  <div className="flex items-center justify-between mb-3">
-                    <Badge variant="outline" className="text-primary-600 border-primary-300">
-                      Principiante
-                    </Badge>
-                    <Award className="h-5 w-5 text-primary-500" />
+            {isLoading ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {[1, 2, 3].map((i) => (
+                  <div key={i} className="p-4 border-2 border-dashed border-gray-200 rounded-lg animate-pulse">
+                    <div className="h-6 bg-gray-200 rounded mb-3"></div>
+                    <div className="h-4 bg-gray-200 rounded mb-2"></div>
+                    <div className="h-3 bg-gray-200 rounded mb-3"></div>
+                    <div className="h-3 bg-gray-200 rounded w-1/2"></div>
                   </div>
-                  <h4 className="font-semibold mb-2">Fundamentos del Marketing Digital</h4>
-                  <p className="text-sm text-gray-600 dark:text-gray-300 mb-3">
-                    Conceptos básicos, herramientas esenciales y primeras estrategias
-                  </p>
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs text-gray-500">4 cursos • 20 horas</span>
-                    <Button size="sm" variant="outline">Ver Ruta</Button>
-                  </div>
-                </Card>
-              </Link>
-
-              <Link href="/tutorials/marketing-redes-sociales">
-                <Card className="p-4 border-2 border-dashed border-secondary-200 hover:border-secondary-400 transition-colors cursor-pointer h-full">
-                  <div className="flex items-center justify-between mb-3">
-                    <Badge variant="outline" className="text-secondary-600 border-secondary-300">
-                      Intermedio
-                    </Badge>
-                    <TrendingUp className="h-5 w-5 text-secondary-500" />
-                  </div>
-                  <h4 className="font-semibold mb-2">Marketing en Redes Sociales</h4>
-                  <p className="text-sm text-gray-600 dark:text-gray-300 mb-3">
-                    Estrategias en Instagram, Facebook, TikTok y plataformas emergentes
-                  </p>
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs text-gray-500">4 cursos • 25 horas</span>
-                    <Button size="sm" variant="outline">Ver Ruta</Button>
-                  </div>
-                </Card>
-              </Link>
-
-              <Link href="/tutorials/casinos-online">
-                <Card className="p-4 border-2 border-dashed border-tertiary-200 hover:border-tertiary-400 transition-colors cursor-pointer h-full">
-                  <div className="flex items-center justify-between mb-3">
-                    <Badge variant="outline" className="text-tertiary-600 border-tertiary-300">
-                      Avanzado
-                    </Badge>
-                    <Target className="h-5 w-5 text-tertiary-500" />
-                  </div>
-                  <h4 className="font-semibold mb-2">Especialista en Casinos Online</h4>
-                  <p className="text-sm text-gray-600 dark:text-gray-300 mb-3">
-                    Estrategias avanzadas, compliance y optimización de conversiones
-                  </p>
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs text-gray-500">4 cursos • 30 horas</span>
-                    <Button size="sm" variant="outline">Ver Ruta</Button>
-                  </div>
-                </Card>
-              </Link>
-            </div>
+                ))}
+              </div>
+            ) : (
+              <LearningPathsSection 
+                learningPaths={learningPaths}
+                showHeader={false}
+                className="py-0"
+              />
+            )}
           </CardContent>
         </Card>
       </div>

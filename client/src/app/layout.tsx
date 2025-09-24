@@ -36,7 +36,7 @@ html {
           `}</style>
         </head>
         <body className={inter.className}>
-          <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+          <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
             <NotificationProvider>
               <Suspense fallback={null}>
                 <ReferralAutoSetup />
