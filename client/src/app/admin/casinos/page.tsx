@@ -40,6 +40,7 @@ import {
 import Image from "next/image"
 import { cn } from "@/lib/utils"
 import { useNotifications } from "@/lib/hooks/useNotifications"
+import { uploadImage, validateImageFile, replaceImage } from "@/lib/services/imageService"
 
 const getCasinoInitial = (name?: string | null) => {
   if (!name) return "?"
@@ -55,6 +56,7 @@ export default function AdminCasinosPage() {
     error,
     updateCasino,
     updateTopThreeImage,
+    uploadCasinoCoverImage,
     createCasino,
     deleteCasino
   } = useCasinosData()
@@ -62,6 +64,7 @@ export default function AdminCasinosPage() {
   const [editingCasino, setEditingCasino] = useState<CasinoWithFields | null>(null)
   const [isEditing, setIsEditing] = useState(false)
   const [editFormErrors, setEditFormErrors] = useState<Record<string, string>>({})
+  const [editCoverImageFile, setEditCoverImageFile] = useState<File | null>(null)
   const [showCreateForm, setShowCreateForm] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [formErrors, setFormErrors] = useState<Record<string, string>>({})
@@ -71,7 +74,8 @@ export default function AdminCasinosPage() {
     precio: 'medio' as 'medio' | 'barato' | 'muy barato',
     rtp: 0,
     platSimilar: '',
-    position: null as number | null
+    position: null as number | null,
+    coverImageFile: null as File | null
   })
   const [imageUploading, setImageUploading] = useState(false)
   
@@ -83,24 +87,22 @@ export default function AdminCasinosPage() {
     title: '',
     excerpt: '',
     content: '',
-    imageUrl: '',
+    imageFile: null as File | null,
     author: 'Admin',
     category: 'general',
     isFeatured: false,
     isPublished: true
   })
+  const [newsFormErrors, setNewsFormErrors] = useState<Record<string, string>>({})
 
   const { createNotification } = useNotifications()
 
-  // Mock image upload - en producción se conectaría a un servicio real
   const handleImageUpload = async (casinoId: string, file: File) => {
     setImageUploading(true)
     try {
-      // Simular upload
-      await new Promise(resolve => setTimeout(resolve, 1500))
-      const mockImageUrl = `/uploaded-${casinoId}-${Date.now()}.jpg`
-      await updateTopThreeImage(casinoId, mockImageUrl)
-      console.log('✅ Imagen subida para:', casinoId)
+      const publicUrl = await uploadCasinoCoverImage(casinoId, file)
+      await updateTopThreeImage(casinoId, publicUrl)
+      console.log('✅ Imagen actualizada para casino:', casinoId)
     } catch (err) {
       console.error('❌ Error subiendo imagen:', err)
     } finally {
@@ -134,13 +136,35 @@ export default function AdminCasinosPage() {
 
     setIsSubmitting(true)
     try {
+      let coverImageUrl: string | undefined
+
+      // Subir imagen si se seleccionó una
+      if (newCasinoForm.coverImageFile) {
+        try {
+          const validation = validateImageFile(newCasinoForm.coverImageFile)
+          if (!validation.valid) {
+            setFormErrors({ coverImage: validation.error || 'Archivo inválido' })
+            return
+          }
+          
+          console.log('📤 Subiendo imagen de portada...')
+          coverImageUrl = await uploadImage(newCasinoForm.coverImageFile, 'casinos')
+        } catch (error) {
+          console.error('❌ Error subiendo imagen:', error)
+          setFormErrors({ coverImage: 'Error subiendo la imagen. Intenta nuevamente.' })
+          return
+        }
+      }
+
       await createCasino({
         casinoName: newCasinoForm.casinoName,
         antiguedad: newCasinoForm.antiguedad,
         precio: newCasinoForm.precio,
         rtp: newCasinoForm.rtp,
         platSimilar: newCasinoForm.platSimilar || null,
-        position: newCasinoForm.position
+        position: newCasinoForm.position,
+        coverImageUrl: coverImageUrl,
+        imageUrl: undefined
       })
       
       // Reset form
@@ -150,7 +174,8 @@ export default function AdminCasinosPage() {
         precio: 'medio',
         rtp: 0,
         platSimilar: '',
-        position: null
+        position: null,
+        coverImageFile: null
       })
       setFormErrors({})
       setShowCreateForm(false)
@@ -192,21 +217,54 @@ export default function AdminCasinosPage() {
 
   // Load news on component mount
   useEffect(() => {
-    loadNews()
+    const loadInitialNews = async () => {
+      try {
+        setNewsLoading(true)
+        const newsData = await NewsService.getAllNewsForAdmin()
+        setNews(newsData)
+      } catch (err) {
+        console.error('❌ Error cargando noticias:', err)
+      } finally {
+        setNewsLoading(false)
+      }
+    }
+    
+    loadInitialNews()
   }, [])
 
   const handleCreateNews = async () => {
     if (!newNewsForm.title.trim()) {
+      setNewsFormErrors({ title: 'El título es requerido' })
       console.error('❌ El título es requerido')
       return
     }
 
     try {
+      let imageUrl: string | null = null
+
+      // Subir imagen si se seleccionó una
+      if (newNewsForm.imageFile) {
+        try {
+          const validation = validateImageFile(newNewsForm.imageFile)
+          if (!validation.valid) {
+            setNewsFormErrors({ image: validation.error || 'Archivo inválido' })
+            return
+          }
+          
+          console.log('📤 Subiendo imagen de la noticia...')
+          imageUrl = await uploadImage(newNewsForm.imageFile, 'news')
+        } catch (error) {
+          console.error('❌ Error subiendo imagen:', error)
+          setNewsFormErrors({ image: 'Error subiendo la imagen. Intenta nuevamente.' })
+          return
+        }
+      }
+
       const createdNews = await NewsService.createNews({
         title: newNewsForm.title,
         excerpt: newNewsForm.excerpt || null,
         content: newNewsForm.content || null,
-        image_url: newNewsForm.imageUrl || null,
+        image_url: imageUrl,
         author: newNewsForm.author,
         category: newNewsForm.category,
         is_featured: newNewsForm.isFeatured,
@@ -228,12 +286,13 @@ export default function AdminCasinosPage() {
         title: '',
         excerpt: '',
         content: '',
-        imageUrl: '',
+        imageFile: null,
         author: 'Admin',
         category: 'general',
         isFeatured: false,
         isPublished: true
       })
+      setNewsFormErrors({})
       setShowCreateNewsForm(false)
       
       // Reload news
@@ -242,6 +301,7 @@ export default function AdminCasinosPage() {
       console.log('✅ Noticia creada exitosamente')
     } catch (err) {
       console.error('❌ Error creando noticia:', err)
+      setNewsFormErrors({ general: 'Error al crear la noticia. Intenta nuevamente.' })
     }
   }
 
@@ -283,6 +343,7 @@ export default function AdminCasinosPage() {
   const handleEditCasino = (casino: CasinoWithFields) => {
     setEditingCasino(casino)
     setEditFormErrors({})
+    setEditCoverImageFile(null)
   }
 
   const validateEditForm = (casino: CasinoWithFields) => {
@@ -312,16 +373,48 @@ export default function AdminCasinosPage() {
 
     setIsEditing(true)
     try {
+      let coverImageUrl = editingCasino.coverImageUrl
+
+      // Subir nueva imagen si se seleccionó una
+      if (editCoverImageFile) {
+        try {
+          const validation = validateImageFile(editCoverImageFile)
+          if (!validation.valid) {
+            setEditFormErrors({ coverImage: validation.error || 'Archivo inválido' })
+            return
+          }
+          
+          console.log('📤 Subiendo nueva imagen de portada...')
+          
+          // Si había una imagen anterior, la reemplazamos; si no, subimos una nueva
+          if (editingCasino.coverImageUrl) {
+            coverImageUrl = await replaceImage(
+              editingCasino.coverImageUrl, 
+              editCoverImageFile, 
+              'casinos'
+            )
+          } else {
+            coverImageUrl = await uploadImage(editCoverImageFile, 'casinos')
+          }
+        } catch (error) {
+          console.error('❌ Error subiendo imagen:', error)
+          setEditFormErrors({ coverImage: 'Error subiendo la imagen. Intenta nuevamente.' })
+          return
+        }
+      }
+
       await updateCasino(editingCasino.id, {
         casinoName: editingCasino.casinoName,
         antiguedad: editingCasino.antiguedad,
         precio: editingCasino.precio,
         rtp: editingCasino.rtp,
         platSimilar: editingCasino.platSimilar,
+        coverImageUrl: coverImageUrl,
         position: editingCasino.position
       })
       setEditingCasino(null)
       setEditFormErrors({})
+      setEditCoverImageFile(null)
       console.log('✅ Casino actualizado exitosamente')
     } catch (err) {
       console.error('❌ Error actualizando casino:', err)
@@ -331,7 +424,7 @@ export default function AdminCasinosPage() {
     }
   }
 
-  const handleSwapTopThreePositions = async (casino1: any, casino2: any) => {
+  const handleSwapTopThreePositions = async (casino1: { id: string; position: number }, casino2: { id: string; position: number }) => {
     try {
       const pos1 = casino1.position
       const pos2 = casino2.position
@@ -644,6 +737,31 @@ export default function AdminCasinosPage() {
                               onChange={(e) => setNewCasinoForm(prev => ({ ...prev, platSimilar: e.target.value }))}
                             />
                           </div>
+                          <div className="md:col-span-2">
+                            <Label htmlFor="casino-cover-image">Imagen de Portada (opcional)</Label>
+                            <Input
+                              id="casino-cover-image"
+                              type="file"
+                              accept="image/*"
+                              onChange={(e) => {
+                                const file = e.target.files?.[0] || null
+                                setNewCasinoForm(prev => ({ ...prev, coverImageFile: file }))
+                                if (formErrors.coverImage) {
+                                  setFormErrors(prev => ({ ...prev, coverImage: '' }))
+                                }
+                              }}
+                              className={formErrors.coverImage ? 'border-red-500' : ''}
+                            />
+                            {formErrors.coverImage && <p className="text-red-500 text-sm mt-1">{formErrors.coverImage}</p>}
+                            <p className="text-xs text-muted-foreground mt-1">
+                              Formatos soportados: JPG, PNG, WebP, GIF. Máximo 5MB.
+                            </p>
+                            {newCasinoForm.coverImageFile && (
+                              <p className="text-xs text-green-600 mt-1">
+                                ✓ Archivo seleccionado: {newCasinoForm.coverImageFile.name}
+                              </p>
+                            )}
+                          </div>
                         </div>
                         {formErrors.general && (
                           <div className="p-3 bg-red-50 border border-red-200 rounded-md">
@@ -693,6 +811,16 @@ export default function AdminCasinosPage() {
                                 <Crown className="h-3 w-3 mr-1" />
                                 Posición #{casino.position}
                               </Badge>
+                            )}
+                            {casino.coverImageUrl && (
+                              <a
+                                href={casino.coverImageUrl}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="text-xs text-primary mt-1 inline-block break-all"
+                              >
+                                Ver imagen
+                              </a>
                             )}
                           </div>
                         </div>
@@ -773,8 +901,15 @@ export default function AdminCasinosPage() {
                               id="news-title"
                               placeholder="Ej: Nuevos casinos agregados"
                               value={newNewsForm.title}
-                              onChange={(e) => setNewNewsForm(prev => ({ ...prev, title: e.target.value }))}
+                              onChange={(e) => {
+                                setNewNewsForm(prev => ({ ...prev, title: e.target.value }))
+                                if (newsFormErrors.title) {
+                                  setNewsFormErrors(prev => ({ ...prev, title: '' }))
+                                }
+                              }}
+                              className={newsFormErrors.title ? 'border-red-500' : ''}
                             />
+                            {newsFormErrors.title && <p className="text-red-500 text-sm mt-1">{newsFormErrors.title}</p>}
                           </div>
                           <div className="md:col-span-2">
                             <Label htmlFor="news-excerpt">Extracto</Label>
@@ -825,13 +960,29 @@ export default function AdminCasinosPage() {
                             />
                           </div>
                           <div>
-                            <Label htmlFor="news-image">URL de Imagen</Label>
+                            <Label htmlFor="news-image">Imagen de la Noticia</Label>
                             <Input
                               id="news-image"
-                              placeholder="https://..."
-                              value={newNewsForm.imageUrl}
-                              onChange={(e) => setNewNewsForm(prev => ({ ...prev, imageUrl: e.target.value }))}
+                              type="file"
+                              accept="image/*"
+                              onChange={(e) => {
+                                const file = e.target.files?.[0] || null
+                                setNewNewsForm(prev => ({ ...prev, imageFile: file }))
+                                if (newsFormErrors.image) {
+                                  setNewsFormErrors(prev => ({ ...prev, image: '' }))
+                                }
+                              }}
+                              className={newsFormErrors.image ? 'border-red-500' : ''}
                             />
+                            {newsFormErrors.image && <p className="text-red-500 text-sm mt-1">{newsFormErrors.image}</p>}
+                            <p className="text-xs text-muted-foreground mt-1">
+                              Formatos soportados: JPG, PNG, WebP, GIF. Máximo 5MB.
+                            </p>
+                            {newNewsForm.imageFile && (
+                              <p className="text-xs text-green-600 mt-1">
+                                ✓ Archivo seleccionado: {newNewsForm.imageFile.name}
+                              </p>
+                            )}
                           </div>
                           <div className="flex items-center space-x-2">
                             <Switch
@@ -854,12 +1005,20 @@ export default function AdminCasinosPage() {
                             <Label htmlFor="news-published">Publicar Inmediatamente</Label>
                           </div>
                         </div>
+                        {newsFormErrors.general && (
+                          <div className="p-3 bg-red-50 border border-red-200 rounded-md">
+                            <p className="text-red-600 text-sm">{newsFormErrors.general}</p>
+                          </div>
+                        )}
                         <div className="flex gap-2">
                           <Button onClick={handleCreateNews}>
                             <Save className="h-4 w-4 mr-2" />
                             Crear Noticia
                           </Button>
-                          <Button variant="outline" onClick={() => setShowCreateNewsForm(false)}>
+                          <Button variant="outline" onClick={() => {
+                            setShowCreateNewsForm(false)
+                            setNewsFormErrors({})
+                          }}>
                             Cancelar
                           </Button>
                         </div>
@@ -959,6 +1118,7 @@ export default function AdminCasinosPage() {
         if (!open) {
           setEditingCasino(null)
           setEditFormErrors({})
+          setEditCoverImageFile(null)
         }
       }}>
         <SheetContent className="w-[400px] sm:w-[540px]">
@@ -1072,6 +1232,44 @@ export default function AdminCasinosPage() {
                     onChange={(e) => setEditingCasino(prev => prev ? { ...prev, platSimilar: e.target.value } : null)}
                   />
                 </div>
+                <div>
+                  <Label htmlFor="edit-casino-cover-image">Imagen de Portada</Label>
+                  <Input
+                    id="edit-casino-cover-image"
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0] || null
+                      setEditCoverImageFile(file)
+                      if (editFormErrors.coverImage) {
+                        setEditFormErrors(prev => ({ ...prev, coverImage: '' }))
+                      }
+                    }}
+                    className={editFormErrors.coverImage ? 'border-red-500' : ''}
+                  />
+                  {editFormErrors.coverImage && <p className="text-red-500 text-sm mt-1">{editFormErrors.coverImage}</p>}
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Formatos soportados: JPG, PNG, WebP, GIF. Máximo 5MB.
+                  </p>
+                  {editCoverImageFile && (
+                    <p className="text-xs text-green-600 mt-1">
+                      ✓ Nueva imagen seleccionada: {editCoverImageFile.name}
+                    </p>
+                  )}
+                  {editingCasino.coverImageUrl && !editCoverImageFile && (
+                    <div className="mt-2">
+                      <p className="text-xs text-muted-foreground">Imagen actual:</p>
+                      <a
+                        href={editingCasino.coverImageUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-xs text-primary break-all"
+                      >
+                        Ver imagen actual
+                      </a>
+                    </div>
+                  )}
+                </div>
               </div>
               
               {editFormErrors.general && (
@@ -1094,6 +1292,7 @@ export default function AdminCasinosPage() {
                   onClick={() => {
                     setEditingCasino(null)
                     setEditFormErrors({})
+                    setEditCoverImageFile(null)
                   }}
                   disabled={isEditing}
                 >

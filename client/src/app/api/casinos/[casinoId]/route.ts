@@ -47,6 +47,7 @@ export async function PUT(request: NextRequest, context: RouteParamsContext) {
     console.log('📝 API: Actualizando casino:', casinoId)
 
     const body = await request.json()
+    const precioOptions = ['medio', 'barato', 'muy barato']
 
     // Validar que el casino existe
     const existingCasino = await CasinoService.getCasinoById(casinoId)
@@ -60,15 +61,40 @@ export async function PUT(request: NextRequest, context: RouteParamsContext) {
       )
     }
 
-    // Validar potencial si se proporciona
-    if (body.potencial_value && !['high', 'medium', 'low'].includes(body.potencial_value)) {
+    if (body.precio !== undefined && !precioOptions.includes(body.precio)) {
       return NextResponse.json(
-        { 
-          success: false, 
-          error: 'potencial_value debe ser: high, medium, o low' 
+        {
+          success: false,
+          error: `precio debe ser uno de: ${precioOptions.join(', ')}`
         },
         { status: 400 }
       )
+    }
+
+    if (body.rtp !== undefined) {
+      const rtpValue = Number(body.rtp)
+      if (Number.isNaN(rtpValue) || rtpValue < 0 || rtpValue > 100) {
+        return NextResponse.json(
+          {
+            success: false,
+            error: 'rtp debe ser un número entre 0 y 100'
+          },
+          { status: 400 }
+        )
+      }
+    }
+
+    if (body.position !== undefined && body.position !== null) {
+      const positionValue = Number(body.position)
+      if (!Number.isInteger(positionValue) || positionValue < 1) {
+        return NextResponse.json(
+          {
+            success: false,
+            error: 'position debe ser un entero positivo o null'
+          },
+          { status: 400 }
+        )
+      }
     }
 
     // Preparar datos de actualización (solo campos que se envían)
@@ -78,9 +104,11 @@ export async function PUT(request: NextRequest, context: RouteParamsContext) {
     if (body.logo !== undefined) updateData.logo = body.logo
     if (body.antiguedad !== undefined) updateData.antiguedad = body.antiguedad.trim()
     if (body.precio !== undefined) updateData.precio = body.precio
-    if (body.rtp !== undefined) updateData.rtp = body.rtp
+    if (body.rtp !== undefined) updateData.rtp = Number(body.rtp)
     if (body.plat_similar !== undefined) updateData.plat_similar = body.plat_similar?.trim() || null
-    if (body.position !== undefined) updateData.position = body.position
+    if (body.position !== undefined) {
+      updateData.position = body.position === null ? null : Number(body.position)
+    }
     if (body.image_url !== undefined) updateData.image_url = body.image_url
     if (body.is_active !== undefined) updateData.is_active = body.is_active
 

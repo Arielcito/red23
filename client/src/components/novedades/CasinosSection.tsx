@@ -1,9 +1,10 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Star, Clock, Settings, ChevronRight } from "lucide-react"
+import { Clock, Settings, ChevronRight, Crown } from "lucide-react"
 import { cn } from "@/lib/utils"
 import type { CasinoWithFields } from "@/lib/supabase/types"
+import { CASINO_PRECIO_VALUES } from "@/lib/supabase/types"
 
 interface CasinosSectionProps {
   casinos: CasinoWithFields[]
@@ -12,175 +13,84 @@ interface CasinosSectionProps {
 // Datos de ejemplo para desarrollo
 const sampleCasinos: CasinoWithFields[] = [
   {
-    id: "1",
-    name: "Bet365",
+    id: "sample-1",
+    casinoName: "Bet365",
     logo: null,
-    plataforma: "Evolution Gaming",
-    tiempo: "2-3 días",
-    potencial: { value: "high", label: "Alto", color: "green" },
-    similar: "William Hill",
-    isTopThree: false,
+    antiguedad: "5 años",
+    precio: "muy barato",
+    rtp: 97.5,
+    platSimilar: "William Hill",
+    position: 1,
+    coverImageUrl: null,
+    imageUrl: null,
     createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-    customFields: [
-      { fieldId: "bonus", fieldName: "Bono de Bienvenida", fieldType: "badge", value: { value: "500", label: "Hasta $500", color: "green" } },
-      { fieldId: "vip", fieldName: "Programa VIP", fieldType: "badge", value: { value: "premium", label: "Premium", color: "green" } }
-    ]
+    updatedAt: new Date().toISOString()
   },
   {
-    id: "2",
-    name: "888 Casino",
+    id: "sample-2",
+    casinoName: "888 Casino",
     logo: null,
-    plataforma: "Playtech",
-    tiempo: "1-2 días",
-    potencial: { value: "very_high", label: "Muy Alto", color: "green" },
-    similar: "Paddy Power",
-    isTopThree: false,
+    antiguedad: "3 años",
+    precio: "barato",
+    rtp: 96.8,
+    platSimilar: "Paddy Power",
+    position: 2,
+    coverImageUrl: null,
+    imageUrl: null,
     createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-    customFields: [
-      { fieldId: "bonus", fieldName: "Bono de Bienvenida", fieldType: "badge", value: { value: "300", label: "Hasta $300", color: "yellow" } },
-      { fieldId: "vip", fieldName: "Programa VIP", fieldType: "badge", value: { value: "gold", label: "Gold", color: "yellow" } }
-    ]
+    updatedAt: new Date().toISOString()
   },
   {
-    id: "3",
-    name: "LeoVegas",
+    id: "sample-3",
+    casinoName: "LeoVegas",
     logo: null,
-    plataforma: "NetEnt",
-    tiempo: "3-5 días",
-    potencial: { value: "high", label: "Alto", color: "green" },
-    similar: "Casumo",
-    isTopThree: false,
+    antiguedad: "7 años",
+    precio: "medio",
+    rtp: 95.2,
+    platSimilar: "Casumo",
+    position: 3,
+    coverImageUrl: null,
+    imageUrl: null,
     createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-    customFields: [
-      { fieldId: "bonus", fieldName: "Bono de Bienvenida", fieldType: "badge", value: { value: "200", label: "Hasta $200", color: "yellow" } },
-      { fieldId: "vip", fieldName: "Programa VIP", fieldType: "badge", value: { value: "silver", label: "Silver", color: "yellow" } }
-    ]
+    updatedAt: new Date().toISOString()
   },
   {
-    id: "4",
-    name: "Unibet",
+    id: "sample-4",
+    casinoName: "Unibet",
     logo: null,
-    plataforma: "Evolution Gaming",
-    tiempo: "2-4 días",
-    potencial: { value: "medium", label: "Medio", color: "yellow" },
-    similar: "Betsson",
-    isTopThree: false,
+    antiguedad: "4 años",
+    precio: "barato",
+    rtp: 96.1,
+    platSimilar: "Betsson",
+    position: 4,
+    coverImageUrl: null,
+    imageUrl: null,
     createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-    customFields: [
-      { fieldId: "bonus", fieldName: "Bono de Bienvenida", fieldType: "badge", value: { value: "150", label: "Hasta $150", color: "yellow" } },
-      { fieldId: "vip", fieldName: "Programa VIP", fieldType: "badge", value: { value: "bronze", label: "Bronze", color: "red" } }
-    ]
+    updatedAt: new Date().toISOString()
   },
   {
-    id: "5",
-    name: "Bwin",
+    id: "sample-5",
+    casinoName: "Bwin",
     logo: null,
-    plataforma: "Playtech",
-    tiempo: "1-3 días",
-    potencial: { value: "high", label: "Alto", color: "green" },
-    similar: "Bet-at-home",
-    isTopThree: false,
+    antiguedad: "2 años",
+    precio: "muy barato",
+    rtp: 97.8,
+    platSimilar: "Bet-at-home",
+    position: 5,
+    coverImageUrl: null,
+    imageUrl: null,
     createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-    customFields: [
-      { fieldId: "bonus", fieldName: "Bono de Bienvenida", fieldType: "badge", value: { value: "400", label: "Hasta $400", color: "green" } },
-      { fieldId: "vip", fieldName: "Programa VIP", fieldType: "badge", value: { value: "diamond", label: "Diamond", color: "green" } }
-    ]
-  },
-  {
-    id: "6",
-    name: "Royal Panda",
-    logo: null,
-    plataforma: "Microgaming",
-    tiempo: "4-6 días",
-    potencial: { value: "low", label: "Bajo", color: "red" },
-    similar: "Guts",
-    isTopThree: false,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-    customFields: [
-      { fieldId: "bonus", fieldName: "Bono de Bienvenida", fieldType: "badge", value: { value: "100", label: "Hasta $100", color: "red" } },
-      { fieldId: "vip", fieldName: "Programa VIP", fieldType: "badge", value: { value: "basic", label: "Basic", color: "red" } }
-    ]
-  },
-  {
-    id: "7",
-    name: "Vegas Hero",
-    logo: null,
-    plataforma: "NetEnt",
-    tiempo: "2-3 días",
-    potencial: { value: "medium", label: "Medio", color: "yellow" },
-    similar: "Thrills",
-    isTopThree: false,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-    customFields: [
-      { fieldId: "bonus", fieldName: "Bono de Bienvenida", fieldType: "badge", value: { value: "250", label: "Hasta $250", color: "yellow" } },
-      { fieldId: "vip", fieldName: "Programa VIP", fieldType: "badge", value: { value: "silver", label: "Silver", color: "yellow" } }
-    ]
-  },
-  {
-    id: "8",
-    name: "Mr Green",
-    logo: null,
-    plataforma: "Evolution Gaming",
-    tiempo: "3-4 días",
-    potencial: { value: "high", label: "Alto", color: "green" },
-    similar: "Casino Euro",
-    isTopThree: false,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-    customFields: [
-      { fieldId: "bonus", fieldName: "Bono de Bienvenida", fieldType: "badge", value: { value: "350", label: "Hasta $350", color: "green" } },
-      { fieldId: "vip", fieldName: "Programa VIP", fieldType: "badge", value: { value: "gold", label: "Gold", color: "yellow" } }
-    ]
-  },
-  {
-    id: "9",
-    name: "ComeOn",
-    logo: null,
-    plataforma: "Playtech",
-    tiempo: "1-2 días",
-    potencial: { value: "very_high", label: "Muy Alto", color: "green" },
-    similar: "Mobilebet",
-    isTopThree: false,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-    customFields: [
-      { fieldId: "bonus", fieldName: "Bono de Bienvenida", fieldType: "badge", value: { value: "450", label: "Hasta $450", color: "green" } },
-      { fieldId: "vip", fieldName: "Programa VIP", fieldType: "badge", value: { value: "platinum", label: "Platinum", color: "green" } }
-    ]
-  },
-  {
-    id: "10",
-    name: "Next Casino",
-    logo: null,
-    plataforma: "Microgaming",
-    tiempo: "5-7 días",
-    potencial: { value: "low", label: "Bajo", color: "red" },
-    similar: "VideoSlots",
-    isTopThree: false,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-    customFields: [
-      { fieldId: "bonus", fieldName: "Bono de Bienvenida", fieldType: "badge", value: { value: "75", label: "Hasta $75", color: "red" } },
-      { fieldId: "vip", fieldName: "Programa VIP", fieldType: "badge", value: { value: "basic", label: "Basic", color: "red" } }
-    ]
+    updatedAt: new Date().toISOString()
   }
-];
+]
 
 export function CasinosSection({ casinos }: CasinosSectionProps) {
-  // Usar siempre datos de ejemplo por ahora
-  const displayCasinos = sampleCasinos
+  const displayCasinos = casinos.length > 0 ? casinos : sampleCasinos
 
   return (
-    <section className="py-12">
+    <section className="py-6 md:py-12">
       <div className="container mx-auto px-6">
-        <div className="text-center space-y-4 mb-12">
+        <div className="text-center space-y-4 mb-6 md:mb-12">
           <h2 className="text-3xl font-bold">Comparación de Casinos</h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
             Compara las características de nuestros casinos recomendados
@@ -196,19 +106,77 @@ export function CasinosSection({ casinos }: CasinosSectionProps) {
           </CardHeader>
           <CardContent>
             <div className="relative">
-              <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 dark:scrollbar-thumb-gray-600 dark:scrollbar-track-gray-800">
+              {/* Mobile Card View */}
+              <div className="block md:hidden space-y-4">
+                {displayCasinos.map((casino, index) => (
+                  <Card key={casino.id} className="p-4">
+                    <div className="space-y-3">
+                      <div className="flex items-center gap-3">
+                        <div className="relative w-10 h-10 rounded bg-muted flex items-center justify-center">
+                          {casino.coverImageUrl || casino.imageUrl ? (
+                            <img
+                              src={casino.coverImageUrl || casino.imageUrl || '/placeholder-casino.svg'}
+                              alt={casino.casinoName}
+                              className="max-w-8 max-h-8 object-contain"
+                              onError={(e) => {
+                                const target = e.target as HTMLImageElement
+                                target.style.display = 'none'
+                                target.nextElementSibling?.classList.remove('hidden')
+                              }}
+                            />
+                          ) : null}
+                          <span className={cn(
+                            "text-sm font-bold text-primary",
+                            (casino.coverImageUrl || casino.imageUrl) && "hidden"
+                          )}>
+                            {casino.casinoName.charAt(0)}
+                          </span>
+                        </div>
+                        <div className="flex-1">
+                          <div className="flex items-center gap-1">
+                            {casino.position && casino.position <= 3 && (
+                              <Crown className="h-3 w-3 text-yellow-500" />
+                            )}
+                            <span className="font-semibold">{casino.casinoName}</span>
+                          </div>
+                          <div className="text-xs text-muted-foreground">#{index + 1}</div>
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-2 text-sm">
+                        <div><span className="text-muted-foreground">Antigüedad:</span> {casino.antiguedad}</div>
+                        <div><span className="text-muted-foreground">RTP:</span> {casino.rtp?.toFixed(1) ?? '0.0'}%</div>
+                        <div><span className="text-muted-foreground">Precio:</span>
+                          <Badge
+                            variant="outline"
+                            className={cn(
+                              "ml-1 text-xs",
+                              casino.precio === 'muy barato' ? 'bg-green-100 text-green-800 border-green-200 dark:bg-green-900/20 dark:text-green-300' :
+                              casino.precio === 'barato' ? 'bg-yellow-100 text-yellow-800 border-yellow-200 dark:bg-yellow-900/20 dark:text-yellow-300' :
+                              'bg-red-100 text-red-800 border-red-200 dark:bg-red-900/20 dark:text-red-300'
+                            )}
+                          >
+                            {CASINO_PRECIO_VALUES[casino.precio].label}
+                          </Badge>
+                        </div>
+                        <div><span className="text-muted-foreground">Similar:</span> {casino.platSimilar || '-'}</div>
+                      </div>
+                    </div>
+                  </Card>
+                ))}
+              </div>
+
+              {/* Desktop Table View */}
+              <div className="hidden md:block overflow-x-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 dark:scrollbar-thumb-gray-600 dark:scrollbar-track-gray-800">
                 <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="w-[200px]">Casino</TableHead>
-                    <TableHead>Plataforma</TableHead>
-                    <TableHead>Tiempo</TableHead>
-                    <TableHead>Potencial</TableHead>
+                    <TableHead className="w-[220px]">Casino</TableHead>
+                    <TableHead>Antigüedad</TableHead>
+                    <TableHead>Precio</TableHead>
+                    <TableHead>RTP</TableHead>
                     <TableHead>Similar a</TableHead>
-                    {/* Dynamic custom fields headers */}
-                    {displayCasinos[0]?.customFields?.slice(0, 2).map((field) => (
-                      <TableHead key={field.fieldId}>{field.fieldName}</TableHead>
-                    ))}
+                    <TableHead>Posición</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -218,10 +186,10 @@ export function CasinosSection({ casinos }: CasinosSectionProps) {
                       <TableCell className="font-medium">
                         <div className="flex items-center gap-3">
                           <div className="relative w-8 h-8 rounded bg-muted flex items-center justify-center">
-                            {casino.logo ? (
+                            {casino.coverImageUrl || casino.imageUrl ? (
                               <img
-                                src={casino.logo}
-                                alt={casino.name}
+                                src={casino.coverImageUrl || casino.imageUrl || '/placeholder-casino.svg'}
+                                alt={casino.casinoName}
                                 className="max-w-6 max-h-6 object-contain"
                                 onError={(e) => {
                                   const target = e.target as HTMLImageElement
@@ -232,87 +200,76 @@ export function CasinosSection({ casinos }: CasinosSectionProps) {
                             ) : null}
                             <span className={cn(
                               "text-xs font-bold text-primary",
-                              casino.logo && "hidden"
+                              (casino.coverImageUrl || casino.imageUrl) && "hidden"
                             )}>
-                              {casino.name.charAt(0)}
+                              {casino.casinoName.charAt(0)}
                             </span>
                           </div>
                           <div>
-                            <div className="font-semibold">{casino.name}</div>
+                            <div className="font-semibold flex items-center gap-1">
+                              {casino.position && casino.position <= 3 && (
+                                <Crown className="h-3 w-3 text-yellow-500" />
+                              )}
+                              <span>{casino.casinoName}</span>
+                            </div>
                             <div className="text-xs text-muted-foreground">#{index + 1}</div>
                           </div>
                         </div>
                       </TableCell>
 
-                      {/* Platform */}
-                      <TableCell>{casino.plataforma}</TableCell>
-
-                      {/* Implementation Time */}
+                      {/* Antigüedad */}
                       <TableCell>
                         <div className="flex items-center gap-1">
                           <Clock className="h-3 w-3 text-muted-foreground" />
-                          <span className="text-sm">{casino.tiempo}</span>
+                          <span className="text-sm">{casino.antiguedad}</span>
                         </div>
                       </TableCell>
 
-                      {/* Potential */}
+                      {/* Precio */}
                       <TableCell>
-                        <Badge 
+                        <Badge
                           variant="outline"
                           className={cn(
-                            "text-xs font-medium",
-                            casino.potencial.color === 'green' ? 'bg-green-100 text-green-800 border-green-200 dark:bg-green-900/20 dark:text-green-300' :
-                            casino.potencial.color === 'yellow' ? 'bg-yellow-100 text-yellow-800 border-yellow-200 dark:bg-yellow-900/20 dark:text-yellow-300' :
+                            "text-xs",
+                            casino.precio === 'muy barato' ? 'bg-green-100 text-green-800 border-green-200 dark:bg-green-900/20 dark:text-green-300' :
+                            casino.precio === 'barato' ? 'bg-yellow-100 text-yellow-800 border-yellow-200 dark:bg-yellow-900/20 dark:text-yellow-300' :
                             'bg-red-100 text-red-800 border-red-200 dark:bg-red-900/20 dark:text-red-300'
                           )}
                         >
-                          <Star className="h-3 w-3 mr-1" />
-                          {casino.potencial.label}
+                          {CASINO_PRECIO_VALUES[casino.precio].label}
                         </Badge>
+                      </TableCell>
+
+                      {/* RTP */}
+                      <TableCell>
+                        <span className="text-sm font-medium">
+                          {casino.rtp?.toFixed(1) ?? '0.0'}%
+                        </span>
                       </TableCell>
 
                       {/* Similar */}
                       <TableCell className="text-sm text-muted-foreground">
-                        {casino.similar || '-'}
+                        {casino.platSimilar || '-'}
                       </TableCell>
 
-                      {/* Custom Fields */}
-                      {casino.customFields?.slice(0, 2).map((field) => (
-                        <TableCell key={field.fieldId} className="text-sm">
-                          {typeof field.value === 'object' && field.value && 'label' in field.value
-                            ? (
-                              <Badge 
-                                variant="outline" 
-                                className={cn(
-                                  "text-xs",
-                                  field.value.color === 'green' ? 'bg-green-100 text-green-800 border-green-200' :
-                                  field.value.color === 'yellow' ? 'bg-yellow-100 text-yellow-800 border-yellow-200' :
-                                  field.value.color === 'red' ? 'bg-red-100 text-red-800 border-red-200' :
-                                  ''
-                                )}
-                              >
-                                {field.value.label}
-                              </Badge>
-                            )
-                            : String(field.value)
-                          }
-                        </TableCell>
-                      ))}
-
-                      {/* Fill empty custom field columns if casino has fewer fields */}
-                      {casino.customFields && casino.customFields.length < 2 &&
-                        displayCasinos[0]?.customFields?.slice(casino.customFields.length, 2).map((field, i) => (
-                          <TableCell key={`empty-${casino.id}-${field.fieldId}`}>-</TableCell>
-                        ))
-                      }
+                      {/* Position */}
+                      <TableCell>
+                        {casino.position ? (
+                          <Badge variant="secondary" className="text-xs">
+                            #{casino.position}
+                          </Badge>
+                        ) : (
+                          <span className="text-sm text-muted-foreground">-</span>
+                        )}
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
               </Table>
               </div>
 
-              {/* Indicador de scroll horizontal */}
-              <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-background via-background/80 to-transparent pointer-events-none flex items-center justify-center opacity-75">
+              {/* Indicador de scroll horizontal - solo en desktop */}
+              <div className="hidden md:block absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-background via-background/80 to-transparent pointer-events-none flex items-center justify-center opacity-75">
                 <div className="flex flex-col items-center gap-1 text-xs text-muted-foreground">
                   <ChevronRight className="h-3 w-3 animate-pulse" />
                   <span className="text-[10px] font-medium whitespace-nowrap">Scroll</span>
@@ -322,17 +279,6 @@ export function CasinosSection({ casinos }: CasinosSectionProps) {
           </CardContent>
         </Card>
 
-        {/* Show count info */}
-        <div className="text-center mt-6 space-y-2">
-          <div className="text-sm text-muted-foreground">
-            Mostrando {displayCasinos.length} casinos de ejemplo
-          </div>
-          <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
-            <ChevronRight className="h-3 w-3" />
-            <span>Desliza horizontalmente para ver más información</span>
-            <ChevronRight className="h-3 w-3" />
-          </div>
-        </div>
       </div>
     </section>
   )

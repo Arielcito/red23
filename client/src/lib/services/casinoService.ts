@@ -32,7 +32,7 @@ export class CasinoService {
         throw new Error('Error al obtener los casinos')
       }
 
-      const formattedCasinos = casinos?.map(this.formatCasinoFromDB) || []
+      const formattedCasinos = casinos?.map(CasinoService.formatCasinoFromDB) || []
       
       console.log('✅ Casinos obtenidos:', formattedCasinos.length)
       return formattedCasinos
@@ -87,7 +87,7 @@ export class CasinoService {
         throw new Error('Error al crear el casino')
       }
 
-      console.log('✅ Casino creado exitosamente:', newCasino.name)
+      console.log('✅ Casino creado exitosamente:', newCasino.casino_name)
       
       // Obtener el casino completo con campos
       const fullCasino = await this.getCasinoById(newCasino.id)
@@ -118,7 +118,7 @@ export class CasinoService {
         throw new Error('Error al actualizar el casino')
       }
 
-      console.log('✅ Casino actualizado:', updatedCasino.name)
+      console.log('✅ Casino actualizado:', updatedCasino.casino_name)
       
       // Obtener el casino completo con campos
       const fullCasino = await this.getCasinoById(id)
@@ -166,7 +166,7 @@ export class CasinoService {
       const { data: topCasinos, error } = await supabase
         .from('top_three_casinos')
         .select('*')
-        .order('top_three_position', { ascending: true })
+        .order('position', { ascending: true })
 
       if (error) {
         console.error('❌ Error obteniendo top 3:', error)
@@ -199,31 +199,51 @@ export class CasinoService {
         throw new Error('No se pueden tener más de 3 casinos en el top 3')
       }
 
-      // Primero, remover todos los casinos del top 3
-      const { error: clearError } = await supabase
-        .from('casinos')
-        .update({ 
-          is_top_three: false, 
-          top_three_position: null 
-        })
-        .eq('is_top_three', true)
+      // Normalizar lista de IDs y remover duplicados
+      const uniqueCasinoIds = Array.from(new Set(casinoIds))
 
-      if (clearError) {
-        console.error('❌ Error limpiando top 3:', clearError)
-        throw clearError
+      if (uniqueCasinoIds.length !== casinoIds.length) {
+        console.warn('⚠️ Se detectaron IDs duplicados en la actualización del top 3')
+      }
+
+      if (uniqueCasinoIds.length > 3) {
+        throw new Error('No se pueden asignar más de 3 casinos en el top 3')
+      }
+
+      // Obtener casinos que actualmente están en el top (position no null)
+      const { data: currentTop, error: fetchTopError } = await supabase
+        .from('casinos')
+        .select('id, position')
+
+      if (fetchTopError) {
+        console.error('❌ Error obteniendo top 3 actual:', fetchTopError)
+        throw fetchTopError
+      }
+
+      const currentTopIds = currentTop
+        ?.filter(item => item.position !== null && item.position <= 3)
+        .map(item => item.id) ?? []
+
+      if (currentTopIds.length > 0) {
+        const { error: clearError } = await supabase
+          .from('casinos')
+          .update({ position: null })
+          .in('id', currentTopIds)
+
+        if (clearError) {
+          console.error('❌ Error limpiando posiciones previas del top 3:', clearError)
+          throw clearError
+        }
       }
 
       // Luego, actualizar los nuevos casinos del top 3
-      for (let i = 0; i < casinoIds.length; i++) {
-        const casinoId = casinoIds[i]
+      for (let i = 0; i < uniqueCasinoIds.length; i++) {
+        const casinoId = uniqueCasinoIds[i]
         const position = i + 1
 
         const { error: updateError } = await supabase
           .from('casinos')
-          .update({ 
-            is_top_three: true, 
-            top_three_position: position 
-          })
+          .update({ position })
           .eq('id', casinoId)
 
         if (updateError) {
@@ -243,11 +263,25 @@ export class CasinoService {
     try {
       console.log('🖼️ Actualizando imagen de casino top 3:', casinoId)
 
+      const { data: casinoRecord, error: fetchError } = await supabase
+        .from('casinos')
+        .select('position')
+        .eq('id', casinoId)
+        .single()
+
+      if (fetchError) {
+        console.error('❌ Error verificando casino antes de actualizar imagen:', fetchError)
+        throw new Error('Error al verificar el casino antes de actualizar la imagen')
+      }
+
+      if (!casinoRecord || casinoRecord.position === null) {
+        throw new Error('El casino no forma parte del top 3 actual')
+      }
+
       const { error } = await supabase
         .from('casinos')
         .update({ image_url: imageUrl })
         .eq('id', casinoId)
-        .eq('is_top_three', true)
 
       if (error) {
         console.error('❌ Error actualizando imagen:', error)
@@ -258,6 +292,48 @@ export class CasinoService {
     } catch (error) {
       console.error('❌ Error en updateTopThreeImage:', error)
       throw new Error('Error al actualizar la imagen')
+    }
+  }
+
+  static async uploadCasinoCoverImage(casinoId: string, file: File | Blob): Promise<string> {
+    try {
+      console.log('📸 Subiendo imagen de casino al bucket:', casinoId)
+
+      const extension = file instanceof File && file.name.includes('.')
+        ? file.name.split('.').pop()?.toLowerCase()
+        : 'jpg'
+
+      const safeExtension = extension && extension.length <= 5 ? extension : 'jpg'
+      const fileName = `${Date.now()}.${safeExtension}`
+      const filePath = `casino/${casinoId}/${fileName}`
+
+      const { error: uploadError } = await supabase.storage
+        .from('images')
+        .upload(filePath, file, {
+          cacheControl: '3600',
+          upsert: true,
+        })
+
+      if (uploadError) {
+        console.error('❌ Error subiendo imagen al bucket:', uploadError)
+        throw new Error('No se pudo subir la imagen al almacenamiento')
+      }
+
+      const {
+        data: { publicUrl },
+      } = supabase.storage
+        .from('images')
+        .getPublicUrl(filePath)
+
+      if (!publicUrl) {
+        throw new Error('No se pudo obtener la URL pública de la imagen')
+      }
+
+      console.log('✅ Imagen subida correctamente:', publicUrl)
+      return publicUrl
+    } catch (error) {
+      console.error('❌ Error en uploadCasinoCoverImage:', error)
+      throw error instanceof Error ? error : new Error('Error desconocido subiendo imagen')
     }
   }
 

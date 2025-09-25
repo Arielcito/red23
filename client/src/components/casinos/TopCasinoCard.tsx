@@ -1,10 +1,11 @@
 "use client"
 
-import { TopCasino } from '@/lib/types/casino'
+import type { TopCasino } from '@/lib/supabase/types'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import Image from 'next/image'
 import { cn } from '@/lib/utils'
+import { CASINO_PRECIO_VALUES } from '@/lib/supabase/types'
 
 interface TopCasinoCardProps {
   casino: TopCasino
@@ -12,19 +13,6 @@ interface TopCasinoCardProps {
 }
 
 export function TopCasinoCard({ casino, className }: TopCasinoCardProps) {
-  const getBadgeColor = (color: string) => {
-    switch (color) {
-      case 'green':
-        return 'bg-green-100 text-green-800 border-green-200 dark:bg-green-900 dark:text-green-300 dark:border-green-800'
-      case 'yellow': 
-        return 'bg-yellow-100 text-yellow-800 border-yellow-200 dark:bg-yellow-900 dark:text-yellow-300 dark:border-yellow-800'
-      case 'red':
-        return 'bg-red-100 text-red-800 border-red-200 dark:bg-red-900 dark:text-red-300 dark:border-red-800'
-      default:
-        return 'bg-gray-100 text-gray-800 border-gray-200 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-800'
-    }
-  }
-
   const getPositionStyles = (position: number) => {
     switch (position) {
       case 1:
@@ -65,17 +53,17 @@ export function TopCasinoCard({ casino, className }: TopCasinoCardProps) {
     )}>
       {/* Position badge */}
       <div className={cn(
-        'absolute top-4 left-4 w-8 h-8 rounded-full flex items-center justify-center text-white font-bold text-sm z-10 bg-gradient-to-br',
+        'absolute top-1 left-1 w-5 h-5 rounded-full flex items-center justify-center text-white font-bold text-xs z-10 bg-gradient-to-br',
         positionStyles.gradient
       )}>
         #{casino.position}
       </div>
 
-      <CardHeader className="pb-3">
-        <div className="relative h-32 w-full rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800">
+      <CardHeader className="pb-1 p-2 pt-2">
+        <div className="relative h-10 w-full rounded-md overflow-hidden bg-gray-100 dark:bg-gray-800">
           <Image
-            src={casino.imageUrl}
-            alt={casino.name}
+            src={casino.imageUrl || '/placeholder-casino.svg'}
+            alt={casino.casinoName}
             fill
             className="object-cover transition-transform duration-300 hover:scale-110"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
@@ -93,28 +81,33 @@ export function TopCasinoCard({ casino, className }: TopCasinoCardProps) {
         </div>
       </CardHeader>
 
-      <CardContent className="space-y-3">
+      <CardContent className="space-y-1 p-2">
         <div>
-          <h3 className="font-bold text-lg text-foreground mb-1">
-            {casino.name}
+          <h3 className="font-bold text-sm text-foreground mb-0.5">
+            {casino.casinoName}
           </h3>
-          <p className="text-sm text-muted-foreground">
-            {casino.plataforma}
+          <p className="text-xs text-muted-foreground leading-tight">
+            Antigüedad: {casino.antiguedad}
+          </p>
+          <p className="text-xs text-muted-foreground leading-tight">
+            RTP: <span className="text-foreground font-medium">{casino.rtp.toFixed(1)}%</span>
           </p>
         </div>
 
         <div className="flex items-center justify-between">
-          <span className="text-sm font-medium text-muted-foreground">
-            Potencial:
+          <span className="text-xs font-medium text-muted-foreground">
+            Rango de precio
           </span>
-          <Badge 
+          <Badge
             variant="outline"
             className={cn(
-              'text-xs font-medium',
-              getBadgeColor(casino.potencial.color)
+              'text-xs font-medium px-1.5 py-0.5',
+              casino.precio === 'muy barato' ? 'bg-green-100 text-green-800 border-green-200 dark:bg-green-900/20 dark:text-green-300' :
+              casino.precio === 'barato' ? 'bg-yellow-100 text-yellow-800 border-yellow-200 dark:bg-yellow-900/20 dark:text-yellow-300' :
+              'bg-red-100 text-red-800 border-red-200 dark:bg-red-900/20 dark:text-red-300'
             )}
           >
-            {casino.potencial.label}
+            {CASINO_PRECIO_VALUES[casino.precio].label}
           </Badge>
         </div>
       </CardContent>

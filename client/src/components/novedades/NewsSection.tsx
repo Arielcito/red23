@@ -60,9 +60,9 @@ export function NewsSection({ featuredNews, recentNews }: NewsSectionProps) {
   }
 
   return (
-    <section className="py-12 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20">
+    <section className="py-6 md:py-12 bg-blue-50/50 md:bg-gradient-to-br md:from-blue-50 md:to-indigo-50 dark:bg-blue-950/10 dark:md:from-blue-950/20 dark:md:to-indigo-950/20">
       <div className="container mx-auto px-6">
-        <div className="text-center space-y-4 mb-12">
+        <div className="text-center space-y-4 mb-6 md:mb-12">
           <div className="flex items-center justify-center gap-2">
             <Newspaper className="h-8 w-8 text-primary" />
             <h2 className="text-3xl font-bold">Últimas Noticias</h2>

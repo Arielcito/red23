@@ -248,6 +248,7 @@ export interface CasinoWithFields {
   rtp: number
   platSimilar?: string | null
   position?: number | null
+  coverImageUrl?: string | null
   imageUrl?: string | null
   createdAt: string
   updatedAt: string

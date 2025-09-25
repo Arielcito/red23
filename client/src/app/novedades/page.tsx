@@ -50,7 +50,7 @@ export default function NovedadesPage() {
   }
 
   // Get 10 casinos for the casinos section (excluding top 3)
-  const availableCasinos = casinos.filter(casino => !casino.isTopThree)
+  const availableCasinos = casinos.filter(casino => !casino.position || casino.position > 3)
   const tenCasinos = availableCasinos.slice(0, 10)
 
   return (
@@ -63,7 +63,7 @@ export default function NovedadesPage() {
         className: "text-xs"
       }}
     >
-      <div className="space-y-12 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20 -mx-6 px-6 -my-6 py-6">
+      <div className="space-y-6 md:space-y-12 bg-blue-50/50 md:bg-gradient-to-br md:from-blue-50 md:to-indigo-50 dark:bg-blue-950/10 dark:md:from-blue-950/20 dark:md:to-indigo-950/20 -mx-6 px-6 -my-6 py-6">
         {/* Top 3 Section */}
         <TopThreeSection topThree={topThree} />
 

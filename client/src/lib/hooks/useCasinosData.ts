@@ -2,141 +2,7 @@
 
 import { useState, useCallback, useEffect } from 'react'
 import type { CasinoWithFields, TopCasino } from '@/lib/supabase/types'
-import { CASINO_PRECIO_VALUES } from '@/lib/supabase/types'
-
-// Mock data for development/fallback
-const mockCasinos: CasinoWithFields[] = [
-  {
-    id: "mock-1",
-    casinoName: "Bet365",
-    logo: null,
-    antiguedad: "5 años",
-    precio: "muy barato",
-    rtp: 96.5,
-    platSimilar: "William Hill",
-    position: 1,
-    imageUrl: "/placeholder-casino.svg",
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
-  },
-  {
-    id: "mock-2",
-    casinoName: "888 Casino",
-    logo: null,
-    antiguedad: "3 años",
-    precio: "barato",
-    rtp: 97.2,
-    platSimilar: "Paddy Power",
-    position: 2,
-    imageUrl: "/placeholder-casino.svg",
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
-  },
-  {
-    id: "mock-3",
-    casinoName: "LeoVegas",
-    logo: null,
-    antiguedad: "7 años",
-    precio: "medio",
-    rtp: 95.8,
-    platSimilar: "Casumo",
-    position: 3,
-    imageUrl: "/placeholder-casino.svg",
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
-  },
-  {
-    id: "mock-4",
-    casinoName: "Unibet",
-    logo: null,
-    antiguedad: "4 años",
-    precio: "barato",
-    rtp: 96.1,
-    platSimilar: "Betsson",
-    position: null,
-    imageUrl: "/placeholder-casino.svg",
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
-  },
-  {
-    id: "mock-5",
-    casinoName: "Bwin",
-    logo: null,
-    antiguedad: "2 años",
-    precio: "muy barato",
-    rtp: 97.8,
-    platSimilar: "Bet-at-home",
-    position: 4,
-    imageUrl: "/placeholder-casino.svg",
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
-  },
-  {
-    id: "mock-6",
-    casinoName: "Royal Panda",
-    logo: null,
-    antiguedad: "6 años",
-    precio: "medio",
-    rtp: 94.5,
-    platSimilar: "Guts",
-    position: null,
-    imageUrl: "/placeholder-casino.svg",
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
-  },
-  {
-    id: "mock-7",
-    casinoName: "Vegas Hero",
-    logo: null,
-    antiguedad: "1 año",
-    precio: "barato",
-    rtp: 96.8,
-    platSimilar: "Thrills",
-    position: null,
-    imageUrl: "/placeholder-casino.svg",
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
-  },
-  {
-    id: "mock-8",
-    casinoName: "Mr Green",
-    logo: null,
-    antiguedad: "8 años",
-    precio: "muy barato",
-    rtp: 98.1,
-    platSimilar: "Casino Euro",
-    position: 5,
-    imageUrl: "/placeholder-casino.svg",
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
-  },
-  {
-    id: "mock-9",
-    casinoName: "ComeOn",
-    logo: null,
-    antiguedad: "3 años",
-    precio: "muy barato",
-    rtp: 97.5,
-    platSimilar: "Mobilebet",
-    position: 6,
-    imageUrl: "/placeholder-casino.svg",
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
-  },
-  {
-    id: "mock-10",
-    casinoName: "Next Casino",
-    logo: null,
-    antiguedad: "2 años",
-    precio: "medio",
-    rtp: 95.2,
-    platSimilar: "VideoSlots",
-    position: null,
-    imageUrl: "/placeholder-casino.svg",
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
-  }
-];
+import { CasinoService } from '@/lib/services/casinoService'
 
 // Updated hook types for simplified casino management
 export interface CasinosDataHook {
@@ -150,6 +16,7 @@ export interface CasinosDataHook {
   deleteCasino: (id: string) => Promise<void>
   // Top three operations
   updateTopThreeImage: (casinoId: string, imageUrl: string) => Promise<void>
+  uploadCasinoCoverImage: (casinoId: string, file: File | Blob) => Promise<string>
   // Utility functions
   refreshData: () => Promise<void>
   clearError: () => void
@@ -178,7 +45,7 @@ export function useCasinosData(): CasinosDataHook {
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  // Cargar datos reales desde la API o usar mock como fallback
+  // Cargar datos reales desde la API
   const loadData = useCallback(async () => {
     try {
       setIsLoading(true)
@@ -186,25 +53,14 @@ export function useCasinosData(): CasinosDataHook {
 
       console.log('🎰 Cargando datos de casinos desde API...')
 
-      try {
-        // Cargar solo casinos
-        const casinosResponse = await apiCall('/api/casinos')
+      // Cargar solo casinos
+      const casinosResponse = await apiCall('/api/casinos')
 
-        if (casinosResponse.success && casinosResponse.data.length > 0) {
-          setCasinos(casinosResponse.data)
-          console.log('✅ Casinos cargados desde API:', casinosResponse.data.length)
-        } else {
-          throw new Error('No hay datos de casinos disponibles')
-        }
-
-      } catch (apiError) {
-        console.warn('⚠️ API no disponible, usando datos de mock para desarrollo:', apiError)
-
-        // Simular tiempo de carga para datos de mock
-        await new Promise(resolve => setTimeout(resolve, 500))
-
-        setCasinos(mockCasinos)
-        console.log('✅ Datos de mock cargados:', mockCasinos.length)
+      if (casinosResponse.success && casinosResponse.data.length > 0) {
+        setCasinos(casinosResponse.data)
+        console.log('✅ Casinos cargados desde API:', casinosResponse.data.length)
+      } else {
+        throw new Error('No hay datos de casinos disponibles')
       }
 
     } catch (error) {
@@ -240,12 +96,12 @@ export function useCasinosData(): CasinosDataHook {
         casino_name: casinoData.casinoName,
         logo: casinoData.logo,
         antiguedad: casinoData.antiguedad,
-        precio: casinoData.precio,
-        rtp: casinoData.rtp,
-        plat_similar: casinoData.platSimilar,
-        position: casinoData.position,
-        image_url: casinoData.imageUrl
-      }
+      precio: casinoData.precio,
+      rtp: casinoData.rtp,
+      plat_similar: casinoData.platSimilar,
+      position: casinoData.position,
+      image_url: casinoData.imageUrl
+    }
       
       const response = await apiCall('/api/casinos', {
         method: 'POST',
@@ -350,6 +206,17 @@ export function useCasinosData(): CasinosDataHook {
     }
   }
 
+  const uploadCasinoCoverImage = async (casinoId: string, file: File | Blob): Promise<string> => {
+    try {
+      const publicUrl = await CasinoService.uploadCasinoCoverImage(casinoId, file)
+      await updateCasino(casinoId, { coverImageUrl: publicUrl })
+      return publicUrl
+    } catch (error) {
+      console.error('❌ Error uploading casino cover image:', error)
+      throw error
+    }
+  }
+
   // Utility functions
   const refreshData = useCallback(async () => {
     await loadData()
@@ -373,6 +240,7 @@ export function useCasinosData(): CasinosDataHook {
     updateCasino,
     deleteCasino,
     updateTopThreeImage,
+    uploadCasinoCoverImage,
     refreshData,
     clearError
   }
