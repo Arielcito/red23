@@ -95,9 +95,6 @@ export function ReferralDashboard({ className }: ReferralDashboardProps) {
         </Button>
       </div>
 
-      {/* Stats */}
-      <ReferralStats stats={stats!} isLoading={isLoading} />
-
       <div className="grid gap-6 lg:grid-cols-2">
         {/* Código de referido */}
         <ReferralCodeDisplay 
