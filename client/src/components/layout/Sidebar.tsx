@@ -152,6 +152,14 @@ export function Sidebar({ className }: SidebarProps) {
       description: "Editar prompts automáticos",
       isAdmin: true
     },
+    {
+      title: "Admin Tutoriales",
+      href: "/admin/tutorials",
+      icon: GraduationCap,
+      badge: "Admin",
+      description: "Gestión de rutas de aprendizaje",
+      isAdmin: true
+    },
   ]
 
   const isActive = (href: string) => pathname === href

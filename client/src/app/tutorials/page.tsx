@@ -62,47 +62,6 @@ export default function TutorialsPage() {
           ))}
         </div>
 
-        {/* Featured Course Banner */}
-        <Card className="bg-gradient-to-r from-primary-50 to-secondary-50 dark:from-primary-900/20 dark:to-secondary-900/20 border-primary-200 dark:border-primary-800">
-          <CardContent className="p-6">
-            <div className="flex flex-col lg:flex-row items-center justify-between space-y-4 lg:space-y-0">
-              <div className="flex-1">
-                <Badge className="bg-primary-100 text-primary-700 border-primary-200 mb-3">
-                  🔥 Curso Destacado
-                </Badge>
-                <h3 className="text-xl lg:text-2xl font-bold text-gray-900 dark:text-white mb-2">
-                  Marketing Digital para Casinos Online
-                </h3>
-                <p className="text-gray-600 dark:text-gray-300 mb-4">
-                  Aprende las estrategias más efectivas para promocionar casinos online de forma legal y ética
-                </p>
-                <div className="flex items-center space-x-4 text-sm text-gray-500 dark:text-gray-400">
-                  <div className="flex items-center">
-                    <Clock className="h-4 w-4 mr-1" />
-                    <span>8 horas</span>
-                  </div>
-                  <div className="flex items-center">
-                    <Users className="h-4 w-4 mr-1" />
-                    <span>1,234 estudiantes</span>
-                  </div>
-                  <div className="flex items-center">
-                    <Star className="h-4 w-4 mr-1 fill-current text-yellow-400" />
-                    <span>4.9</span>
-                  </div>
-                </div>
-              </div>
-              <div className="flex flex-col items-center space-y-3">
-                <Button size="lg" className="bg-primary-600 hover:bg-primary-700">
-                  <PlayCircle className="mr-2 h-5 w-5" />
-                  Comenzar Curso
-                </Button>
-                <span className="text-sm text-gray-500">Gratis con tu plan</span>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-
         {/* Learning Path Section */}
         <Card>
           <CardHeader>
