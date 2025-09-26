@@ -11,6 +11,34 @@ export const useImageDownload = (): UseImageDownloadReturn => {
   const [isDownloading, setIsDownloading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
+  const triggerDownload = (href: string, fileName: string) => {
+    const link = document.createElement('a')
+    link.href = href
+    link.download = fileName
+    link.rel = 'noopener noreferrer'
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+  }
+
+  const downloadImageViaProxy = async (imageUrl: string, fileName: string): Promise<void> => {
+    const proxyUrl = `/api/image-download?url=${encodeURIComponent(imageUrl)}&filename=${encodeURIComponent(fileName)}`
+    const response = await fetch(proxyUrl)
+
+    if (!response.ok) {
+      throw new Error(`Fallo al descargar la imagen desde el proxy (${response.status})`)
+    }
+
+    const blob = await response.blob()
+    const blobUrl = URL.createObjectURL(blob)
+
+    try {
+      triggerDownload(blobUrl, fileName)
+    } finally {
+      setTimeout(() => URL.revokeObjectURL(blobUrl), 1000)
+    }
+  }
+
   const downloadImage = useCallback(async (imageUrl: string, fileName?: string): Promise<void> => {
     try {
       setIsDownloading(true)
@@ -21,18 +49,22 @@ export const useImageDownload = (): UseImageDownloadReturn => {
       
       // Estrategia 1: Si la imagen está en formato base64, usar directamente
       if (imageUrl.startsWith('data:')) {
-        const link = document.createElement('a')
-        link.href = imageUrl
-        link.download = finalFileName
-        document.body.appendChild(link)
-        link.click()
-        document.body.removeChild(link)
+        triggerDownload(imageUrl, finalFileName)
         console.log('✅ Descarga base64 exitosa')
         return
       }
       
       // Estrategia 2: Para URLs externas, intentar diferentes métodos
       if (imageUrl.startsWith('http')) {
+        // Método 0: Intentar mediante proxy del servidor para evitar problemas CORS
+        try {
+          await downloadImageViaProxy(imageUrl, finalFileName)
+          console.log('✅ Descarga via proxy API exitosa')
+          return
+        } catch (proxyError) {
+          console.warn('Proxy download failed:', proxyError)
+        }
+
         // Método 1: Intentar con Canvas (funciona con CORS habilitado)
         try {
           await downloadImageViaCanvas(imageUrl, finalFileName)
@@ -48,12 +80,7 @@ export const useImageDownload = (): UseImageDownloadReturn => {
           const blob = await response.blob()
           const blobUrl = URL.createObjectURL(blob)
           
-          const link = document.createElement('a')
-          link.href = blobUrl
-          link.download = finalFileName
-          document.body.appendChild(link)
-          link.click()
-          document.body.removeChild(link)
+          triggerDownload(blobUrl, finalFileName)
           
           setTimeout(() => URL.revokeObjectURL(blobUrl), 100)
           console.log('✅ Descarga via blob exitosa')
@@ -69,12 +96,7 @@ export const useImageDownload = (): UseImageDownloadReturn => {
       }
       
       // Para otros tipos de URL
-      const link = document.createElement('a')
-      link.href = imageUrl
-      link.download = finalFileName
-      document.body.appendChild(link)
-      link.click()
-      document.body.removeChild(link)
+      triggerDownload(imageUrl, finalFileName)
       console.log('✅ Descarga directa exitosa')
       
     } catch (error) {
@@ -122,12 +144,7 @@ export const useImageDownload = (): UseImageDownloadReturn => {
             }
             
             const blobUrl = URL.createObjectURL(blob)
-            const link = document.createElement('a')
-            link.href = blobUrl
-            link.download = fileName
-            document.body.appendChild(link)
-            link.click()
-            document.body.removeChild(link)
+            triggerDownload(blobUrl, fileName)
             
             setTimeout(() => URL.revokeObjectURL(blobUrl), 100)
             resolve()
