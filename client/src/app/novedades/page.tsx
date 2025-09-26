@@ -10,18 +10,17 @@ import { LoadingState } from "@/components/novedades/LoadingState"
 import { ErrorState } from "@/components/novedades/ErrorState"
 
 export default function NovedadesPage() {
-  const { 
-    featuredNews, 
-    recentNews, 
-    isLoading: newsLoading, 
-    error: newsError 
+  const {
+    featuredNews,
+    recentNews,
+    isLoading: newsLoading,
+    error: newsError
   } = useNewsData()
-  
-  const { 
-    topThree, 
-    casinos, 
-    isLoading: casinosLoading, 
-    error: casinosError 
+
+  const {
+    topThree,
+    isLoading: casinosLoading,
+    error: casinosError
   } = useCasinosData()
 
   const isLoading = newsLoading || casinosLoading
@@ -49,9 +48,6 @@ export default function NovedadesPage() {
     )
   }
 
-  // Get 10 casinos for the casinos section (excluding top 3)
-  const availableCasinos = casinos.filter(casino => !casino.position || casino.position > 3)
-  const tenCasinos = availableCasinos.slice(0, 10)
 
   return (
     <AppLayout
@@ -67,8 +63,8 @@ export default function NovedadesPage() {
         {/* Top 3 Section */}
         <TopThreeSection topThree={topThree} />
 
-        {/* 10 Casinos Section */}
-        <CasinosSection casinos={tenCasinos} />
+        {/* Casinos Section */}
+        <CasinosSection />
 
         {/* News Section */}
         <NewsSection 

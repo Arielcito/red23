@@ -47,7 +47,12 @@ export function TopThreeSection({ topThree }: TopThreeSectionProps) {
           </p>
         </div>
 
-        <div className="grid grid-cols-3 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4 max-w-4xl mx-auto">
+        <div className={cn(
+          "gap-3 md:gap-4 max-w-4xl mx-auto",
+          topThree.length === 1 && "grid grid-cols-1",
+          topThree.length === 2 && "grid grid-cols-2",
+          topThree.length === 3 && "grid grid-cols-3 sm:grid-cols-2 lg:grid-cols-3"
+        )}>
           {topThree.map((casino, index) => (
             <div key={casino.id} className="relative">
               {/* Position Badge - Outside Card */}

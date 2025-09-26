@@ -3,89 +3,22 @@ import { Badge } from "@/components/ui/badge"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Clock, Settings, ChevronRight, Crown } from "lucide-react"
 import { cn } from "@/lib/utils"
-import type { CasinoWithFields } from "@/lib/supabase/types"
 import { CASINO_PRECIO_VALUES } from "@/lib/supabase/types"
+import { useCasinosData } from "@/lib/hooks/useCasinosData"
+import { LoadingState } from "./LoadingState"
+import { ErrorState } from "./ErrorState"
+import Image from "next/image"
 
-interface CasinosSectionProps {
-  casinos: CasinoWithFields[]
-}
+export function CasinosSection() {
+  const { casinos, isLoading, error } = useCasinosData()
 
-// Datos de ejemplo para desarrollo
-const sampleCasinos: CasinoWithFields[] = [
-  {
-    id: "sample-1",
-    casinoName: "Bet365",
-    logo: null,
-    antiguedad: "5 años",
-    precio: "muy barato",
-    rtp: 97.5,
-    platSimilar: "William Hill",
-    position: 1,
-    coverImageUrl: null,
-    imageUrl: null,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
-  },
-  {
-    id: "sample-2",
-    casinoName: "888 Casino",
-    logo: null,
-    antiguedad: "3 años",
-    precio: "barato",
-    rtp: 96.8,
-    platSimilar: "Paddy Power",
-    position: 2,
-    coverImageUrl: null,
-    imageUrl: null,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
-  },
-  {
-    id: "sample-3",
-    casinoName: "LeoVegas",
-    logo: null,
-    antiguedad: "7 años",
-    precio: "medio",
-    rtp: 95.2,
-    platSimilar: "Casumo",
-    position: 3,
-    coverImageUrl: null,
-    imageUrl: null,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
-  },
-  {
-    id: "sample-4",
-    casinoName: "Unibet",
-    logo: null,
-    antiguedad: "4 años",
-    precio: "barato",
-    rtp: 96.1,
-    platSimilar: "Betsson",
-    position: 4,
-    coverImageUrl: null,
-    imageUrl: null,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
-  },
-  {
-    id: "sample-5",
-    casinoName: "Bwin",
-    logo: null,
-    antiguedad: "2 años",
-    precio: "muy barato",
-    rtp: 97.8,
-    platSimilar: "Bet-at-home",
-    position: 5,
-    coverImageUrl: null,
-    imageUrl: null,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
+  if (error) {
+    return <ErrorState error={error} />
   }
-]
 
-export function CasinosSection({ casinos }: CasinosSectionProps) {
-  const displayCasinos = casinos.length > 0 ? casinos : sampleCasinos
+  if (isLoading) {
+    return <LoadingState />
+  }
 
   return (
     <section className="py-6 md:py-12">
@@ -120,16 +53,25 @@ export function CasinosSection({ casinos }: CasinosSectionProps) {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {displayCasinos.map((casino, index) => (
+                  {casinos.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
+                        No hay casinos disponibles para mostrar
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    casinos.map((casino, index) => (
                     <TableRow key={casino.id} className="hover:bg-muted/50">
                       {/* Casino Name with Logo */}
                       <TableCell className="font-medium">
                         <div className="flex items-center gap-3">
                           <div className="relative w-8 h-8 rounded bg-muted flex items-center justify-center">
                             {casino.coverImageUrl || casino.imageUrl ? (
-                              <img
+                              <Image
                                 src={casino.coverImageUrl || casino.imageUrl || '/placeholder-casino.svg'}
                                 alt={casino.casinoName}
+                                width={24}
+                                height={24}
                                 className="max-w-6 max-h-6 object-contain"
                                 onError={(e) => {
                                   const target = e.target as HTMLImageElement
@@ -203,7 +145,8 @@ export function CasinosSection({ casinos }: CasinosSectionProps) {
                         )}
                       </TableCell>
                     </TableRow>
-                  ))}
+                    ))
+                  )}
                 </TableBody>
               </Table>
               </div>
