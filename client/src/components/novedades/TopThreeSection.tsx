@@ -14,7 +14,7 @@ export function TopThreeSection({ topThree }: TopThreeSectionProps) {
   if (!topThree || topThree.length === 0) {
     return (
       <section className="py-12">
-        <div className="container mx-auto px-6">
+        <div className="container mx-auto">
           <div className="text-center space-y-4">
             <div className="flex items-center justify-center gap-2">
               <Crown className="h-8 w-8 text-yellow-500" />
@@ -34,8 +34,8 @@ export function TopThreeSection({ topThree }: TopThreeSectionProps) {
   }
 
   return (
-    <section className="py-6 md:py-12">
-      <div className="container mx-auto px-6">
+    <section className="py-6 md:py-12 px-4 md:px-6">
+      <div className="container mx-auto">
         <div className="text-center space-y-4 pb-6 md:pb-12">
           <div className="flex items-center justify-center gap-2">
             <Crown className="h-8 w-8 text-yellow-500" />
@@ -47,12 +47,12 @@ export function TopThreeSection({ topThree }: TopThreeSectionProps) {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+        <div className="grid grid-cols-3 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4 max-w-4xl mx-auto">
           {topThree.map((casino, index) => (
             <div key={casino.id} className="relative">
               {/* Position Badge - Outside Card */}
               <div className={cn(
-                "absolute -top-6 left-1/2 transform -translate-x-1/2 w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-lg z-20 shadow-lg",
+                "absolute -top-4 left-1/2 transform -translate-x-1/2 w-8 h-8 rounded-full flex items-center justify-center text-white font-bold text-sm z-20 shadow-lg",
                 index === 0 ? "bg-gradient-to-br from-yellow-400 to-yellow-600" :
                 index === 1 ? "bg-gradient-to-br from-gray-300 to-gray-500" :
                 "bg-gradient-to-br from-orange-400 to-orange-600"
@@ -68,7 +68,7 @@ export function TopThreeSection({ topThree }: TopThreeSectionProps) {
               >
                 <CardContent className="p-0">
                 {/* Casino Image */}
-                <div className="relative aspect-square w-full bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900">
+                <div className="relative aspect-[3/2] w-full bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900">
                   <Image
                     src={casino.imageUrl || '/placeholder-casino.svg'}
                     alt={casino.casinoName}
@@ -84,12 +84,12 @@ export function TopThreeSection({ topThree }: TopThreeSectionProps) {
                 </div>
 
                 {/* Casino Name */}
-                <div className="p-3 text-center">
-                  <h3 className="text-sm md:text-lg font-bold text-gray-900 dark:text-white">{casino.casinoName}</h3>
+                <div className="p-2 text-center">
+                  <h3 className="text-sm font-bold text-gray-900 dark:text-white">{casino.casinoName}</h3>
                 </div>
 
                 {/* Casino Info - Hidden on Mobile */}
-                <div className="hidden md:block p-4 space-y-3">
+                <div className="hidden md:block p-3 space-y-2">
                   <div className="space-y-1 text-sm text-muted-foreground">
                     <p>Antigüedad: {casino.antiguedad}</p>
                     <p>RTP: <span className="font-medium text-foreground">{casino.rtp.toFixed(1)}%</span></p>

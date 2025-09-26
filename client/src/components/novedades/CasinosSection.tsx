@@ -89,7 +89,7 @@ export function CasinosSection({ casinos }: CasinosSectionProps) {
 
   return (
     <section className="py-6 md:py-12">
-      <div className="container mx-auto px-6">
+      <div className="container mx-auto">
         <div className="text-center space-y-4 mb-6 md:mb-12">
           <h2 className="text-3xl font-bold">Comparación de Casinos</h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
@@ -106,68 +106,8 @@ export function CasinosSection({ casinos }: CasinosSectionProps) {
           </CardHeader>
           <CardContent>
             <div className="relative">
-              {/* Mobile Card View */}
-              <div className="block md:hidden space-y-4">
-                {displayCasinos.map((casino, index) => (
-                  <Card key={casino.id} className="p-4">
-                    <div className="space-y-3">
-                      <div className="flex items-center gap-3">
-                        <div className="relative w-10 h-10 rounded bg-muted flex items-center justify-center">
-                          {casino.coverImageUrl || casino.imageUrl ? (
-                            <img
-                              src={casino.coverImageUrl || casino.imageUrl || '/placeholder-casino.svg'}
-                              alt={casino.casinoName}
-                              className="max-w-8 max-h-8 object-contain"
-                              onError={(e) => {
-                                const target = e.target as HTMLImageElement
-                                target.style.display = 'none'
-                                target.nextElementSibling?.classList.remove('hidden')
-                              }}
-                            />
-                          ) : null}
-                          <span className={cn(
-                            "text-sm font-bold text-primary",
-                            (casino.coverImageUrl || casino.imageUrl) && "hidden"
-                          )}>
-                            {casino.casinoName.charAt(0)}
-                          </span>
-                        </div>
-                        <div className="flex-1">
-                          <div className="flex items-center gap-1">
-                            {casino.position && casino.position <= 3 && (
-                              <Crown className="h-3 w-3 text-yellow-500" />
-                            )}
-                            <span className="font-semibold">{casino.casinoName}</span>
-                          </div>
-                          <div className="text-xs text-muted-foreground">#{index + 1}</div>
-                        </div>
-                      </div>
-
-                      <div className="grid grid-cols-2 gap-2 text-sm">
-                        <div><span className="text-muted-foreground">Antigüedad:</span> {casino.antiguedad}</div>
-                        <div><span className="text-muted-foreground">RTP:</span> {casino.rtp?.toFixed(1) ?? '0.0'}%</div>
-                        <div><span className="text-muted-foreground">Precio:</span>
-                          <Badge
-                            variant="outline"
-                            className={cn(
-                              "ml-1 text-xs",
-                              casino.precio === 'muy barato' ? 'bg-green-100 text-green-800 border-green-200 dark:bg-green-900/20 dark:text-green-300' :
-                              casino.precio === 'barato' ? 'bg-yellow-100 text-yellow-800 border-yellow-200 dark:bg-yellow-900/20 dark:text-yellow-300' :
-                              'bg-red-100 text-red-800 border-red-200 dark:bg-red-900/20 dark:text-red-300'
-                            )}
-                          >
-                            {CASINO_PRECIO_VALUES[casino.precio].label}
-                          </Badge>
-                        </div>
-                        <div><span className="text-muted-foreground">Similar:</span> {casino.platSimilar || '-'}</div>
-                      </div>
-                    </div>
-                  </Card>
-                ))}
-              </div>
-
-              {/* Desktop Table View */}
-              <div className="hidden md:block overflow-x-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 dark:scrollbar-thumb-gray-600 dark:scrollbar-track-gray-800">
+              {/* Mobile and Desktop Table View */}
+              <div className="block overflow-x-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 dark:scrollbar-thumb-gray-600 dark:scrollbar-track-gray-800">
                 <Table>
                 <TableHeader>
                   <TableRow>
@@ -268,8 +208,8 @@ export function CasinosSection({ casinos }: CasinosSectionProps) {
               </Table>
               </div>
 
-              {/* Indicador de scroll horizontal - solo en desktop */}
-              <div className="hidden md:block absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-background via-background/80 to-transparent pointer-events-none flex items-center justify-center opacity-75">
+              {/* Indicador de scroll horizontal */}
+              <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-background via-background/80 to-transparent pointer-events-none flex items-center justify-center opacity-75">
                 <div className="flex flex-col items-center gap-1 text-xs text-muted-foreground">
                   <ChevronRight className="h-3 w-3 animate-pulse" />
                   <span className="text-[10px] font-medium whitespace-nowrap">Scroll</span>
