@@ -145,6 +145,9 @@ export interface RewardSettings {
   banner_image_id?: number | null
   daily_prize_amount: string
   monthly_prize_amount: string
+  daily_prize_draw_date?: string | null
+  monthly_prize_draw_date?: string | null
+  use_custom_dates: boolean
   rules_text?: string | null
 }
 
@@ -158,6 +161,9 @@ export interface NewRewardSettings {
   banner_image_id?: number | null
   daily_prize_amount?: string
   monthly_prize_amount?: string
+  daily_prize_draw_date?: string | null
+  monthly_prize_draw_date?: string | null
+  use_custom_dates?: boolean
   rules_text?: string | null
 }
 

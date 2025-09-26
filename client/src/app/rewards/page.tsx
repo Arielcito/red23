@@ -12,7 +12,7 @@ import { useAdminRewardsSettings } from "@/lib/hooks/useAdminRewardsSettings"
 import { useBannerImage } from "@/lib/hooks/useBannerImage"
 
 export default function RewardsPage() {
-  const { nextDailyPrize, nextMonthlyPrize, recentWinners, isLoading, error } = useRewardsData()
+  const { nextDailyPrize, nextMonthlyPrize, recentWinners, rewardSettings, isLoading, error } = useRewardsData()
   const { settings: bannerSettings, isLoaded: settingsLoaded } = useAdminRewardsSettings()
   const { bannerImage } = useBannerImage(bannerSettings.imageId)
   
@@ -72,7 +72,7 @@ export default function RewardsPage() {
               />
               <div className="flex items-center gap-2">
                 <Star className="h-4 w-4 text-yellow-500" />
-                <span className="text-sm font-medium">Premio: $500 - $1,500 USD</span>
+                <span className="text-sm font-medium">Premio: {rewardSettings?.daily_prize_amount || "$500 - $1,500 USD"}</span>
               </div>
             </CardContent>
           </Card>
@@ -97,7 +97,7 @@ export default function RewardsPage() {
               />
               <div className="flex items-center gap-2">
                 <Star className="h-4 w-4 text-yellow-500" />
-                <span className="text-sm font-medium">Premio: $5,000 - $15,000 USD</span>
+                <span className="text-sm font-medium">Premio: {rewardSettings?.monthly_prize_amount || "$5,000 - $15,000 USD"}</span>
               </div>
             </CardContent>
           </Card>

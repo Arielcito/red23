@@ -35,6 +35,9 @@ export async function GET() {
           banner_theme: "emerald",
           daily_prize_amount: "$500 - $1,500 USD",
           monthly_prize_amount: "$5,000 - $15,000 USD",
+          daily_prize_draw_date: null,
+          monthly_prize_draw_date: null,
+          use_custom_dates: false,
           rules_text: null
         }
 
@@ -106,6 +109,57 @@ export async function PUT(request: NextRequest) {
           details: 'Theme must be one of: emerald, indigo, amber'
         }
       }, { status: 400 })
+    }
+
+    // Validar fechas personalizadas si están presentes
+    if (updates.daily_prize_draw_date) {
+      const dailyDate = new Date(updates.daily_prize_draw_date)
+      if (isNaN(dailyDate.getTime())) {
+        return NextResponse.json({
+          success: false,
+          error: {
+            code: 'VALIDATION_ERROR',
+            message: 'Invalid daily prize draw date',
+            details: 'Date must be a valid ISO string'
+          }
+        }, { status: 400 })
+      }
+      
+      if (dailyDate <= new Date()) {
+        return NextResponse.json({
+          success: false,
+          error: {
+            code: 'VALIDATION_ERROR',
+            message: 'Daily prize draw date must be in the future',
+            details: 'Cannot set past dates for prize draws'
+          }
+        }, { status: 400 })
+      }
+    }
+
+    if (updates.monthly_prize_draw_date) {
+      const monthlyDate = new Date(updates.monthly_prize_draw_date)
+      if (isNaN(monthlyDate.getTime())) {
+        return NextResponse.json({
+          success: false,
+          error: {
+            code: 'VALIDATION_ERROR',
+            message: 'Invalid monthly prize draw date',
+            details: 'Date must be a valid ISO string'
+          }
+        }, { status: 400 })
+      }
+      
+      if (monthlyDate <= new Date()) {
+        return NextResponse.json({
+          success: false,
+          error: {
+            code: 'VALIDATION_ERROR',
+            message: 'Monthly prize draw date must be in the future',
+            details: 'Cannot set past dates for prize draws'
+          }
+        }, { status: 400 })
+      }
     }
 
     console.log('📝 Updating with data:', updates)

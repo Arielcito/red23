@@ -11,6 +11,11 @@ export interface RewardsBannerSettings {
   ctaUrl: string
   theme: RewardsBannerTheme
   imageId?: number | null
+  dailyPrizeAmount: string
+  monthlyPrizeAmount: string
+  dailyPrizeDrawDate?: string | null
+  monthlyPrizeDrawDate?: string | null
+  useCustomDates: boolean
 }
 
 interface UseAdminRewardsSettingsReturn {
@@ -31,7 +36,12 @@ export function useAdminRewardsSettings(): UseAdminRewardsSettingsReturn {
     ctaLabel: "Ver reglas",
     ctaUrl: "#reglas-premios",
     theme: "emerald",
-    imageId: null
+    imageId: null,
+    dailyPrizeAmount: "$500 - $1,500 USD",
+    monthlyPrizeAmount: "$5,000 - $15,000 USD",
+    dailyPrizeDrawDate: null,
+    monthlyPrizeDrawDate: null,
+    useCustomDates: false
   })
   const [isLoaded, setIsLoaded] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
@@ -45,7 +55,12 @@ export function useAdminRewardsSettings(): UseAdminRewardsSettingsReturn {
     ctaLabel: dbSettings.banner_cta_label,
     ctaUrl: dbSettings.banner_cta_url,
     theme: dbSettings.banner_theme,
-    imageId: dbSettings.banner_image_id
+    imageId: dbSettings.banner_image_id,
+    dailyPrizeAmount: dbSettings.daily_prize_amount,
+    monthlyPrizeAmount: dbSettings.monthly_prize_amount,
+    dailyPrizeDrawDate: dbSettings.daily_prize_draw_date,
+    monthlyPrizeDrawDate: dbSettings.monthly_prize_draw_date,
+    useCustomDates: dbSettings.use_custom_dates
   }), [])
 
   // Transform frontend settings to database format
@@ -56,7 +71,12 @@ export function useAdminRewardsSettings(): UseAdminRewardsSettingsReturn {
     banner_cta_label: frontendSettings.ctaLabel,
     banner_cta_url: frontendSettings.ctaUrl,
     banner_theme: frontendSettings.theme,
-    banner_image_id: frontendSettings.imageId
+    banner_image_id: frontendSettings.imageId,
+    daily_prize_amount: frontendSettings.dailyPrizeAmount,
+    monthly_prize_amount: frontendSettings.monthlyPrizeAmount,
+    daily_prize_draw_date: frontendSettings.dailyPrizeDrawDate,
+    monthly_prize_draw_date: frontendSettings.monthlyPrizeDrawDate,
+    use_custom_dates: frontendSettings.useCustomDates
   }), [])
 
   const fetchSettings = useCallback(async () => {
@@ -130,7 +150,12 @@ export function useAdminRewardsSettings(): UseAdminRewardsSettingsReturn {
       ctaLabel: "Ver reglas",
       ctaUrl: "#reglas-premios",
       theme: "emerald",
-      imageId: null
+      imageId: null,
+      dailyPrizeAmount: "$500 - $1,500 USD",
+      monthlyPrizeAmount: "$5,000 - $15,000 USD",
+      dailyPrizeDrawDate: null,
+      monthlyPrizeDrawDate: null,
+      useCustomDates: false
     }
     
     await updateSettings(defaultSettings)

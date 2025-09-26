@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import type { RewardWinner } from '@/lib/supabase/types'
+import type { RewardWinner, RewardSettings } from '@/lib/supabase/types'
 
 export interface Winner {
   id: string
@@ -14,6 +14,7 @@ interface UseRewardsDataReturn {
   nextDailyPrize: Date
   nextMonthlyPrize: Date
   recentWinners: Winner[]
+  rewardSettings: RewardSettings | null
   isLoading: boolean
   error: string | null
   refetch: () => Promise<void>
@@ -21,10 +22,20 @@ interface UseRewardsDataReturn {
 
 export function useRewardsData(): UseRewardsDataReturn {
   const [recentWinners, setRecentWinners] = useState<Winner[]>([])
+  const [rewardSettings, setRewardSettings] = useState<RewardSettings | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
   const getNextDailyPrize = (): Date => {
+    // Usar fecha personalizada si existe y use_custom_dates está habilitado
+    if (rewardSettings?.use_custom_dates && rewardSettings?.daily_prize_draw_date) {
+      const customDate = new Date(rewardSettings.daily_prize_draw_date)
+      if (customDate > new Date()) {
+        return customDate
+      }
+    }
+    
+    // Fallback: calcular próximo día automáticamente
     const now = new Date()
     const tomorrow = new Date(now)
     tomorrow.setDate(tomorrow.getDate() + 1)
@@ -33,6 +44,15 @@ export function useRewardsData(): UseRewardsDataReturn {
   }
 
   const getNextMonthlyPrize = (): Date => {
+    // Usar fecha personalizada si existe y use_custom_dates está habilitado
+    if (rewardSettings?.use_custom_dates && rewardSettings?.monthly_prize_draw_date) {
+      const customDate = new Date(rewardSettings.monthly_prize_draw_date)
+      if (customDate > new Date()) {
+        return customDate
+      }
+    }
+    
+    // Fallback: calcular próximo mes automáticamente
     const now = new Date()
     const nextMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1)
     nextMonth.setHours(0, 0, 0, 0)
@@ -74,6 +94,11 @@ export function useRewardsData(): UseRewardsDataReturn {
       }))
 
       setRecentWinners(transformedWinners)
+      
+      // También guardar reward settings si están disponibles
+      if (result.data.rewardSettings) {
+        setRewardSettings(result.data.rewardSettings)
+      }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to fetch rewards'
       console.error('❌ Error fetching rewards:', errorMessage)
@@ -91,6 +116,7 @@ export function useRewardsData(): UseRewardsDataReturn {
     nextDailyPrize: getNextDailyPrize(),
     nextMonthlyPrize: getNextMonthlyPrize(),
     recentWinners,
+    rewardSettings,
     isLoading,
     error,
     refetch: fetchRewards

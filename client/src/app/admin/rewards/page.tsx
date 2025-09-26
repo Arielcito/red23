@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useAdminRewardsSettings, RewardsBannerSettings, RewardsBannerTheme } from "@/lib/hooks/useAdminRewardsSettings"
 import { RewardsBanner } from "@/components/rewards/RewardsBanner"
-import { AlertTriangle, Loader2, Paintbrush } from "lucide-react"
+import { AlertTriangle, Loader2, Paintbrush, Calendar, DollarSign } from "lucide-react"
 
 const THEME_OPTIONS: { value: RewardsBannerTheme; label: string; description: string }[] = [
   { value: "emerald", label: "Esmeralda", description: "Ideal para destacar premios principales" },
@@ -181,6 +181,104 @@ export default function AdminRewardsPage() {
                 <div className="flex items-center gap-2 text-sm text-amber-600">
                   <AlertTriangle className="h-4 w-4" />
                   <span>Agrega un texto para el botón si muestras un enlace.</span>
+                </div>
+              )}
+            </form>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="space-y-2">
+            <CardTitle className="flex items-center gap-2">
+              <DollarSign className="h-4 w-4" />
+              Configuración de Premios
+            </CardTitle>
+            <CardDescription>
+              Personaliza los montos de los premios y configura fechas específicas para los sorteos.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="space-y-2">
+                  <Label htmlFor="daily-prize-amount">Premio Diario</Label>
+                  <Input
+                    id="daily-prize-amount"
+                    value={formState.dailyPrizeAmount}
+                    onChange={(event) => handleChange("dailyPrizeAmount", event.target.value)}
+                    placeholder="Ej: $500 - $1,500 USD"
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="monthly-prize-amount">Premio Mensual</Label>
+                  <Input
+                    id="monthly-prize-amount"
+                    value={formState.monthlyPrizeAmount}
+                    onChange={(event) => handleChange("monthlyPrizeAmount", event.target.value)}
+                    placeholder="Ej: $5,000 - $15,000 USD"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between rounded-lg border p-4">
+                <div className="space-y-1">
+                  <Label htmlFor="custom-dates" className="text-base">
+                    Fechas personalizadas
+                  </Label>
+                  <p className="text-sm text-muted-foreground">
+                    Activa para configurar fechas específicas de sorteo en lugar del cálculo automático.
+                  </p>
+                </div>
+                <Switch
+                  id="custom-dates"
+                  checked={formState.useCustomDates}
+                  onCheckedChange={(checked) => handleChange("useCustomDates", checked)}
+                />
+              </div>
+
+              {formState.useCustomDates && (
+                <div className="space-y-4 rounded-lg border p-4 bg-muted/20">
+                  <div className="flex items-center gap-2 text-sm font-medium">
+                    <Calendar className="h-4 w-4" />
+                    <span>Fechas de Sorteo</span>
+                  </div>
+                  
+                  <div className="grid gap-4 md:grid-cols-2">
+                    <div className="space-y-2">
+                      <Label htmlFor="daily-draw-date">Próximo Sorteo Diario</Label>
+                      <Input
+                        id="daily-draw-date"
+                        type="datetime-local"
+                        value={formState.dailyPrizeDrawDate ? new Date(formState.dailyPrizeDrawDate).toISOString().slice(0, 16) : ''}
+                        onChange={(event) => {
+                          const value = event.target.value ? new Date(event.target.value).toISOString() : null
+                          handleChange("dailyPrizeDrawDate", value)
+                        }}
+                        min={new Date().toISOString().slice(0, 16)}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="monthly-draw-date">Próximo Sorteo Mensual</Label>
+                      <Input
+                        id="monthly-draw-date"
+                        type="datetime-local"
+                        value={formState.monthlyPrizeDrawDate ? new Date(formState.monthlyPrizeDrawDate).toISOString().slice(0, 16) : ''}
+                        onChange={(event) => {
+                          const value = event.target.value ? new Date(event.target.value).toISOString() : null
+                          handleChange("monthlyPrizeDrawDate", value)
+                        }}
+                        min={new Date().toISOString().slice(0, 16)}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="text-xs text-muted-foreground">
+                    <p>• Las fechas deben ser futuras</p>
+                    <p>• Si no se especifica fecha, se calculará automáticamente</p>
+                    <p>• Al desactivar fechas personalizadas, se volverá al cálculo automático</p>
+                  </div>
                 </div>
               )}
 

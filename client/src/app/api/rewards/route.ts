@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabase } from '@/lib/supabase/client'
-import type { RewardWinner } from '@/lib/supabase/types'
+import type { RewardWinner, RewardSettings } from '@/lib/supabase/types'
 
 export async function GET(request: NextRequest) {
   try {
@@ -32,10 +32,24 @@ export async function GET(request: NextRequest) {
 
     console.log(`✅ Loaded ${recentWinners?.length || 0} winners from database`)
 
+    // También obtener configuraciones de premios
+    const { data: rewardSettings, error: settingsError } = await supabase
+      .from('reward_settings')
+      .select('*')
+      .limit(1)
+      .single()
+
+    if (settingsError && settingsError.code !== 'PGRST116') {
+      console.error('❌ Error fetching reward settings:', settingsError)
+    }
+
+    console.log('✅ Loaded reward settings from database')
+
     return NextResponse.json({
       success: true,
       data: {
-        recentWinners: recentWinners || []
+        recentWinners: recentWinners || [],
+        rewardSettings: rewardSettings || null
       }
     })
   } catch (error) {
