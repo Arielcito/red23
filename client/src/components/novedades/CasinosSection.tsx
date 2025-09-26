@@ -49,7 +49,6 @@ export function CasinosSection() {
                     <TableHead>Precio</TableHead>
                     <TableHead>RTP</TableHead>
                     <TableHead>Similar a</TableHead>
-                    <TableHead>Posición</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -132,17 +131,6 @@ export function CasinosSection() {
                       {/* Similar */}
                       <TableCell className="text-sm text-muted-foreground">
                         {casino.platSimilar || '-'}
-                      </TableCell>
-
-                      {/* Position */}
-                      <TableCell>
-                        {casino.position ? (
-                          <Badge variant="secondary" className="text-xs">
-                            #{casino.position}
-                          </Badge>
-                        ) : (
-                          <span className="text-sm text-muted-foreground">-</span>
-                        )}
                       </TableCell>
                     </TableRow>
                     ))
