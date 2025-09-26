@@ -103,6 +103,10 @@ export function ReferralDashboard({ className }: ReferralDashboardProps) {
         <ReferralCodeDisplay 
           code={stats?.myReferralCode || ''}
           onCopy={() => console.log('Código copiado')}
+          onCodeUpdated={(newCode) => {
+            console.log('Código actualizado:', newCode)
+            refreshStats() // Refrescar datos después de actualizar el código
+          }}
         />
 
         {/* Lista de referidos */}

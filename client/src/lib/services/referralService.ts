@@ -14,11 +14,143 @@ export interface ReferralStats {
   myReferralCode: string
 }
 
+export interface CodeValidationResult {
+  isValid: boolean
+  error?: string
+  suggestions?: string[]
+}
+
 export class ReferralService {
   static generateReferralCode(): string {
     const code = nanoid(8).toUpperCase()
     console.log('🎯 Generando código de referido:', code)
     return code
+  }
+
+  static validateCustomReferralCode(code: string): CodeValidationResult {
+    // Normalizar código
+    const normalizedCode = code.trim().toUpperCase()
+
+    // Validar longitud
+    if (normalizedCode.length < 3) {
+      return {
+        isValid: false,
+        error: 'El código debe tener al menos 3 caracteres',
+        suggestions: ['Prueba con un código más largo']
+      }
+    }
+
+    if (normalizedCode.length > 15) {
+      return {
+        isValid: false,
+        error: 'El código no puede tener más de 15 caracteres',
+        suggestions: ['Prueba con un código más corto']
+      }
+    }
+
+    // Validar formato (solo alfanuméricos, guiones y guiones bajos)
+    const validFormat = /^[A-Z0-9_-]+$/
+    if (!validFormat.test(normalizedCode)) {
+      return {
+        isValid: false,
+        error: 'Solo se permiten letras, números, guiones (-) y guiones bajos (_)',
+        suggestions: ['Usa solo letras, números, - y _']
+      }
+    }
+
+    // Validar palabras prohibidas
+    const prohibitedWords = ['ADMIN', 'TEST', 'NULL', 'UNDEFINED', 'RED23', 'CASINO', 'REFERRAL', 'CODE']
+    if (prohibitedWords.some(word => normalizedCode.includes(word))) {
+      return {
+        isValid: false,
+        error: 'Este código contiene palabras reservadas',
+        suggestions: ['Prueba con un código diferente']
+      }
+    }
+
+    // Validar que no sea solo números o solo guiones
+    if (/^[\d-_]+$/.test(normalizedCode)) {
+      return {
+        isValid: false,
+        error: 'El código debe contener al menos una letra',
+        suggestions: ['Agrega algunas letras al código']
+      }
+    }
+
+    return { isValid: true }
+  }
+
+  static async checkReferralCodeAvailability(code: string, excludeUserId?: string): Promise<boolean> {
+    try {
+      const normalizedCode = code.trim().toUpperCase()
+      console.log('🔍 Verificando disponibilidad del código:', normalizedCode)
+
+      const { data: existingUser, error } = await supabase
+        .from('user_referrals')
+        .select('user_id')
+        .eq('referral_code', normalizedCode)
+        .limit(1)
+        .single()
+
+      if (error && error.code !== 'PGRST116') {
+        console.error('Error checking code availability:', error)
+        throw error
+      }
+
+      // Si no existe ningún usuario con ese código, está disponible
+      if (!existingUser) {
+        return true
+      }
+
+      // Si existe pero es el mismo usuario (para actualización), está disponible
+      if (excludeUserId && existingUser.user_id === excludeUserId) {
+        return true
+      }
+
+      // El código ya está en uso por otro usuario
+      return false
+    } catch (error) {
+      console.error('❌ Error verificando disponibilidad:', error)
+      throw new Error('Error verificando disponibilidad del código')
+    }
+  }
+
+  static async updateUserReferralCode(userId: string, newCode: string) {
+    try {
+      const normalizedCode = newCode.trim().toUpperCase()
+      console.log('🔄 Actualizando código de referido:', { userId, newCode: normalizedCode })
+
+      const { data: updatedUser, error } = await supabase
+        .from('user_referrals')
+        .update({
+          referral_code: normalizedCode,
+          updated_at: new Date().toISOString()
+        })
+        .eq('user_id', userId)
+        .select('*')
+        .single()
+
+      if (error) {
+        console.error('Error updating referral code:', error)
+        throw error
+      }
+
+      if (!updatedUser) {
+        throw new Error('Usuario no encontrado')
+      }
+
+      // También actualizar en referral_tracking si hay referencias al código anterior
+      await supabase
+        .from('referral_tracking')
+        .update({ referral_code: normalizedCode })
+        .eq('referrer_user_id', userId)
+
+      console.log('✅ Código de referido actualizado exitosamente')
+      return updatedUser
+    } catch (error) {
+      console.error('❌ Error actualizando código de referido:', error)
+      throw new Error('Error al actualizar el código de referido')
+    }
   }
 
   static async createUserReferral(data: CreateReferralData) {

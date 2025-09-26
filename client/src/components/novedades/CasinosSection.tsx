@@ -12,6 +12,13 @@ import Image from "next/image"
 export function CasinosSection() {
   const { casinos, isLoading, error } = useCasinosData()
 
+  // Ordenar casinos por posición (los que tienen posición primero, luego por orden ascendente)
+  const sortedCasinos = casinos.sort((a, b) => {
+    const aPos = a.position ?? 999
+    const bPos = b.position ?? 999
+    return aPos - bPos
+  })
+
   if (error) {
     return <ErrorState error={error} />
   }
@@ -52,14 +59,14 @@ export function CasinosSection() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {casinos.length === 0 ? (
+                  {sortedCasinos.length === 0 ? (
                     <TableRow>
                       <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
                         No hay casinos disponibles para mostrar
                       </TableCell>
                     </TableRow>
                   ) : (
-                    casinos.map((casino, index) => (
+                    sortedCasinos.map((casino, index) => (
                     <TableRow key={casino.id} className="hover:bg-muted/50">
                       {/* Casino Name with Logo */}
                       <TableCell className="font-medium">

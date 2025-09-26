@@ -1,18 +1,25 @@
 "use client"
 
 import { useState } from 'react'
-import { Copy, Check, Share } from 'lucide-react'
+import { Copy, Check, Share, Edit3 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
 import type { ReferralCodeDisplayProps } from '@/lib/types/referrals'
+import { ReferralCodeEditor } from './ReferralCodeEditor'
+
+interface ExtendedReferralCodeDisplayProps extends ReferralCodeDisplayProps {
+  onCodeUpdated?: (newCode: string) => void
+}
 
 export function ReferralCodeDisplay({ 
   code, 
   onCopy, 
-  className 
-}: ReferralCodeDisplayProps) {
+  className,
+  onCodeUpdated
+}: ExtendedReferralCodeDisplayProps) {
   const [copied, setCopied] = useState(false)
+  const [isEditorOpen, setIsEditorOpen] = useState(false)
 
   const handleCopy = async () => {
     try {
@@ -65,14 +72,40 @@ export function ReferralCodeDisplay({
     }
   }
 
+  const handleEditCode = () => {
+    setIsEditorOpen(true)
+  }
+
+  const handleCodeEditorSave = async (newCode: string) => {
+    onCodeUpdated?.(newCode)
+    setIsEditorOpen(false)
+  }
+
+  const handleCodeEditorCancel = () => {
+    setIsEditorOpen(false)
+  }
+
   return (
-    <Card className={cn('w-full', className)}>
-      <CardHeader className="text-center">
-        <CardTitle className="text-xl">Tu Enlace de Referido</CardTitle>
-        <CardDescription>
-          Comparte este enlace con tus amigos para ganar recompensas
-        </CardDescription>
-      </CardHeader>
+    <>
+      <Card className={cn('w-full', className)}>
+        <CardHeader className="text-center">
+          <div className="flex items-center justify-between">
+            <div className="flex-1">
+              <CardTitle className="text-xl">Tu Código de Referido</CardTitle>
+              <CardDescription>
+                Comparte este código con tus amigos para ganar recompensas
+              </CardDescription>
+            </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleEditCode}
+              className="text-muted-foreground hover:text-foreground"
+            >
+              <Edit3 className="h-4 w-4" />
+            </Button>
+          </div>
+        </CardHeader>
       <CardContent className="space-y-4">
         <div className="text-center">
           <div className="inline-flex items-center justify-center p-4 bg-primary/10 rounded-lg border-2 border-dashed border-primary/20">
@@ -118,5 +151,13 @@ export function ReferralCodeDisplay({
         </div>
       </CardContent>
     </Card>
+
+    <ReferralCodeEditor
+      currentCode={code}
+      onSave={handleCodeEditorSave}
+      onCancel={handleCodeEditorCancel}
+      isOpen={isEditorOpen}
+    />
+  </>
   )
 }

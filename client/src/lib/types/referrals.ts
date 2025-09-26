@@ -48,6 +48,26 @@ export interface ValidateCodeResponse {
   referralCode: string
 }
 
+export interface CustomReferralCodeRequest {
+  referralCode: string
+}
+
+export interface CodeAvailabilityResponse {
+  isAvailable: boolean
+  referralCode: string
+  error?: string
+  suggestions?: string[]
+}
+
+export interface UpdateReferralCodeRequest {
+  newReferralCode: string
+}
+
+export interface UpdateReferralCodeResponse {
+  referralCode: string
+  message: string
+}
+
 export interface ApiResponse<T> {
   success: boolean
   data?: T
@@ -98,6 +118,15 @@ export interface ReferralInputProps {
   className?: string
 }
 
+export interface ReferralCodeEditorProps {
+  currentCode: string
+  onSave: (newCode: string) => Promise<void>
+  onCancel: () => void
+  isOpen: boolean
+  isLoading?: boolean
+  className?: string
+}
+
 export interface ReferralListProps {
   referrals: ReferralData[]
   isLoading?: boolean
@@ -113,6 +142,21 @@ export interface UseReferralsReturn {
   validateCode: (code: string) => Promise<boolean>
   registerWithReferral: (referralCode?: string) => Promise<boolean>
   refreshStats: () => Promise<void>
+}
+
+export interface UseReferralCodeEditorReturn {
+  isEditing: boolean
+  newCode: string
+  isValidating: boolean
+  isSaving: boolean
+  validationError: string | null
+  isAvailable: boolean | null
+  suggestions: string[]
+  setNewCode: (code: string) => void
+  startEditing: () => void
+  cancelEditing: () => void
+  saveCode: () => Promise<boolean>
+  checkAvailability: (code: string) => Promise<void>
 }
 
 // Configuración y constantes
