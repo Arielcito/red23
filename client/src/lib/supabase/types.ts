@@ -453,3 +453,106 @@ export interface LearningPathApiResponse {
   success: boolean
   data: LearningPathFormatted
 }
+
+// =============================================
+// TUTORIAL MODULES AND VIDEOS SYSTEM TYPES
+// =============================================
+
+// Base interfaces for tutorial database tables
+export interface TutorialModule {
+  id: string
+  learning_path_id: string
+  title: string
+  description?: string | null
+  order_index: number
+  is_active: boolean
+  created_at: string
+  updated_at: string
+}
+
+export interface NewTutorialModule {
+  learning_path_id: string
+  title: string
+  description?: string | null
+  order_index?: number
+  is_active?: boolean
+}
+
+export interface TutorialVideo {
+  id: string
+  module_id: string
+  title: string
+  description?: string | null
+  video_url: string
+  duration?: string | null
+  order_index: number
+  is_active: boolean
+  created_at: string
+  updated_at: string
+}
+
+export interface NewTutorialVideo {
+  module_id: string
+  title: string
+  description?: string | null
+  video_url: string
+  duration?: string | null
+  order_index?: number
+  is_active?: boolean
+}
+
+// Enhanced interfaces for frontend use
+export interface TutorialModuleFormatted {
+  id: string
+  learningPathId: string
+  title: string
+  description?: string | null
+  order: number
+  isActive: boolean
+  videos: TutorialVideoFormatted[]
+  createdAt: string
+  updatedAt: string
+}
+
+export interface TutorialVideoFormatted {
+  id: string
+  title: string
+  description?: string | null
+  videoUrl: string
+  duration?: string | null
+  order: number
+  isActive: boolean
+  createdAt: string
+  updatedAt: string
+}
+
+// Extended Learning Path with modules and videos
+export interface LearningPathWithContent extends LearningPathFormatted {
+  modules: TutorialModuleFormatted[]
+}
+
+// API Response types
+export interface TutorialModulesApiResponse {
+  success: boolean
+  data: TutorialModuleFormatted[]
+}
+
+export interface TutorialModuleApiResponse {
+  success: boolean
+  data: TutorialModuleFormatted
+}
+
+export interface TutorialVideosApiResponse {
+  success: boolean
+  data: TutorialVideoFormatted[]
+}
+
+export interface TutorialVideoApiResponse {
+  success: boolean
+  data: TutorialVideoFormatted
+}
+
+export interface LearningPathsWithContentApiResponse {
+  success: boolean
+  data: LearningPathWithContent[]
+}

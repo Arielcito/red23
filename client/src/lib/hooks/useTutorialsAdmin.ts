@@ -1,15 +1,18 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { TutorialsAdminService } from "@/lib/services/tutorialsAdminService"
 import type { 
   TutorialsAdminHook, 
-  LearningPathWithContent, 
   LearningPathFormData,
   ModuleFormData,
-  VideoFormData,
-  TutorialModule,
-  TutorialVideo
+  VideoFormData
 } from "@/lib/types/tutorials"
+import type { 
+  LearningPathWithContent,
+  TutorialModuleFormatted as TutorialModule,
+  TutorialVideoFormatted as TutorialVideo
+} from "@/lib/supabase/types"
 
 export function useTutorialsAdmin(): TutorialsAdminHook {
   const [learningPaths, setLearningPaths] = useState<LearningPathWithContent[]>([])
@@ -21,130 +24,8 @@ export function useTutorialsAdmin(): TutorialsAdminHook {
       setIsLoading(true)
       setError(null)
 
-      // Simulamos datos estáticos por ahora, ya que no hay API específica
-      // En el futuro esto se conectará con la API real
-      const mockPaths: LearningPathWithContent[] = [
-        {
-          id: '1',
-          title: 'Fundamentos del Marketing Digital',
-          description: 'Conceptos básicos, herramientas esenciales y primeras estrategias',
-          level: 'Principiante',
-          duration: '4 módulos • 20 horas',
-          courseCount: 4,
-          icon: '🎯',
-          colorScheme: 'primary',
-          slug: 'fundamentos-marketing',
-          imageUrl: null,
-          isFeatured: true,
-          isActive: true,
-          displayOrder: 1,
-          modules: [
-            {
-              id: 'mod1',
-              learningPathId: '1',
-              title: 'Introducción al Marketing Digital',
-              description: 'Conceptos básicos y fundamentos del marketing online',
-              order: 1,
-              isActive: true,
-              videos: [
-                {
-                  id: 'vid1',
-                  title: '¿Qué es el Marketing Digital?',
-                  description: 'Una introducción completa al mundo del marketing digital',
-                  videoUrl: 'https://www.youtube.com/watch?v=example1',
-                  duration: '15:30',
-                  order: 1,
-                  isActive: true,
-                  createdAt: new Date().toISOString(),
-                  updatedAt: new Date().toISOString()
-                },
-                {
-                  id: 'vid2',
-                  title: 'Principales Canales Digitales',
-                  description: 'Exploración de los canales más importantes',
-                  videoUrl: 'https://www.youtube.com/watch?v=example2',
-                  duration: '22:45',
-                  order: 2,
-                  isActive: true,
-                  createdAt: new Date().toISOString(),
-                  updatedAt: new Date().toISOString()
-                }
-              ],
-              createdAt: new Date().toISOString(),
-              updatedAt: new Date().toISOString()
-            },
-            {
-              id: 'mod2',
-              learningPathId: '1',
-              title: 'Herramientas Esenciales',
-              description: 'Las herramientas que todo marketero digital debe conocer',
-              order: 2,
-              isActive: true,
-              videos: [
-                {
-                  id: 'vid3',
-                  title: 'Google Analytics para Principiantes',
-                  description: 'Configuración y conceptos básicos de Analytics',
-                  videoUrl: 'https://www.youtube.com/watch?v=example3',
-                  duration: '28:12',
-                  order: 1,
-                  isActive: true,
-                  createdAt: new Date().toISOString(),
-                  updatedAt: new Date().toISOString()
-                }
-              ],
-              createdAt: new Date().toISOString(),
-              updatedAt: new Date().toISOString()
-            }
-          ],
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString()
-        },
-        {
-          id: '2',
-          title: 'Marketing en Redes Sociales',
-          description: 'Estrategias en Instagram, Facebook, TikTok y plataformas emergentes',
-          level: 'Intermedio',
-          duration: '5 módulos • 25 horas',
-          courseCount: 5,
-          icon: '📱',
-          colorScheme: 'secondary',
-          slug: 'marketing-redes-sociales',
-          imageUrl: null,
-          isFeatured: true,
-          isActive: true,
-          displayOrder: 2,
-          modules: [
-            {
-              id: 'mod3',
-              learningPathId: '2',
-              title: 'Estrategias en Instagram',
-              description: 'Domina Instagram para tu marca',
-              order: 1,
-              isActive: true,
-              videos: [
-                {
-                  id: 'vid4',
-                  title: 'Optimización de Perfil en Instagram',
-                  description: 'Cómo crear un perfil que convierta',
-                  videoUrl: 'https://www.youtube.com/watch?v=example4',
-                  duration: '18:30',
-                  order: 1,
-                  isActive: true,
-                  createdAt: new Date().toISOString(),
-                  updatedAt: new Date().toISOString()
-                }
-              ],
-              createdAt: new Date().toISOString(),
-              updatedAt: new Date().toISOString()
-            }
-          ],
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString()
-        }
-      ]
-
-      setLearningPaths(mockPaths)
+      const paths = await TutorialsAdminService.getAllLearningPaths()
+      setLearningPaths(paths)
     } catch (err) {
       console.error('useTutorialsAdmin - Error loading learning paths:', err)
       setError('Error al cargar las rutas de aprendizaje')
@@ -163,14 +44,7 @@ export function useTutorialsAdmin(): TutorialsAdminHook {
     try {
       console.log('🆕 Creando nueva ruta de aprendizaje:', data)
       
-      const newPath: LearningPathWithContent = {
-        id: `path_${Date.now()}`,
-        ...data,
-        modules: [],
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      }
-
+      const newPath = await TutorialsAdminService.createLearningPath(data)
       setLearningPaths(prev => [...prev, newPath])
       console.log('✅ Ruta de aprendizaje creada exitosamente')
       return newPath
@@ -184,18 +58,11 @@ export function useTutorialsAdmin(): TutorialsAdminHook {
     try {
       console.log('✏️ Actualizando ruta de aprendizaje:', id, updates)
       
-      const updatedPaths = learningPaths.map(path => 
-        path.id === id 
-          ? { ...path, ...updates, updatedAt: new Date().toISOString() }
-          : path
-      )
+      const updatedPath = await TutorialsAdminService.updateLearningPath(id, updates)
       
-      setLearningPaths(updatedPaths)
-      
-      const updatedPath = updatedPaths.find(path => path.id === id)
-      if (!updatedPath) {
-        throw new Error('Ruta de aprendizaje no encontrada')
-      }
+      setLearningPaths(prev => prev.map(path => 
+        path.id === id ? updatedPath : path
+      ))
       
       console.log('✅ Ruta de aprendizaje actualizada exitosamente')
       return updatedPath
@@ -208,6 +75,7 @@ export function useTutorialsAdmin(): TutorialsAdminHook {
   const deleteLearningPath = async (id: string): Promise<void> => {
     try {
       console.log('🗑️ Eliminando ruta de aprendizaje:', id)
+      await TutorialsAdminService.deleteLearningPath(id)
       setLearningPaths(prev => prev.filter(path => path.id !== id))
       console.log('✅ Ruta de aprendizaje eliminada exitosamente')
     } catch (err) {
@@ -221,14 +89,7 @@ export function useTutorialsAdmin(): TutorialsAdminHook {
     try {
       console.log('🆕 Creando nuevo módulo:', learningPathId, data)
       
-      const newModule: TutorialModule = {
-        id: `module_${Date.now()}`,
-        learningPathId,
-        ...data,
-        videos: [],
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      }
+      const newModule = await TutorialsAdminService.createModule(learningPathId, data)
 
       setLearningPaths(prev => prev.map(path => 
         path.id === learningPathId 
@@ -253,23 +114,15 @@ export function useTutorialsAdmin(): TutorialsAdminHook {
     try {
       console.log('✏️ Actualizando módulo:', moduleId, updates)
       
-      let updatedModule: TutorialModule | null = null
+      const updatedModule = await TutorialsAdminService.updateModule(moduleId, updates)
       
       setLearningPaths(prev => prev.map(path => ({
         ...path,
-        modules: path.modules.map(module => {
-          if (module.id === moduleId) {
-            updatedModule = { ...module, ...updates, updatedAt: new Date().toISOString() }
-            return updatedModule
-          }
-          return module
-        }),
+        modules: path.modules.map(module => 
+          module.id === moduleId ? updatedModule : module
+        ),
         updatedAt: path.modules.some(m => m.id === moduleId) ? new Date().toISOString() : path.updatedAt
       })))
-      
-      if (!updatedModule) {
-        throw new Error('Módulo no encontrado')
-      }
       
       console.log('✅ Módulo actualizado exitosamente')
       return updatedModule
@@ -282,6 +135,8 @@ export function useTutorialsAdmin(): TutorialsAdminHook {
   const deleteModule = async (moduleId: string): Promise<void> => {
     try {
       console.log('🗑️ Eliminando módulo:', moduleId)
+      
+      await TutorialsAdminService.deleteModule(moduleId)
       
       setLearningPaths(prev => prev.map(path => ({
         ...path,
@@ -302,12 +157,7 @@ export function useTutorialsAdmin(): TutorialsAdminHook {
     try {
       console.log('🆕 Creando nuevo video:', moduleId, data)
       
-      const newVideo: TutorialVideo = {
-        id: `video_${Date.now()}`,
-        ...data,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      }
+      const newVideo = await TutorialsAdminService.createVideo(moduleId, data)
 
       setLearningPaths(prev => prev.map(path => ({
         ...path,
@@ -335,27 +185,19 @@ export function useTutorialsAdmin(): TutorialsAdminHook {
     try {
       console.log('✏️ Actualizando video:', videoId, updates)
       
-      let updatedVideo: TutorialVideo | null = null
+      const updatedVideo = await TutorialsAdminService.updateVideo(videoId, updates)
       
       setLearningPaths(prev => prev.map(path => ({
         ...path,
         modules: path.modules.map(module => ({
           ...module,
-          videos: module.videos.map(video => {
-            if (video.id === videoId) {
-              updatedVideo = { ...video, ...updates, updatedAt: new Date().toISOString() }
-              return updatedVideo
-            }
-            return video
-          }),
+          videos: module.videos.map(video => 
+            video.id === videoId ? updatedVideo : video
+          ),
           updatedAt: module.videos.some(v => v.id === videoId) ? new Date().toISOString() : module.updatedAt
         })),
         updatedAt: path.modules.some(m => m.videos.some(v => v.id === videoId)) ? new Date().toISOString() : path.updatedAt
       })))
-      
-      if (!updatedVideo) {
-        throw new Error('Video no encontrado')
-      }
       
       console.log('✅ Video actualizado exitosamente')
       return updatedVideo
@@ -368,6 +210,8 @@ export function useTutorialsAdmin(): TutorialsAdminHook {
   const deleteVideo = async (videoId: string): Promise<void> => {
     try {
       console.log('🗑️ Eliminando video:', videoId)
+      
+      await TutorialsAdminService.deleteVideo(videoId)
       
       setLearningPaths(prev => prev.map(path => ({
         ...path,

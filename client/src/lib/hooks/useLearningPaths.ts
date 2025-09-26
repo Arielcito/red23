@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { supabase } from "@/lib/supabase/client"
-import type { LearningPathFormatted } from "@/lib/supabase/types"
+import type { LearningPathFormatted, LearningPathWithContent } from "@/lib/supabase/types"
 
 interface UseLearningPathsReturn {
   learningPaths: LearningPathFormatted[]
@@ -22,36 +22,108 @@ export function useLearningPaths(): UseLearningPathsReturn {
       setIsLoading(true)
       setError(null)
 
-      const { data, error: supabaseError } = await supabase
+      // Get learning paths with modules and videos
+      const { data: pathsData, error: pathsError } = await supabase
         .from('learning_paths')
         .select('*')
         .eq('is_active', true)
         .order('display_order', { ascending: true })
 
-      if (supabaseError) {
-        console.error('Error fetching learning paths:', supabaseError)
-        throw supabaseError
+      if (pathsError) {
+        console.error('Error fetching learning paths:', pathsError)
+        throw pathsError
       }
 
-      const formattedPaths: LearningPathFormatted[] = (data || []).map(path => ({
-        id: path.id,
-        title: path.title,
-        description: path.description,
-        level: path.level,
-        duration: path.duration,
-        courseCount: path.course_count,
-        icon: path.icon,
-        colorScheme: path.color_scheme,
-        slug: path.slug,
-        imageUrl: path.image_url,
-        isFeatured: path.is_featured,
-        isActive: path.is_active,
-        displayOrder: path.display_order,
-        createdAt: path.created_at,
-        updatedAt: path.updated_at,
-        href: `/tutorials/${path.slug}`
-      }))
+      const paths = pathsData || []
 
+      // For each path, get its modules and videos
+      const pathsWithContent: LearningPathWithContent[] = await Promise.all(
+        paths.map(async (path) => {
+          // Get modules for this path
+          const { data: modulesData, error: modulesError } = await supabase
+            .from('tutorial_modules')
+            .select('*')
+            .eq('learning_path_id', path.id)
+            .eq('is_active', true)
+            .order('order_index', { ascending: true })
+
+          if (modulesError) {
+            console.error('Error fetching modules:', modulesError)
+            // Continue with empty modules array if there's an error
+          }
+
+          const modules = modulesData || []
+
+          // For each module, get its videos
+          const modulesWithVideos = await Promise.all(
+            modules.map(async (module) => {
+              const { data: videosData, error: videosError } = await supabase
+                .from('tutorial_videos')
+                .select('*')
+                .eq('module_id', module.id)
+                .eq('is_active', true)
+                .order('order_index', { ascending: true })
+
+              if (videosError) {
+                console.error('Error fetching videos:', videosError)
+                // Continue with empty videos array if there's an error
+              }
+
+              const videos = videosData || []
+
+              return {
+                id: module.id,
+                learningPathId: module.learning_path_id,
+                title: module.title,
+                description: module.description,
+                order: module.order_index,
+                isActive: module.is_active,
+                videos: videos.map(video => ({
+                  id: video.id,
+                  title: video.title,
+                  description: video.description,
+                  videoUrl: video.video_url,
+                  duration: video.duration,
+                  order: video.order_index,
+                  isActive: video.is_active,
+                  createdAt: video.created_at,
+                  updatedAt: video.updated_at
+                })),
+                createdAt: module.created_at,
+                updatedAt: module.updated_at
+              }
+            })
+          )
+
+          const formattedPath: LearningPathFormatted = {
+            id: path.id,
+            title: path.title,
+            description: path.description,
+            level: path.level,
+            duration: path.duration,
+            courseCount: path.course_count,
+            icon: path.icon,
+            colorScheme: path.color_scheme,
+            slug: path.slug,
+            imageUrl: path.image_url,
+            isFeatured: path.is_featured,
+            isActive: path.is_active,
+            displayOrder: path.display_order,
+            createdAt: path.created_at,
+            updatedAt: path.updated_at,
+            href: `/tutorials/${path.slug}`
+          }
+
+          return {
+            ...formattedPath,
+            modules: modulesWithVideos
+          }
+        })
+      )
+
+      // Extract just the basic formatted paths for compatibility
+      const formattedPaths: LearningPathFormatted[] = pathsWithContent.map(({ modules, ...path }) => path)
+      
       setLearningPaths(formattedPaths)
     } catch (err) {
       console.error('useLearningPaths - Error loading learning paths:', err)
