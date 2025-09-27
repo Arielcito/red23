@@ -17,7 +17,7 @@ import Image from "next/image"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { NotificationDropdown } from "@/components/ui/notification-dropdown"
 import { useAuth } from "@/lib/hooks/useAuth"
-import { useTheme } from "next-themes"
+import { useTheme } from "@/components/theme-provider"
 import { SidebarTrigger } from "@/components/layout/Sidebar"
 
 interface NavigationHeaderProps {
