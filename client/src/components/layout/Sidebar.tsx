@@ -176,7 +176,7 @@ export function Sidebar({ className }: SidebarProps) {
   return (
     <SidebarComponent variant="inset" {...{ className }}>
       <SidebarHeader>
-        <Link href="/gallery" className="cursor-pointer hover:opacity-80 transition-opacity">
+        <Link href="/dashboard" className="cursor-pointer hover:opacity-80 transition-opacity">
           <div className="flex items-center gap-2 px-4 py-2">
             <Image
               src="/logo.png"
