@@ -131,6 +131,12 @@ export function NotificationDropdown({ className }: NotificationDropdownProps) {
                   onMarkAsRead={markAsRead}
                   onRemove={removeNotification}
                   onActionClick={handleNotificationAction}
+                  onNotificationClick={(notif) => {
+                    if (!notif.read) {
+                      markAsRead(notif.id)
+                    }
+                    router.push(`/notifications/${notif.id}`)
+                  }}
                 />
               ))}
             </div>

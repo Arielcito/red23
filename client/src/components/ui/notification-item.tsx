@@ -23,6 +23,7 @@ interface NotificationItemProps {
   onMarkAsRead?: (id: string) => void
   onRemove?: (id: string) => void
   onActionClick?: (notification: Notification) => void
+  onNotificationClick?: (notification: Notification) => void
 }
 
 const iconMap = {
@@ -45,7 +46,8 @@ export function NotificationItem({
   notification,
   onMarkAsRead,
   onRemove,
-  onActionClick
+  onActionClick,
+  onNotificationClick
 }: NotificationItemProps) {
   const Icon = iconMap[notification.type]
   const iconColor = colorMap[notification.type]
@@ -58,6 +60,9 @@ export function NotificationItem({
   const handleClick = () => {
     if (!notification.read && onMarkAsRead) {
       onMarkAsRead(notification.id)
+    }
+    if (onNotificationClick) {
+      onNotificationClick(notification)
     }
   }
 
