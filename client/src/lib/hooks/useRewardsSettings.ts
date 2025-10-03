@@ -12,6 +12,8 @@ export interface RewardsBannerSettings {
   ctaUrl: string
   theme: RewardsBannerTheme
   imageId?: number | null
+  imageUrl?: string | null
+  useImage: boolean
 }
 
 interface UseRewardsSettingsReturn {
@@ -30,7 +32,9 @@ const DEFAULT_SETTINGS: RewardsBannerSettings = {
   ctaLabel: "Ver reglas",
   ctaUrl: "#reglas-premios",
   theme: "emerald",
-  imageId: null
+  imageId: null,
+  imageUrl: null,
+  useImage: false
 }
 
 const isBrowser = typeof window !== "undefined"
