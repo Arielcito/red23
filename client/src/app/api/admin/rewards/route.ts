@@ -33,6 +33,8 @@ export async function GET() {
           banner_cta_label: "Ver reglas",
           banner_cta_url: "#reglas-premios",
           banner_theme: "emerald",
+          banner_image_url: null,
+          banner_use_image: false,
           daily_prize_amount: "$500 - $1,500 USD",
           monthly_prize_amount: "$5,000 - $15,000 USD",
           daily_prize_draw_date: null,
@@ -84,11 +86,16 @@ export async function GET() {
 export async function PUT(request: NextRequest) {
   try {
     console.log('📝 Updating rewards settings in database')
-    
+
     const updates = await request.json()
-    
+
+    console.log('📥 Raw request body received:', updates)
+    console.log('📥 Request body type:', typeof updates)
+    console.log('🎨 Banner theme in request:', updates.banner_theme, 'Type:', typeof updates.banner_theme)
+
     // Validar que el body sea un objeto válido
     if (typeof updates !== 'object' || updates === null) {
+      console.error('❌ Invalid request body: not an object or null')
       return NextResponse.json({
         success: false,
         error: {
@@ -100,21 +107,33 @@ export async function PUT(request: NextRequest) {
     }
 
     // Validar campos específicos si están presentes
-    if ('banner_theme' in updates && !['emerald', 'indigo', 'amber'].includes(updates.banner_theme)) {
-      return NextResponse.json({
-        success: false,
-        error: {
-          code: 'VALIDATION_ERROR',
-          message: 'Invalid banner theme',
-          details: 'Theme must be one of: emerald, indigo, amber'
-        }
-      }, { status: 400 })
+    if ('banner_theme' in updates) {
+      console.log('🔍 Validating banner theme:', updates.banner_theme)
+      console.log('📋 Valid themes:', ['emerald', 'indigo', 'amber'])
+      console.log('✅ Is valid theme?', ['emerald', 'indigo', 'amber'].includes(updates.banner_theme))
+
+      if (!['emerald', 'indigo', 'amber'].includes(updates.banner_theme)) {
+        console.error('❌ Invalid banner theme validation failed:', {
+          receivedTheme: updates.banner_theme,
+          receivedType: typeof updates.banner_theme,
+          validThemes: ['emerald', 'indigo', 'amber']
+        })
+        return NextResponse.json({
+          success: false,
+          error: {
+            code: 'VALIDATION_ERROR',
+            message: 'Invalid banner theme',
+            details: `Theme must be one of: emerald, indigo, amber. Received: ${updates.banner_theme}`
+          }
+        }, { status: 400 })
+      }
+      console.log('✅ Banner theme validation passed')
     }
 
     // Validar fechas personalizadas si están presentes
     if (updates.daily_prize_draw_date) {
       const dailyDate = new Date(updates.daily_prize_draw_date)
-      if (isNaN(dailyDate.getTime())) {
+      if (Number.isNaN(dailyDate.getTime())) {
         return NextResponse.json({
           success: false,
           error: {
@@ -139,7 +158,7 @@ export async function PUT(request: NextRequest) {
 
     if (updates.monthly_prize_draw_date) {
       const monthlyDate = new Date(updates.monthly_prize_draw_date)
-      if (isNaN(monthlyDate.getTime())) {
+      if (Number.isNaN(monthlyDate.getTime())) {
         return NextResponse.json({
           success: false,
           error: {

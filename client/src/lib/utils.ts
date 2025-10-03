@@ -102,3 +102,64 @@ export function formatShortDate(date: Date | string): string {
     year: 'numeric'
   })
 }
+
+/**
+ * Convierte enlaces de Google Drive a enlaces directos para imágenes
+ * @param url - URL de Google Drive
+ * @returns URL directa o la URL original si no es de Drive
+ */
+export function convertDriveUrlToDirect(url: string): string {
+  if (!url) return url
+
+  // Patrón para enlaces de compartir de Google Drive
+  const drivePattern = /https:\/\/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)\/view/
+  const match = url.match(drivePattern)
+
+  if (match?.[1]) {
+    return `https://drive.google.com/uc?export=view&id=${match[1]}`
+  }
+
+  // Patrón para enlaces directos que ya están convertidos
+  const directPattern = /https:\/\/drive\.google\.com\/uc\?export=view&id=/
+  if (directPattern.test(url)) {
+    return url
+  }
+
+  return url
+}
+
+/**
+ * Valida si una URL es una imagen válida para nuestro sistema
+ * @param url - URL a validar
+ * @returns true si es una URL de imagen válida
+ */
+export function isValidImageUrl(url: string): boolean {
+  if (!url) return false
+
+  try {
+    const urlObj = new URL(url)
+
+    // Verificar hostnames permitidos
+    const allowedHostnames = [
+      'drive.google.com',
+      'lh3.googleusercontent.com',
+      'images.unsplash.com',
+      'imgur.com',
+      'i.imgur.com',
+      'cdn.pixabay.com',
+      'picsum.photos'
+    ]
+
+    if (!allowedHostnames.includes(urlObj.hostname)) {
+      return false
+    }
+
+    // Verificar extensiones de imagen comunes
+    const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.svg']
+    const pathname = urlObj.pathname.toLowerCase()
+
+    return imageExtensions.some(ext => pathname.endsWith(ext))
+  } catch {
+    return false
+  }
+}

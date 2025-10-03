@@ -12,7 +12,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { DateTimePicker } from "@/components/ui/date-time-picker"
 import { useAdminRewardsSettings, RewardsBannerSettings, RewardsBannerTheme } from "@/lib/hooks/useAdminRewardsSettings"
 import { RewardsBanner } from "@/components/rewards/RewardsBanner"
-import { AlertTriangle, Loader2, Paintbrush, Calendar, DollarSign } from "lucide-react"
+import { AlertTriangle, Loader2, Paintbrush, Calendar, DollarSign, Image as ImageIcon, HelpCircle } from "lucide-react"
+import Image from "next/image"
+import { convertDriveUrlToDirect, isValidImageUrl } from "@/lib/utils"
 
 const THEME_OPTIONS: { value: RewardsBannerTheme; label: string; description: string }[] = [
   { value: "emerald", label: "Esmeralda", description: "Ideal para destacar premios principales" },
@@ -22,14 +24,29 @@ const THEME_OPTIONS: { value: RewardsBannerTheme; label: string; description: st
 
 export default function AdminRewardsPage() {
   const { settings, updateSettings, resetSettings, isLoaded, error } = useAdminRewardsSettings()
-  const [formState, setFormState] = useState<RewardsBannerSettings>(settings)
+  const [formState, setFormState] = useState<RewardsBannerSettings>(() => ({
+    ...settings,
+    theme: settings.theme && ['emerald', 'indigo', 'amber'].includes(settings.theme) ? settings.theme : 'emerald',
+    useImage: settings.useImage ?? false
+  }))
   const [isSaving, setIsSaving] = useState(false)
   const [hasChanges, setHasChanges] = useState(false)
   
   console.log('⚙️ Admin rewards page loaded:', { isLoaded, hasError: !!error })
 
   useEffect(() => {
-    setFormState(settings)
+    console.log('🔄 Updating formState from settings:', settings)
+    console.log('🎨 Theme in settings:', settings.theme, 'Type:', typeof settings.theme)
+
+    // Ensure theme always has a valid value
+    const safeSettings = {
+      ...settings,
+      theme: settings.theme && ['emerald', 'indigo', 'amber'].includes(settings.theme) ? settings.theme : 'emerald'
+    }
+
+    console.log('🛡️ Safe settings after theme validation:', safeSettings)
+
+    setFormState(safeSettings)
     setHasChanges(false)
   }, [settings])
 
@@ -58,10 +75,20 @@ export default function AdminRewardsPage() {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
+
+    console.log('🔥 Submitting form with current formState:', formState)
+    console.log('🎨 Current theme value:', formState.theme, 'Type:', typeof formState.theme)
+
     setIsSaving(true)
-    await updateSettings(formState)
-    setIsSaving(false)
-    setHasChanges(false)
+    try {
+      await updateSettings(formState)
+      console.log('✅ Form submission successful')
+    } catch (error) {
+      console.error('❌ Form submission failed:', error)
+    } finally {
+      setIsSaving(false)
+      setHasChanges(false)
+    }
   }
 
   const handleReset = async () => {
@@ -69,7 +96,24 @@ export default function AdminRewardsPage() {
   }
 
   const handleChange = <Key extends keyof RewardsBannerSettings>(field: Key, value: RewardsBannerSettings[Key] | null | undefined) => {
-    setFormState((prev) => ({ ...prev, [field]: value ?? null }))
+    console.log(`🔄 Changing field '${field}' from:`, formState[field], 'to:', value, 'Type:', typeof value)
+
+    let processedValue: RewardsBannerSettings[Key] | null = value ?? null
+
+    // Special handling for theme field - ensure it's always valid
+    if (field === 'theme') {
+      const themeValue = (value && ['emerald', 'indigo', 'amber'].includes(value as string))
+        ? value as RewardsBannerTheme
+        : 'emerald'
+      processedValue = themeValue as RewardsBannerSettings[Key]
+      console.log(`🎨 Theme processed from '${value}' to '${processedValue}'`)
+    }
+
+    setFormState((prev) => {
+      const newState = { ...prev, [field]: processedValue }
+      console.log(`📝 New formState after change:`, newState)
+      return newState
+    })
     setHasChanges(true)
   }
 
@@ -132,80 +176,156 @@ export default function AdminRewardsPage() {
                 />
               </div>
 
-              <div className="grid gap-4 md:grid-cols-2">
-                <div className="space-y-2">
-                  <Label htmlFor="banner-title">Título</Label>
-                  <Input
-                    id="banner-title"
-                    value={formState.title}
-                    onChange={(event) => handleChange("title", event.target.value)}
-                    placeholder="Título del banner"
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="banner-theme" className="flex items-center gap-2">
-                    <Paintbrush className="h-4 w-4" />
-                    Estilo visual
+              <div className="flex items-center justify-between rounded-lg border p-4">
+                <div className="space-y-1">
+                  <Label htmlFor="use-image" className="text-base">
+                    Usar solo imagen
                   </Label>
-                  <Select
-                    value={formState.theme}
-                    onValueChange={(value: RewardsBannerTheme) => handleChange("theme", value)}
-                  >
-                    <SelectTrigger id="banner-theme">
-                      <SelectValue placeholder="Selecciona un estilo" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {THEME_OPTIONS.map((option) => (
-                        <SelectItem key={option.value} value={option.value}>
-                          <div className="flex flex-col">
-                            <span className="font-medium">{option.label}</span>
-                            <span className="text-xs text-muted-foreground">{option.description}</span>
-                          </div>
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <p className="text-sm text-muted-foreground">
+                    Activa para mostrar SOLO la imagen sin textos ni botones.
+                  </p>
                 </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="banner-description">Descripción</Label>
-                <Textarea
-                  id="banner-description"
-                  rows={3}
-                  value={formState.description}
-                  onChange={(event) => handleChange("description", event.target.value)}
-                  placeholder="Mensaje descriptivo para el banner"
+                <Switch
+                  id="use-image"
+                  checked={formState.useImage}
+                  onCheckedChange={(checked) => handleChange("useImage", checked)}
                 />
               </div>
 
-              <div className="grid gap-4 md:grid-cols-2">
-                <div className="space-y-2">
-                  <Label htmlFor="banner-cta-label">Texto del botón</Label>
-                  <Input
-                    id="banner-cta-label"
-                    value={formState.ctaLabel}
-                    onChange={(event) => handleChange("ctaLabel", event.target.value)}
-                    placeholder="Ej: Conoce más"
-                  />
+              {formState.useImage ? (
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="banner-image-url" className="flex items-center gap-2">
+                      <ImageIcon className="h-4 w-4" />
+                      URL de la imagen
+                    </Label>
+                    <Input
+                      id="banner-image-url"
+                      value={formState.imageUrl || ''}
+                      onChange={(event) => {
+                        const url = event.target.value
+                        // Convertir automáticamente enlaces de Google Drive
+                        const convertedUrl = convertDriveUrlToDirect(url)
+                        handleChange("imageUrl", convertedUrl)
+                      }}
+                      placeholder="https://drive.google.com/uc?export=view&id=ABC123 o https://ejemplo.com/imagen.jpg"
+                      type="url"
+                      required
+                    />
+                    <div className="space-y-2">
+                      <p className="text-xs text-muted-foreground">
+                        La imagen se mostrará en tamaño completo. Recomendado: 1200x400px o similar.
+                      </p>
+                      <details className="text-xs">
+                        <summary className="cursor-pointer text-muted-foreground hover:text-foreground">
+                          📁 ¿Cómo obtener enlaces de Google Drive?
+                        </summary>
+                        <div className="mt-2 space-y-1 pl-2 border-l-2 border-muted">
+                          <p>1. Sube tu imagen a Google Drive</p>
+                          <p>2. Haz clic derecho en la imagen → "Obtener enlace"</p>
+                          <p>3. Copia el enlace y pégalo aquí</p>
+                          <p className="text-amber-600">✅ El enlace se convertirá automáticamente al formato correcto</p>
+                        </div>
+                      </details>
+                      {formState.imageUrl && !isValidImageUrl(formState.imageUrl) && (
+                        <p className="text-xs text-red-600 flex items-center gap-1">
+                          <AlertTriangle className="h-3 w-3" />
+                          URL no válida. Usa enlaces de Google Drive, Imgur, Unsplash u otros servicios permitidos.
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="banner-cta-url">Enlace al hacer clic (opcional)</Label>
+                    <Input
+                      id="banner-cta-url"
+                      value={formState.ctaUrl}
+                      onChange={(event) => handleChange("ctaUrl", event.target.value)}
+                      placeholder="https:// o #seccion"
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      Si agregas un enlace, la imagen completa será clickeable.
+                    </p>
+                  </div>
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="banner-cta-url">Enlace</Label>
-                  <Input
-                    id="banner-cta-url"
-                    value={formState.ctaUrl}
-                    onChange={(event) => handleChange("ctaUrl", event.target.value)}
-                    placeholder="https:// o #seccion"
-                  />
-                </div>
-              </div>
+              ) : (
+                <>
+                  <div className="grid gap-4 md:grid-cols-2">
+                    <div className="space-y-2">
+                      <Label htmlFor="banner-title">Título</Label>
+                      <Input
+                        id="banner-title"
+                        value={formState.title}
+                        onChange={(event) => handleChange("title", event.target.value)}
+                        placeholder="Título del banner"
+                        required
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="banner-theme" className="flex items-center gap-2">
+                        <Paintbrush className="h-4 w-4" />
+                        Estilo visual
+                      </Label>
+                      <Select
+                        value={formState.theme || 'emerald'}
+                        onValueChange={(value: RewardsBannerTheme) => handleChange("theme", value)}
+                      >
+                        <SelectTrigger id="banner-theme">
+                          <SelectValue placeholder="Selecciona un estilo" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {THEME_OPTIONS.map((option) => (
+                            <SelectItem key={option.value} value={option.value}>
+                              <div className="flex flex-col">
+                                <span className="font-medium">{option.label}</span>
+                                <span className="text-xs text-muted-foreground">{option.description}</span>
+                              </div>
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
 
-              {!formState.ctaLabel && formState.ctaUrl && (
-                <div className="flex items-center gap-2 text-sm text-amber-600">
-                  <AlertTriangle className="h-4 w-4" />
-                  <span>Agrega un texto para el botón si muestras un enlace.</span>
-                </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="banner-description">Descripción</Label>
+                    <Textarea
+                      id="banner-description"
+                      rows={3}
+                      value={formState.description}
+                      onChange={(event) => handleChange("description", event.target.value)}
+                      placeholder="Mensaje descriptivo para el banner"
+                    />
+                  </div>
+
+                  <div className="grid gap-4 md:grid-cols-2">
+                    <div className="space-y-2">
+                      <Label htmlFor="banner-cta-label">Texto del botón</Label>
+                      <Input
+                        id="banner-cta-label"
+                        value={formState.ctaLabel}
+                        onChange={(event) => handleChange("ctaLabel", event.target.value)}
+                        placeholder="Ej: Conoce más"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="banner-cta-url">Enlace</Label>
+                      <Input
+                        id="banner-cta-url"
+                        value={formState.ctaUrl}
+                        onChange={(event) => handleChange("ctaUrl", event.target.value)}
+                        placeholder="https:// o #seccion"
+                      />
+                    </div>
+                  </div>
+
+                  {!formState.ctaLabel && formState.ctaUrl && (
+                    <div className="flex items-center gap-2 text-sm text-amber-600">
+                      <AlertTriangle className="h-4 w-4" />
+                      <span>Agrega un texto para el botón si muestras un enlace.</span>
+                    </div>
+                  )}
+                </>
               )}
             </form>
           </CardContent>
@@ -329,6 +449,52 @@ export default function AdminRewardsPage() {
             <CardDescription>Así se mostrará el banner en la sección de premios.</CardDescription>
           </CardHeader>
           <CardContent>
+            {formState.useImage && formState.imageUrl && (
+              <div className="mb-4 space-y-2">
+                <div className="flex items-center gap-2">
+                  <ImageIcon className="h-4 w-4 text-muted-foreground" />
+                  <p className="text-sm text-muted-foreground">Vista previa de la imagen:</p>
+                </div>
+                <div className="relative w-full h-48 rounded-lg overflow-hidden border bg-muted">
+                  {isValidImageUrl(formState.imageUrl) ? (
+                    <Image
+                      src={formState.imageUrl}
+                      alt="Preview del banner"
+                      fill
+                      className="object-cover"
+                      onError={(e) => {
+                        console.error('❌ Error loading banner image preview:', formState.imageUrl)
+                        const target = e.target as HTMLImageElement
+                        if (target.parentElement) {
+                          target.parentElement.innerHTML = `
+                            <div class="flex items-center justify-center h-full text-sm text-red-600 bg-red-50">
+                              <div class="text-center">
+                                <div class="text-lg mb-1">❌</div>
+                                <div>Error al cargar imagen</div>
+                                <div class="text-xs mt-1 opacity-75">Verifica la URL</div>
+                              </div>
+                            </div>
+                          `
+                        }
+                      }}
+                    />
+                  ) : (
+                    <div className="flex items-center justify-center h-full text-sm text-muted-foreground">
+                      <div className="text-center">
+                        <div className="text-lg mb-1">📷</div>
+                        <div>URL no válida</div>
+                        <div className="text-xs mt-1 opacity-75">Ingresa una URL de imagen correcta</div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+                {isValidImageUrl(formState.imageUrl) && (
+                  <p className="text-xs text-green-600 flex items-center gap-1">
+                    ✅ URL válida - La imagen se mostrará correctamente
+                  </p>
+                )}
+              </div>
+            )}
             <RewardsBanner settings={{ ...formState, enabled: true }} forceVisible />
           </CardContent>
         </Card>

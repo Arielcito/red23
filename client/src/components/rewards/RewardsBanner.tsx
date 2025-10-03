@@ -39,14 +39,45 @@ export function RewardsBanner({ settings, forceVisible = false, bannerImage }: R
   const themeKey = (settings.theme && THEME_STYLES[settings.theme]) ? settings.theme : 'emerald'
   const theme = THEME_STYLES[themeKey]
 
+  const imageUrl = settings.useImage ? (settings.imageUrl || bannerImage) : null
+
+  if (imageUrl) {
+    const handleImageClick = () => {
+      if (settings.ctaUrl) {
+        if (settings.ctaUrl.startsWith("http")) {
+          window.open(settings.ctaUrl, "_blank")
+        } else {
+          window.location.href = settings.ctaUrl
+        }
+      }
+    }
+
+    if (settings.ctaUrl) {
+      return (
+        <Card className="border-0 shadow-lg overflow-hidden relative">
+          <button
+            type="button"
+            className="w-full h-[300px] sm:h-[400px] bg-cover bg-center bg-no-repeat cursor-pointer hover:opacity-95 transition-opacity focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 border-0 p-0"
+            style={{ backgroundImage: `url(${imageUrl})` }}
+            onClick={handleImageClick}
+            aria-label={`Banner promocional - Click para ir a ${settings.ctaUrl}`}
+          />
+        </Card>
+      )
+    }
+
+    return (
+      <Card className="border-0 shadow-lg overflow-hidden relative">
+        <div 
+          className="w-full h-[300px] sm:h-[400px] bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: `url(${imageUrl})` }}
+        />
+      </Card>
+    )
+  }
+
   return (
     <Card className={cn("border-0 shadow-lg overflow-hidden relative", theme.container)}>
-      {bannerImage && (
-        <div 
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-20"
-          style={{ backgroundImage: `url(${bannerImage})` }}
-        />
-      )}
       <CardContent className="p-6 sm:p-8 relative z-10">
         <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
           <div className="flex-1 space-y-3">
