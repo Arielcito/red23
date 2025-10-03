@@ -35,12 +35,32 @@ import {
   Star,
   Eye,
   EyeOff,
-  ArrowUpDown
+  ArrowUpDown,
+  GripVertical
 } from "lucide-react"
 import Image from "next/image"
 import { cn } from "@/lib/utils"
 import { useNotifications } from "@/lib/hooks/useNotifications"
 import { uploadImage, validateImageFile, replaceImage } from "@/lib/services/imageService"
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from '@dnd-kit/core'
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable'
+import {
+  useSortable,
+} from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
 
 const getCasinoInitial = (name?: string | null) => {
   if (!name) return "?"
@@ -48,17 +68,136 @@ const getCasinoInitial = (name?: string | null) => {
   return initial ? initial.toUpperCase() : "?"
 }
 
+interface SortableCasinoItemProps {
+  casino: CasinoWithFields
+  onEdit: (casino: CasinoWithFields) => void
+  onDelete: (casinoId: string) => void
+  isDragging?: boolean
+}
+
+function SortableCasinoItem({ casino, onEdit, onDelete, isDragging }: SortableCasinoItemProps) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging: itemIsDragging,
+  } = useSortable({ id: casino.id })
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: itemIsDragging ? 0.5 : 1,
+  }
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      className={cn(
+        "flex items-center justify-between p-4 border rounded-lg bg-background transition-all duration-200",
+        itemIsDragging && "shadow-lg z-50 ring-2 ring-primary/20 scale-105"
+      )}
+    >
+      <div className="flex items-center gap-3 flex-1">
+        <div className="flex items-center gap-2">
+          <div
+            {...attributes}
+            {...listeners}
+            className={cn(
+              "cursor-grab active:cursor-grabbing p-1 rounded transition-all duration-200",
+              "hover:bg-muted hover:text-primary hover:scale-110",
+              itemIsDragging && "cursor-grabbing scale-110"
+            )}
+            title="Arrastrar para reordenar"
+          >
+            <GripVertical className={cn(
+              "h-4 w-4 transition-colors",
+              itemIsDragging ? "text-primary" : "text-muted-foreground"
+            )} />
+          </div>
+          <div className="w-6 h-6 rounded-full bg-muted flex items-center justify-center">
+            <span className="text-xs font-medium text-muted-foreground">
+              {casino.position || "?"}
+            </span>
+          </div>
+        </div>
+
+        <div className="w-10 h-10 rounded-lg bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
+          <span className="text-sm font-bold">
+            {getCasinoInitial(casino.casinoName)}
+          </span>
+        </div>
+
+        <div className="flex-1">
+          <h3 className="font-medium">{casino.casinoName}</h3>
+          <p className="text-sm text-muted-foreground">
+            Antigüedad: {casino.antiguedad} • RTP: {casino.rtp}%
+          </p>
+          {casino.position && (
+            <Badge variant="outline" className="text-xs mt-1">
+              <Crown className="h-3 w-3 mr-1" />
+              Posición #{casino.position}
+            </Badge>
+          )}
+          {casino.coverImageUrl && (
+            <a
+              href={casino.coverImageUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="text-xs text-primary mt-1 inline-block break-all"
+            >
+              Ver imagen
+            </a>
+          )}
+        </div>
+      </div>
+
+      <div className="flex items-center gap-2">
+        <Badge
+          variant="outline"
+          className={cn(
+            "text-xs",
+            casino.precio === 'muy barato' ? 'bg-green-100 text-green-800 border-green-200' :
+            casino.precio === 'barato' ? 'bg-yellow-100 text-yellow-800 border-yellow-200' :
+            'bg-red-100 text-red-800 border-red-200'
+          )}
+        >
+          {CASINO_PRECIO_VALUES[casino.precio].label}
+        </Badge>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => onEdit(casino)}
+        >
+          <Edit className="h-4 w-4" />
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => onDelete(casino.id)}
+        >
+          <Trash2 className="h-4 w-4" />
+        </Button>
+      </div>
+    </div>
+  )
+}
+
 export default function AdminCasinosPage() {
-  const { 
-    casinos, 
-    topThree, 
-    isLoading, 
+  const {
+    casinos,
+    topThree,
+    isLoading,
     error,
     updateCasino,
     updateTopThreeImage,
     uploadCasinoCoverImage,
     createCasino,
-    deleteCasino
+    deleteCasino,
+    reorderCasinos,
+    revertCasinoReorder
   } = useCasinosData()
 
   const [editingCasino, setEditingCasino] = useState<CasinoWithFields | null>(null)
@@ -96,6 +235,62 @@ export default function AdminCasinosPage() {
   const [newsFormErrors, setNewsFormErrors] = useState<Record<string, string>>({})
 
   const { createNotification } = useNotifications()
+
+  // Sensors para drag and drop
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  )
+
+  // Función para manejar el fin del arrastre con actualización optimista
+  const handleDragEnd = async (event: DragEndEvent) => {
+    const { active, over } = event
+
+    if (over && active.id !== over.id) {
+      const oldIndex = casinos.findIndex((casino) => casino.id === active.id)
+      const newIndex = casinos.findIndex((casino) => casino.id === over.id)
+
+      // Crear nueva lista ordenada
+      const newCasinos = arrayMove(casinos, oldIndex, newIndex)
+
+      // Calcular nuevas posiciones (UI First - actualizar inmediatamente)
+      const updatedCasinos = newCasinos.map((casino, index) => ({
+        ...casino,
+        position: index + 1
+      }))
+
+      // El estado se actualiza inmediatamente en reorderCasinos (UI First)
+
+      try {
+        console.log('🔄 Reordenando casinos (UI first)...')
+        await reorderCasinos(updatedCasinos)
+        console.log('✅ Casinos reordenados exitosamente')
+      } catch (err) {
+        console.error('❌ Error reordenando casinos:', err)
+
+        // Revertir el estado local en caso de error
+        try {
+          revertCasinoReorder()
+          createNotification(
+            'error',
+            'Error al reordenar',
+            'No se pudieron actualizar las posiciones. Se ha revertido el cambio.',
+            { duration: 5000 }
+          )
+        } catch (revertError) {
+          console.error('❌ Error revirtiendo cambios:', revertError)
+          createNotification(
+            'error',
+            'Error al reordenar',
+            'No se pudieron actualizar las posiciones. Recarga la página.',
+            { duration: 5000 }
+          )
+        }
+      }
+    }
+  }
 
   const handleImageUpload = async (casinoId: string, file: File) => {
     setImageUploading(true)
@@ -791,68 +986,41 @@ export default function AdminCasinosPage() {
                     </Card>
                   )}
                   
-                  {/* Lista de casinos existentes */}
-                  <div className="space-y-3">
-                    {casinos.map((casino) => (
-                      <div key={casino.id} className="flex items-center justify-between p-4 border rounded-lg">
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-lg bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
-                            <span className="text-sm font-bold">
-                              {getCasinoInitial(casino.casinoName)}
-                            </span>
-                          </div>
-                          <div>
-                            <h3 className="font-medium">{casino.casinoName}</h3>
-                            <p className="text-sm text-muted-foreground">
-                              Antigüedad: {casino.antiguedad} • RTP: {casino.rtp}%
-                            </p>
-                            {casino.position && (
-                              <Badge variant="outline" className="text-xs mt-1">
-                                <Crown className="h-3 w-3 mr-1" />
-                                Posición #{casino.position}
-                              </Badge>
-                            )}
-                            {casino.coverImageUrl && (
-                              <a
-                                href={casino.coverImageUrl}
-                                target="_blank"
-                                rel="noreferrer"
-                                className="text-xs text-primary mt-1 inline-block break-all"
-                              >
-                                Ver imagen
-                              </a>
-                            )}
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <Badge 
-                            variant="outline"
-                            className={cn(
-                              "text-xs",
-                              casino.precio === 'muy barato' ? 'bg-green-100 text-green-800 border-green-200' :
-                              casino.precio === 'barato' ? 'bg-yellow-100 text-yellow-800 border-yellow-200' :
-                              'bg-red-100 text-red-800 border-red-200'
-                            )}
-                          >
-                            {CASINO_PRECIO_VALUES[casino.precio].label}
-                          </Badge>
-                          <Button 
-                            variant="outline" 
-                            size="sm"
-                            onClick={() => handleEditCasino(casino)}
-                          >
-                            <Edit className="h-4 w-4" />
-                          </Button>
-                          <Button 
-                            variant="outline" 
-                            size="sm"
-                            onClick={() => handleDeleteCasino(casino.id)}
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </div>
+                  {/* Lista de casinos ordenable con drag and drop */}
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                        <GripVertical className="h-4 w-4" />
+                        <span>Arrastra los casinos para cambiar su orden</span>
                       </div>
-                    ))}
+                      <Badge variant="secondary" className="text-xs">
+                        {casinos.length} casinos
+                      </Badge>
+                    </div>
+
+                    <DndContext
+                      sensors={sensors}
+                      collisionDetection={closestCenter}
+                      onDragEnd={handleDragEnd}
+                    >
+                      <SortableContext
+                        items={casinos.map(c => c.id)}
+                        strategy={verticalListSortingStrategy}
+                      >
+                        <div className="space-y-3">
+                          {casinos
+                            .sort((a, b) => (a.position || 999) - (b.position || 999))
+                            .map((casino) => (
+                              <SortableCasinoItem
+                                key={casino.id}
+                                casino={casino}
+                                onEdit={handleEditCasino}
+                                onDelete={handleDeleteCasino}
+                              />
+                            ))}
+                        </div>
+                      </SortableContext>
+                    </DndContext>
                   </div>
                   
                   {casinos.length === 0 && !isLoading && (

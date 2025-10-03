@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Newspaper, Calendar, ExternalLink } from "lucide-react"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
-import { cn } from "@/lib/utils"
+import { cn, formatShortDate } from "@/lib/utils"
 import type { NewsFormatted } from "@/lib/supabase/types"
 
 interface RelatedArticlesProps {
@@ -16,15 +16,6 @@ interface RelatedArticlesProps {
 export function RelatedArticles({ articles }: RelatedArticlesProps) {
   const router = useRouter()
 
-  // Format date for display
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString)
-    return date.toLocaleDateString('es-ES', {
-      day: 'numeric',
-      month: 'short',
-      year: 'numeric'
-    })
-  }
 
   // Get category display name
   const getCategoryName = (category: string) => {
@@ -108,7 +99,7 @@ export function RelatedArticles({ articles }: RelatedArticlesProps) {
                 <div className="flex items-center justify-between text-xs text-muted-foreground">
                   <div className="flex items-center gap-1">
                     <Calendar className="h-3 w-3" />
-                    <span>{formatDate(article.publishDate)}</span>
+                    <span>{formatShortDate(article.publishDate)}</span>
                   </div>
                   <Button
                     variant="ghost"

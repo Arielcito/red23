@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { Calendar, Clock, X, CheckCircle } from "lucide-react"
 import { useScheduledImages } from "@/lib/hooks/useScheduledImages"
+import { formatFullDate } from "@/lib/utils"
 
 export function ScheduledImagesList() {
   const { 
@@ -16,14 +17,6 @@ export function ScheduledImagesList() {
 
   const upcomingImages = getUpcomingImages()
 
-  const formatDate = (dateStr: string) => {
-    const date = new Date(dateStr)
-    return date.toLocaleDateString('es-ES', { 
-      weekday: 'short', 
-      month: 'short', 
-      day: 'numeric' 
-    })
-  }
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -114,7 +107,7 @@ export function ScheduledImagesList() {
                   <p className="text-sm font-medium truncate">{image.imageTitle}</p>
                   <div className="flex items-center space-x-2 text-xs text-gray-500">
                     <Calendar className="h-3 w-3" />
-                    <span>{formatDate(image.date)}</span>
+                    <span>{formatFullDate(image.date)}</span>
                     <Clock className="h-3 w-3" />
                     <span>{image.time}</span>
                   </div>

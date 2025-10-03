@@ -11,6 +11,7 @@ import { ErrorState } from "@/components/novedades/ErrorState"
 import { Button } from "@/components/ui/button"
 import { ArrowLeft, Calendar, User, Tag } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
+import { formatNewsDate } from "@/lib/utils"
 
 export default function NoticiaIndividualPage() {
   const params = useParams()
@@ -54,15 +55,6 @@ export default function NoticiaIndividualPage() {
     )
   }
 
-  // Format date for display
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString)
-    return date.toLocaleDateString('es-ES', {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric'
-    })
-  }
 
   // Get category display name
   const getCategoryName = (category: string) => {
@@ -78,7 +70,7 @@ export default function NoticiaIndividualPage() {
   return (
     <AppLayout
       title={article.title}
-      subtitle={`Publicado el ${formatDate(article.publishDate)}`}
+      subtitle={`Publicado el ${formatNewsDate(article.publishDate)}`}
       showBackButton={true}
       backHref="/novedades"
       badge={article.isFeatured ? {
@@ -116,7 +108,7 @@ export default function NoticiaIndividualPage() {
             </div>
             <div className="flex items-center gap-1">
               <Calendar className="h-4 w-4" />
-              <span>{formatDate(article.publishDate)}</span>
+              <span>{formatNewsDate(article.publishDate)}</span>
             </div>
             <div className="flex items-center gap-1">
               <Tag className="h-4 w-4" />

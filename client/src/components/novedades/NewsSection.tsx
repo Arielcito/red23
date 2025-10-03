@@ -3,7 +3,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Newspaper, Star, Calendar, ExternalLink } from "lucide-react"
 import Image from "next/image"
-import { cn } from "@/lib/utils"
+import { cn, formatNewsDate } from "@/lib/utils"
 import type { NewsFormatted } from "@/lib/supabase/types"
 
 interface NewsSectionProps {
@@ -15,15 +15,6 @@ export function NewsSection({ featuredNews, recentNews }: NewsSectionProps) {
   const hasFeatured = featuredNews && featuredNews.length > 0
   const hasRecent = recentNews && recentNews.length > 0
 
-  // Format date for display
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString)
-    return date.toLocaleDateString('es-ES', {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric'
-    })
-  }
 
   // Get category display name
   const getCategoryName = (category: string) => {
@@ -149,7 +140,7 @@ export function NewsSection({ featuredNews, recentNews }: NewsSectionProps) {
                         <div className="flex items-center justify-start text-xs text-muted-foreground">
                           <div className="flex items-center gap-1">
                             <Calendar className="h-3 w-3" />
-                            <span>{formatDate(article.publishDate)}</span>
+                            <span>{formatNewsDate(article.publishDate)}</span>
                           </div>
                         </div>
                       </div>
@@ -227,7 +218,7 @@ export function NewsSection({ featuredNews, recentNews }: NewsSectionProps) {
                         <div className="flex items-center justify-start text-xs text-muted-foreground">
                           <div className="flex items-center gap-1">
                             <Calendar className="h-3 w-3" />
-                            <span>{formatDate(article.publishDate)}</span>
+                            <span>{formatNewsDate(article.publishDate)}</span>
                           </div>
                         </div>
                       </div>

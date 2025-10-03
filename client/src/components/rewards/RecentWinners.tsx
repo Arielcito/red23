@@ -3,6 +3,7 @@
 import { Winner } from "@/lib/hooks/useRewardsData"
 import { Trophy, Calendar } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
+import { formatRelativeDate } from "@/lib/utils"
 
 interface RecentWinnersProps {
   winners: Winner[]
@@ -42,16 +43,6 @@ export function RecentWinners({ winners, isLoading, className }: RecentWinnersPr
     )
   }
 
-  const formatDate = (date: Date) => {
-    const today = new Date()
-    const diffTime = today.getTime() - date.getTime()
-    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24))
-
-    if (diffDays === 0) return "Hoy"
-    if (diffDays === 1) return "Ayer"
-    if (diffDays === 2) return "Hace 2 días"
-    return date.toLocaleDateString("es-ES", { day: "numeric", month: "short" })
-  }
 
   const getInitials = (name: string) => {
     return name.split(" ").map(n => n[0]).join("").toUpperCase()
@@ -94,7 +85,7 @@ export function RecentWinners({ winners, isLoading, className }: RecentWinnersPr
               </div>
               <div className="flex items-center gap-1 mt-0.5">
                 <Calendar className="h-3 w-3 text-muted-foreground" />
-                <p className="text-xs text-muted-foreground">{formatDate(winner.date)}</p>
+                <p className="text-xs text-muted-foreground">{formatRelativeDate(winner.date)}</p>
               </div>
             </div>
             

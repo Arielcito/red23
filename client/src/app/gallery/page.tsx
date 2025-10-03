@@ -17,6 +17,7 @@ import { useImageDownload } from "@/lib/hooks/useImageDownload"
 // import { useImageStorage } from "@/lib/hooks/useImageStorage" // No se usa más
 import type { ImageRecord } from "@/lib/types/imageGeneration"
 import type { StoredImage } from "@/lib/hooks/useImageStorage"
+import { formatShortDate } from "@/lib/utils"
 
 // Tipo simplificado para la UI de la galería
 interface GalleryImage {
@@ -141,8 +142,8 @@ export default function GalleryPage() {
 
   return (
     <AppLayout
-      title="Home"
-      subtitle={`${filteredImages.length} imágenes (API)`}
+      title="Gallery"
+      subtitle="Almacenamiento de imágenes generadas"
       showBackButton={true}
       backHref="/dashboard"
     >
@@ -292,7 +293,7 @@ export default function GalleryPage() {
                           </Badge>
                         ))}
                       </div>
-                      <p className="text-xs text-gray-500">{image.timestamp.toLocaleDateString()}</p>
+                      <p className="text-xs text-gray-500">{formatShortDate(image.timestamp)}</p>
                       <Button
                         size="sm"
                         variant="outline"
@@ -327,7 +328,7 @@ export default function GalleryPage() {
                                 </Badge>
                               ))}
                             </div>
-                            <p className="text-xs text-gray-500">{image.timestamp.toLocaleDateString()}</p>
+                            <p className="text-xs text-gray-500">{formatShortDate(image.timestamp)}</p>
                           </div>
                           <div className="flex space-x-1 ml-2 sm:ml-4">
                             <Button

@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Calendar as CalendarIcon, Clock, X, Check } from "lucide-react"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { formatFullDate } from "@/lib/utils"
 
 interface ImageSchedulerProps {
   imageUrl?: string
@@ -57,13 +58,13 @@ export function ImageScheduler({
   const getNextWeekDates = () => {
     const dates = []
     const today = new Date()
-    
+
     for (let i = 0; i < 14; i++) {
       const date = new Date(today)
       date.setDate(today.getDate() + i)
       dates.push(date)
     }
-    
+
     return dates
   }
 
@@ -71,14 +72,6 @@ export function ImageScheduler({
     return date.toISOString().split('T')[0]
   }
 
-  const formatDisplayDate = (date: Date) => {
-    const options: Intl.DateTimeFormatOptions = { 
-      weekday: 'short', 
-      month: 'short', 
-      day: 'numeric' 
-    }
-    return date.toLocaleDateString('es-ES', options)
-  }
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
@@ -129,7 +122,7 @@ export function ImageScheduler({
                     } ${isToday ? "border-primary-500" : ""}`}
                     onClick={() => setSelectedDate(dateStr)}
                   >
-                    <span className="text-xs">{formatDisplayDate(date)}</span>
+                    <span className="text-xs">{formatFullDate(date)}</span>
                     <span className="text-lg font-bold">{date.getDate()}</span>
                     {isToday && (
                       <span className="text-xs text-primary-600 dark:text-primary-400">Hoy</span>

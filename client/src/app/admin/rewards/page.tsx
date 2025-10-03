@@ -12,6 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useAdminRewardsSettings, RewardsBannerSettings, RewardsBannerTheme } from "@/lib/hooks/useAdminRewardsSettings"
 import { RewardsBanner } from "@/components/rewards/RewardsBanner"
 import { AlertTriangle, Loader2, Paintbrush, Calendar, DollarSign } from "lucide-react"
+import { toISOStringGMT3, nowGMT3 } from "@/lib/utils"
 
 const THEME_OPTIONS: { value: RewardsBannerTheme; label: string; description: string }[] = [
   { value: "emerald", label: "Esmeralda", description: "Ideal para destacar premios principales" },
@@ -251,12 +252,12 @@ export default function AdminRewardsPage() {
                       <Input
                         id="daily-draw-date"
                         type="datetime-local"
-                        value={formState.dailyPrizeDrawDate ? new Date(formState.dailyPrizeDrawDate).toISOString().slice(0, 16) : ''}
+                        value={formState.dailyPrizeDrawDate ? toISOStringGMT3(formState.dailyPrizeDrawDate).slice(0, 16) : ''}
                         onChange={(event) => {
-                          const value = event.target.value ? new Date(event.target.value).toISOString() : null
+                          const value = event.target.value ? toISOStringGMT3(event.target.value) : null
                           handleChange("dailyPrizeDrawDate", value)
                         }}
-                        min={new Date().toISOString().slice(0, 16)}
+                        min={nowGMT3().toISOString().slice(0, 16)}
                       />
                     </div>
                     <div className="space-y-2">
@@ -264,12 +265,12 @@ export default function AdminRewardsPage() {
                       <Input
                         id="monthly-draw-date"
                         type="datetime-local"
-                        value={formState.monthlyPrizeDrawDate ? new Date(formState.monthlyPrizeDrawDate).toISOString().slice(0, 16) : ''}
+                        value={formState.monthlyPrizeDrawDate ? toISOStringGMT3(formState.monthlyPrizeDrawDate).slice(0, 16) : ''}
                         onChange={(event) => {
-                          const value = event.target.value ? new Date(event.target.value).toISOString() : null
+                          const value = event.target.value ? toISOStringGMT3(event.target.value) : null
                           handleChange("monthlyPrizeDrawDate", value)
                         }}
-                        min={new Date().toISOString().slice(0, 16)}
+                        min={nowGMT3().toISOString().slice(0, 16)}
                       />
                     </div>
                   </div>

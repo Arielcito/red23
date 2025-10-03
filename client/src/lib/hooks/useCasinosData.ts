@@ -14,6 +14,8 @@ export interface CasinosDataHook {
   createCasino: (casino: Omit<CasinoWithFields, 'id' | 'createdAt' | 'updatedAt'>) => Promise<CasinoWithFields>
   updateCasino: (id: string, updates: Partial<CasinoWithFields>) => Promise<CasinoWithFields>
   deleteCasino: (id: string) => Promise<void>
+  reorderCasinos: (reorderedCasinos: CasinoWithFields[]) => Promise<void>
+  revertCasinoReorder: () => void
   // Top three operations
   updateTopThreeImage: (casinoId: string, imageUrl: string) => Promise<void>
   uploadCasinoCoverImage: (casinoId: string, file: File | Blob) => Promise<string>
@@ -159,13 +161,13 @@ export function useCasinosData(): CasinosDataHook {
   const deleteCasino = async (id: string): Promise<void> => {
     try {
       console.log('🗑️ Eliminando casino:', id)
-      
+
       const deletedCasino = casinos.find(c => c.id === id)
-      
+
       const response = await apiCall(`/api/casinos/${id}`, {
         method: 'DELETE'
       })
-      
+
       if (response.success) {
         setCasinos(prev => prev.filter(c => c.id !== id))
         console.log('✅ Casino eliminado exitosamente:', deletedCasino?.casinoName)
@@ -177,6 +179,44 @@ export function useCasinosData(): CasinosDataHook {
       throw error
     }
   }
+
+  const reorderCasinos = async (reorderedCasinos: CasinoWithFields[]): Promise<void> => {
+    // Actualizar estado local inmediatamente (optimista)
+    setCasinos(reorderedCasinos)
+
+    try {
+      console.log('🔄 Reordenando casinos...')
+
+      // Crear el payload con las nuevas posiciones
+      const reorderData = reorderedCasinos.map((casino, index) => ({
+        id: casino.id,
+        position: index + 1
+      }))
+
+      const response = await apiCall('/api/casinos/reorder', {
+        method: 'POST',
+        body: JSON.stringify({ casinos: reorderData })
+      })
+
+      if (response.success) {
+        console.log('✅ Casinos reordenados exitosamente')
+      } else {
+        throw new Error(response.error || 'Error reordering casinos')
+      }
+    } catch (error) {
+      console.error('❌ Error reordering casinos:', error)
+      // Revertir el estado local en caso de error
+      // Como no tenemos el estado anterior aquí, lanzamos el error
+      // El componente que llama manejará la reversión
+      throw error
+    }
+  }
+
+  // Función para revertir cambios optimistas
+  const revertCasinoReorder = useCallback(() => {
+    // Recargar datos desde la API para revertir cambios
+    loadData()
+  }, [loadData])
 
   const updateTopThreeImage = async (casinoId: string, imageUrl: string): Promise<void> => {
     try {
@@ -239,6 +279,8 @@ export function useCasinosData(): CasinosDataHook {
     createCasino,
     updateCasino,
     deleteCasino,
+    reorderCasinos,
+    revertCasinoReorder,
     updateTopThreeImage,
     uploadCasinoCoverImage,
     refreshData,
