@@ -9,10 +9,10 @@ import { Textarea } from "@/components/ui/textarea"
 import { Switch } from "@/components/ui/switch"
 import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { DateTimePicker } from "@/components/ui/date-time-picker"
 import { useAdminRewardsSettings, RewardsBannerSettings, RewardsBannerTheme } from "@/lib/hooks/useAdminRewardsSettings"
 import { RewardsBanner } from "@/components/rewards/RewardsBanner"
 import { AlertTriangle, Loader2, Paintbrush, Calendar, DollarSign } from "lucide-react"
-import { toISOStringGMT3, nowGMT3 } from "@/lib/utils"
 
 const THEME_OPTIONS: { value: RewardsBannerTheme; label: string; description: string }[] = [
   { value: "emerald", label: "Esmeralda", description: "Ideal para destacar premios principales" },
@@ -33,6 +33,29 @@ export default function AdminRewardsPage() {
     setHasChanges(false)
   }, [settings])
 
+  // Helper functions to convert between Date objects and ISO strings
+  const isoStringToDate = (isoString: string | null | undefined): Date | undefined => {
+    return isoString ? new Date(isoString) : undefined
+  }
+
+  // Safe conversion that ensures we always return string | null
+  const safeDateToISOString = (date: Date | undefined): string | null => {
+    if (!date) {
+      return null
+    }
+    try {
+      const isoString = date.toISOString()
+      return typeof isoString === 'string' ? isoString : null
+    } catch {
+      return null
+    }
+  }
+
+  // Wrapper that guarantees string | null type
+  const ensureStringOrNull = (value: string | null | undefined): string | null => {
+    return value ?? null
+  }
+
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     setIsSaving(true)
@@ -45,8 +68,8 @@ export default function AdminRewardsPage() {
     await resetSettings()
   }
 
-  const handleChange = <Key extends keyof RewardsBannerSettings>(field: Key, value: RewardsBannerSettings[Key]) => {
-    setFormState((prev) => ({ ...prev, [field]: value }))
+  const handleChange = <Key extends keyof RewardsBannerSettings>(field: Key, value: RewardsBannerSettings[Key] | null | undefined) => {
+    setFormState((prev) => ({ ...prev, [field]: value ?? null }))
     setHasChanges(true)
   }
 
@@ -248,29 +271,25 @@ export default function AdminRewardsPage() {
                   
                   <div className="grid gap-4 md:grid-cols-2">
                     <div className="space-y-2">
-                      <Label htmlFor="daily-draw-date">Próximo Sorteo Diario</Label>
-                      <Input
-                        id="daily-draw-date"
-                        type="datetime-local"
-                        value={formState.dailyPrizeDrawDate ? toISOStringGMT3(formState.dailyPrizeDrawDate).slice(0, 16) : ''}
-                        onChange={(event) => {
-                          const value = event.target.value ? toISOStringGMT3(event.target.value) : null
-                          handleChange("dailyPrizeDrawDate", value)
+                      <Label>Próximo Sorteo Diario</Label>
+                      <DateTimePicker
+                        date={isoStringToDate(formState.dailyPrizeDrawDate)}
+                        onDateChange={(date) => {
+                          (handleChange as any)("dailyPrizeDrawDate", safeDateToISOString(date))
                         }}
-                        min={nowGMT3().toISOString().slice(0, 16)}
+                        placeholder="Seleccionar fecha y hora"
+                        minDate={new Date()}
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="monthly-draw-date">Próximo Sorteo Mensual</Label>
-                      <Input
-                        id="monthly-draw-date"
-                        type="datetime-local"
-                        value={formState.monthlyPrizeDrawDate ? toISOStringGMT3(formState.monthlyPrizeDrawDate).slice(0, 16) : ''}
-                        onChange={(event) => {
-                          const value = event.target.value ? toISOStringGMT3(event.target.value) : null
-                          handleChange("monthlyPrizeDrawDate", value)
+                      <Label>Próximo Sorteo Mensual</Label>
+                      <DateTimePicker
+                        date={isoStringToDate(formState.monthlyPrizeDrawDate)}
+                        onDateChange={(date) => {
+                          (handleChange as any)("monthlyPrizeDrawDate", safeDateToISOString(date))
                         }}
-                        min={nowGMT3().toISOString().slice(0, 16)}
+                        placeholder="Seleccionar fecha y hora"
+                        minDate={new Date()}
                       />
                     </div>
                   </div>

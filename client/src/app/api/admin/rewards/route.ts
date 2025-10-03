@@ -100,7 +100,7 @@ export async function PUT(request: NextRequest) {
     }
 
     // Validar campos específicos si están presentes
-    if (updates.banner_theme && !['emerald', 'indigo', 'amber'].includes(updates.banner_theme)) {
+    if ('banner_theme' in updates && !['emerald', 'indigo', 'amber'].includes(updates.banner_theme)) {
       return NextResponse.json({
         success: false,
         error: {
