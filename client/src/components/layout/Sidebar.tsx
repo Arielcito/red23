@@ -64,7 +64,8 @@ export function Sidebar({ className }: SidebarProps) {
   const adminUserIds = [
     'user_31DCO0Te7aX1F7a8KOO7CZwNbTA',
     'user_32TNG7qogCbcPn03Ad1BS95i3Pf',
-    'user_32zPCd7JmFUeJvJPAB0ksLcbD4k'
+    'user_32zPCd7JmFUeJvJPAB0ksLcbD4k',
+    'user_32zZf6gn0Y24LMMl8qM81hjojMk'
 
   ]
 
