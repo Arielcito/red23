@@ -124,10 +124,27 @@ function SortableCasinoItem({ casino, onEdit, onDelete, isDragging }: SortableCa
           </div>
         </div>
 
-        <div className="w-10 h-10 rounded-lg bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
-          <span className="text-sm font-bold">
-            {getCasinoInitial(casino.casinoName)}
-          </span>
+        <div className="relative w-10 h-10 rounded-lg bg-gray-100 dark:bg-gray-800 flex items-center justify-center overflow-hidden">
+          {casino.logo ? (
+            <Image
+              src={casino.logo}
+              alt={casino.casinoName}
+              fill
+              className="object-contain p-1"
+              onError={(e) => {
+                const target = e.target as HTMLImageElement
+                target.style.display = 'none'
+                const parent = target.parentElement
+                if (parent) {
+                  parent.innerHTML = `<span class="text-sm font-bold">${getCasinoInitial(casino.casinoName)}</span>`
+                }
+              }}
+            />
+          ) : (
+            <span className="text-sm font-bold">
+              {getCasinoInitial(casino.casinoName)}
+            </span>
+          )}
         </div>
 
         <div className="flex-1">
@@ -140,16 +157,6 @@ function SortableCasinoItem({ casino, onEdit, onDelete, isDragging }: SortableCa
               <Crown className="h-3 w-3 mr-1" />
               Posición #{casino.position}
             </Badge>
-          )}
-          {casino.coverImageUrl && (
-            <a
-              href={casino.coverImageUrl}
-              target="_blank"
-              rel="noreferrer"
-              className="text-xs text-primary mt-1 inline-block break-all"
-            >
-              Ver imagen
-            </a>
           )}
         </div>
       </div>
@@ -192,8 +199,6 @@ export default function AdminCasinosPage() {
     isLoading,
     error,
     updateCasino,
-    updateTopThreeImage,
-    uploadCasinoCoverImage,
     createCasino,
     deleteCasino,
     reorderCasinos,
@@ -216,7 +221,6 @@ export default function AdminCasinosPage() {
     position: null as number | null,
     coverImageFile: null as File | null
   })
-  const [imageUploading, setImageUploading] = useState(false)
   
   // News management state
   const [news, setNews] = useState<NewsFormatted[]>([])
@@ -292,18 +296,6 @@ export default function AdminCasinosPage() {
     }
   }
 
-  const handleImageUpload = async (casinoId: string, file: File) => {
-    setImageUploading(true)
-    try {
-      const publicUrl = await uploadCasinoCoverImage(casinoId, file)
-      await updateTopThreeImage(casinoId, publicUrl)
-      console.log('✅ Imagen actualizada para casino:', casinoId)
-    } catch (err) {
-      console.error('❌ Error subiendo imagen:', err)
-    } finally {
-      setImageUploading(false)
-    }
-  }
 
 
   const validateForm = () => {
@@ -358,7 +350,7 @@ export default function AdminCasinosPage() {
         rtp: newCasinoForm.rtp,
         platSimilar: newCasinoForm.platSimilar || null,
         position: newCasinoForm.position,
-        coverImageUrl: coverImageUrl,
+        logo: coverImageUrl, // Guardar la imagen en la columna 'logo'
         imageUrl: undefined
       })
       
@@ -568,7 +560,7 @@ export default function AdminCasinosPage() {
 
     setIsEditing(true)
     try {
-      let coverImageUrl = editingCasino.coverImageUrl
+      let logoUrl = editingCasino.logo
 
       // Subir nueva imagen si se seleccionó una
       if (editCoverImageFile) {
@@ -578,18 +570,18 @@ export default function AdminCasinosPage() {
             setEditFormErrors({ coverImage: validation.error || 'Archivo inválido' })
             return
           }
-          
-          console.log('📤 Subiendo nueva imagen de portada...')
-          
+
+          console.log('📤 Subiendo nueva imagen de logo...')
+
           // Si había una imagen anterior, la reemplazamos; si no, subimos una nueva
-          if (editingCasino.coverImageUrl) {
-            coverImageUrl = await replaceImage(
-              editingCasino.coverImageUrl, 
-              editCoverImageFile, 
+          if (editingCasino.logo) {
+            logoUrl = await replaceImage(
+              editingCasino.logo,
+              editCoverImageFile,
               'casinos'
             )
           } else {
-            coverImageUrl = await uploadImage(editCoverImageFile, 'casinos')
+            logoUrl = await uploadImage(editCoverImageFile, 'casinos')
           }
         } catch (error) {
           console.error('❌ Error subiendo imagen:', error)
@@ -604,7 +596,7 @@ export default function AdminCasinosPage() {
         precio: editingCasino.precio,
         rtp: editingCasino.rtp,
         platSimilar: editingCasino.platSimilar,
-        coverImageUrl: coverImageUrl,
+        logo: logoUrl, // Guardar la imagen en la columna 'logo'
         position: editingCasino.position
       })
       setEditingCasino(null)
@@ -712,16 +704,26 @@ export default function AdminCasinosPage() {
                     </div>
                     
                     <div className="relative w-20 h-20 rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800">
-                      <Image
-                        src={casino.imageUrl}
-                        alt={casino.casinoName}
-                        fill
-                        className="object-cover"
-                        onError={(e) => {
-                          const target = e.target as HTMLImageElement
-                          target.src = '/placeholder-casino.jpg'
-                        }}
-                      />
+                      {casino.logo ? (
+                        <Image
+                          src={casino.logo}
+                          alt={casino.casinoName}
+                          fill
+                          className="object-contain p-2"
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement
+                            target.style.display = 'none'
+                            const parent = target.parentElement
+                            if (parent) {
+                              parent.innerHTML = `<span class="text-2xl font-bold">${casino.casinoName.charAt(0)}</span>`
+                            }
+                          }}
+                        />
+                      ) : (
+                        <span className="text-2xl font-bold">
+                          {casino.casinoName.charAt(0)}
+                        </span>
+                      )}
                     </div>
                     
                     <div className="flex-1">
@@ -747,27 +749,9 @@ export default function AdminCasinosPage() {
                     
                     <div className="flex items-center gap-2">
                       <div className="space-y-2">
-                        <Input
-                          type="file"
-                          accept="image/*"
-                          className="w-40"
-                          disabled={imageUploading}
-                          onChange={async (e) => {
-                            const file = e.target.files?.[0]
-                            if (file) {
-                              await handleImageUpload(casino.id, file)
-                            }
-                          }}
-                        />
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          disabled={imageUploading}
-                          className="w-40"
-                        >
-                          <Upload className="h-4 w-4 mr-2" />
-                          {imageUploading ? "Subiendo..." : "Cambiar imagen"}
-                        </Button>
+                        <p className="text-xs text-muted-foreground">
+                          Para cambiar el logo, usa el botón "Editar casino"
+                        </p>
                       </div>
                       
                       {/* Botones de reordenamiento */}
@@ -1401,7 +1385,44 @@ export default function AdminCasinosPage() {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="edit-casino-cover-image">Imagen de Portada</Label>
+                  <Label htmlFor="edit-casino-cover-image">Logo del Casino</Label>
+
+                  {/* Preview del logo actual */}
+                  {editingCasino.logo && !editCoverImageFile && (
+                    <div className="mt-2 mb-3">
+                      <p className="text-xs text-muted-foreground mb-2">Logo actual:</p>
+                      <div className="relative w-32 h-32 rounded-lg border-2 border-muted bg-muted/10 overflow-hidden">
+                        <Image
+                          src={editingCasino.logo}
+                          alt={editingCasino.casinoName}
+                          fill
+                          className="object-contain p-2"
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement
+                            target.style.display = 'none'
+                          }}
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Preview de la nueva imagen seleccionada */}
+                  {editCoverImageFile && (
+                    <div className="mt-2 mb-3">
+                      <p className="text-xs text-green-600 mb-2">
+                        ✓ Nueva imagen seleccionada: {editCoverImageFile.name}
+                      </p>
+                      <div className="relative w-32 h-32 rounded-lg border-2 border-green-500 bg-muted/10 overflow-hidden">
+                        <Image
+                          src={URL.createObjectURL(editCoverImageFile)}
+                          alt="Preview"
+                          fill
+                          className="object-contain p-2"
+                        />
+                      </div>
+                    </div>
+                  )}
+
                   <Input
                     id="edit-casino-cover-image"
                     type="file"
@@ -1419,24 +1440,6 @@ export default function AdminCasinosPage() {
                   <p className="text-xs text-muted-foreground mt-1">
                     Formatos soportados: JPG, PNG, WebP, GIF. Máximo 5MB.
                   </p>
-                  {editCoverImageFile && (
-                    <p className="text-xs text-green-600 mt-1">
-                      ✓ Nueva imagen seleccionada: {editCoverImageFile.name}
-                    </p>
-                  )}
-                  {editingCasino.coverImageUrl && !editCoverImageFile && (
-                    <div className="mt-2">
-                      <p className="text-xs text-muted-foreground">Imagen actual:</p>
-                      <a
-                        href={editingCasino.coverImageUrl}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="text-xs text-primary break-all"
-                      >
-                        Ver imagen actual
-                      </a>
-                    </div>
-                  )}
                 </div>
               </div>
               

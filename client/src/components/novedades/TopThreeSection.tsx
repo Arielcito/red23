@@ -71,20 +71,30 @@ export function TopThreeSection({ topThree }: TopThreeSectionProps) {
                 )}
               >
                 <CardContent className="p-0">
-                {/* Casino Image */}
-                <div className="relative aspect-[3/2] w-full bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900">
-                  <Image
-                    src={casino.imageUrl || '/placeholder-casino.svg'}
-                    alt={casino.casinoName}
-                    fill
-                    className="object-cover transition-transform duration-300 hover:scale-110"
-                    onError={(e) => {
-                      const target = e.target as HTMLImageElement
-                      target.src = '/placeholder-casino.svg'
-                    }}
-                  />
-                  {/* Overlay gradient */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+                {/* Casino Logo */}
+                <div className="relative aspect-[3/2] w-full bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 flex items-center justify-center">
+                  {casino.logo ? (
+                    <div className="relative w-full h-full p-4">
+                      <Image
+                        src={casino.logo}
+                        alt={casino.casinoName}
+                        fill
+                        className="object-contain transition-transform duration-300 hover:scale-110"
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement
+                          target.style.display = 'none'
+                          const parent = target.parentElement?.parentElement
+                          if (parent) {
+                            parent.innerHTML = `<span class="text-4xl font-bold text-muted-foreground">${casino.casinoName.charAt(0)}</span>`
+                          }
+                        }}
+                      />
+                    </div>
+                  ) : (
+                    <span className="text-4xl font-bold text-muted-foreground">
+                      {casino.casinoName.charAt(0)}
+                    </span>
+                  )}
                 </div>
 
                 {/* Casino Name */}

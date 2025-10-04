@@ -16,9 +16,6 @@ export interface CasinosDataHook {
   deleteCasino: (id: string) => Promise<void>
   reorderCasinos: (reorderedCasinos: CasinoWithFields[]) => Promise<void>
   revertCasinoReorder: () => void
-  // Top three operations
-  updateTopThreeImage: (casinoId: string, imageUrl: string) => Promise<void>
-  uploadCasinoCoverImage: (casinoId: string, file: File | Blob) => Promise<string>
   // Utility functions
   refreshData: () => Promise<void>
   clearError: () => void
@@ -84,7 +81,7 @@ export function useCasinosData(): CasinosDataHook {
       antiguedad: casino.antiguedad,
       precio: casino.precio,
       rtp: casino.rtp,
-      imageUrl: casino.imageUrl || '/placeholder-casino.svg',
+      logo: casino.logo,
       position: casino.position!
     }))
 
@@ -218,44 +215,6 @@ export function useCasinosData(): CasinosDataHook {
     loadData()
   }, [loadData])
 
-  const updateTopThreeImage = async (casinoId: string, imageUrl: string): Promise<void> => {
-    try {
-      console.log('🖼️ Actualizando imagen de casino top 3:', casinoId)
-      
-      const response = await apiCall('/api/casinos/top-three', {
-        method: 'PATCH',
-        body: JSON.stringify({
-          casinoId,
-          imageUrl
-        })
-      })
-      
-      if (response.success) {
-        setCasinos(prev => prev.map(casino => 
-          casino.id === casinoId 
-            ? { ...casino, imageUrl }
-            : casino
-        ))
-        console.log('✅ Imagen de casino top 3 actualizada')
-      } else {
-        throw new Error(response.error || 'Error updating top three image')
-      }
-    } catch (error) {
-      console.error('❌ Error updating top three image:', error)
-      throw error
-    }
-  }
-
-  const uploadCasinoCoverImage = async (casinoId: string, file: File | Blob): Promise<string> => {
-    try {
-      const publicUrl = await CasinoService.uploadCasinoCoverImage(casinoId, file)
-      await updateCasino(casinoId, { coverImageUrl: publicUrl })
-      return publicUrl
-    } catch (error) {
-      console.error('❌ Error uploading casino cover image:', error)
-      throw error
-    }
-  }
 
   // Utility functions
   const refreshData = useCallback(async () => {
@@ -281,8 +240,6 @@ export function useCasinosData(): CasinosDataHook {
     deleteCasino,
     reorderCasinos,
     revertCasinoReorder,
-    updateTopThreeImage,
-    uploadCasinoCoverImage,
     refreshData,
     clearError
   }

@@ -1,5 +1,5 @@
 -- Crear tabla para usuarios pendientes de completar registro
-CREATE TABLE pending_users (
+CREATE TABLE IF NOT EXISTS pending_users (
   id BIGSERIAL PRIMARY KEY,
   email TEXT NOT NULL UNIQUE,
   name TEXT NOT NULL,
@@ -16,24 +16,27 @@ CREATE TABLE pending_users (
 );
 
 -- Índices para optimizar consultas
-CREATE INDEX idx_pending_users_email ON pending_users(email);
-CREATE INDEX idx_pending_users_clerk_user_id ON pending_users(clerk_user_id);
-CREATE INDEX idx_pending_users_status ON pending_users(status);
-CREATE INDEX idx_pending_users_referred_by_code ON pending_users(referred_by_code);
-CREATE INDEX idx_pending_users_created_at ON pending_users(created_at);
+CREATE INDEX IF NOT EXISTS idx_pending_users_email ON pending_users(email);
+CREATE INDEX IF NOT EXISTS idx_pending_users_clerk_user_id ON pending_users(clerk_user_id);
+CREATE INDEX IF NOT EXISTS idx_pending_users_status ON pending_users(status);
+CREATE INDEX IF NOT EXISTS idx_pending_users_referred_by_code ON pending_users(referred_by_code);
+CREATE INDEX IF NOT EXISTS idx_pending_users_created_at ON pending_users(created_at);
 
 -- RLS (Row Level Security)
 ALTER TABLE pending_users ENABLE ROW LEVEL SECURITY;
 
 -- Política para permitir lectura a usuarios autenticados de sus propios datos
+DROP POLICY IF EXISTS "Users can read their own pending registration" ON pending_users;
 CREATE POLICY "Users can read their own pending registration" ON pending_users
   FOR SELECT USING (auth.jwt() ->> 'email' = email OR auth.jwt() ->> 'sub' = clerk_user_id);
 
 -- Política para permitir inserción pública (para el formulario de demo)
+DROP POLICY IF EXISTS "Anyone can create pending user registration" ON pending_users;
 CREATE POLICY "Anyone can create pending user registration" ON pending_users
   FOR INSERT WITH CHECK (true);
 
 -- Política para permitir actualización solo del sistema (para vincular con Clerk)
+DROP POLICY IF EXISTS "System can update pending users" ON pending_users;
 CREATE POLICY "System can update pending users" ON pending_users
   FOR UPDATE USING (true);
 

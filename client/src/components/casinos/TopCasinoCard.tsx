@@ -60,24 +60,28 @@ export function TopCasinoCard({ casino, className }: TopCasinoCardProps) {
       </div>
 
       <CardHeader className="pb-1 p-2 pt-2">
-        <div className="relative h-10 w-full rounded-md overflow-hidden bg-gray-100 dark:bg-gray-800">
-          <Image
-            src={casino.imageUrl || '/placeholder-casino.svg'}
-            alt={casino.casinoName}
-            fill
-            className="object-cover transition-transform duration-300 hover:scale-110"
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            onError={(e) => {
-              // Fallback to placeholder if image fails to load
-              const target = e.target as HTMLImageElement
-              if (!target.src.includes('placeholder-casino.svg')) {
-                target.src = '/placeholder-casino.svg'
-              } else {
-                // If placeholder also fails, show a simple background
+        <div className="relative h-16 w-full rounded-md overflow-hidden bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
+          {casino.logo ? (
+            <Image
+              src={casino.logo}
+              alt={casino.casinoName}
+              fill
+              className="object-contain p-2 transition-transform duration-300 hover:scale-110"
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              onError={(e) => {
+                const target = e.target as HTMLImageElement
                 target.style.display = 'none'
-              }
-            }}
-          />
+                const parent = target.parentElement
+                if (parent) {
+                  parent.innerHTML = `<span class="text-2xl font-bold text-muted-foreground">${casino.casinoName.charAt(0)}</span>`
+                }
+              }}
+            />
+          ) : (
+            <span className="text-2xl font-bold text-muted-foreground">
+              {casino.casinoName.charAt(0)}
+            </span>
+          )}
         </div>
       </CardHeader>
 

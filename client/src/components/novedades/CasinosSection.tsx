@@ -71,27 +71,28 @@ export function CasinosSection() {
                       {/* Casino Name with Logo */}
                       <TableCell className="font-medium">
                         <div className="flex items-center gap-3">
-                          <div className="relative w-8 h-8 rounded bg-muted flex items-center justify-center">
-                            {casino.coverImageUrl || casino.imageUrl ? (
+                          <div className="relative w-8 h-8 rounded bg-muted flex items-center justify-center overflow-hidden">
+                            {casino.logo ? (
                               <Image
-                                src={casino.coverImageUrl || casino.imageUrl || '/placeholder-casino.svg'}
+                                src={casino.logo}
                                 alt={casino.casinoName}
-                                width={24}
-                                height={24}
-                                className="max-w-6 max-h-6 object-contain"
+                                width={32}
+                                height={32}
+                                className="object-contain p-0.5"
                                 onError={(e) => {
                                   const target = e.target as HTMLImageElement
                                   target.style.display = 'none'
-                                  target.nextElementSibling?.classList.remove('hidden')
+                                  const parent = target.parentElement
+                                  if (parent) {
+                                    parent.innerHTML = `<span class="text-xs font-bold text-primary">${casino.casinoName.charAt(0)}</span>`
+                                  }
                                 }}
                               />
-                            ) : null}
-                            <span className={cn(
-                              "text-xs font-bold text-primary",
-                              (casino.coverImageUrl || casino.imageUrl) && "hidden"
-                            )}>
-                              {casino.casinoName.charAt(0)}
-                            </span>
+                            ) : (
+                              <span className="text-xs font-bold text-primary">
+                                {casino.casinoName.charAt(0)}
+                              </span>
+                            )}
                           </div>
                           <div>
                             <div className="font-semibold flex items-center gap-1">

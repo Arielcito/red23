@@ -93,7 +93,7 @@ WHERE NOT EXISTS (SELECT 1 FROM automatic_prompts LIMIT 1);
 INSERT INTO automatic_prompts (title, content, category, is_active, order_index)
 SELECT 
   'Jackpot progresivo',
-  'Diseñar una imagen para promocionar nuestro jackpot progresivo con números grandes y efectos brillantes',
+  'DiseÃ±ar una imagen para promocionar nuestro jackpot progresivo con nÃºmeros grandes y efectos brillantes',
   'jackpots',
   true,
   2

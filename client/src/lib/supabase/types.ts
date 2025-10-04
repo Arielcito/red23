@@ -270,7 +270,7 @@ export interface TopCasino {
   antiguedad: string
   precio: PrecioValue
   rtp: number
-  imageUrl: string
+  logo?: string | null
   position: number
 }
 
