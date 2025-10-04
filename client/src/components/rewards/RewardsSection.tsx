@@ -24,7 +24,7 @@ export function RewardsSection({ className }: RewardsSectionProps) {
         <div className="space-y-3">
           <CountdownTimer
             targetDate={nextDailyPrize}
-            label="Próximo premio diario"
+            label="Bonificación del 10% en todas tus cargas del día"
             className="p-3 bg-gradient-to-r from-primary/5 to-primary/10 rounded-lg border border-primary/20"
           />
           

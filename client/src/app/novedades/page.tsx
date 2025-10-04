@@ -28,9 +28,9 @@ export default function NovedadesPage() {
 
   if (error) {
     return (
-      <AppLayout 
-        title="Novedades" 
-        subtitle="Últimas noticias y actualizaciones"
+      <AppLayout
+        title="Novedades"
+        subtitle="Información exclusiva y en tiempo real"
       >
         <ErrorState error={error} />
       </AppLayout>
@@ -39,9 +39,9 @@ export default function NovedadesPage() {
 
   if (isLoading) {
     return (
-      <AppLayout 
-        title="Novedades" 
-        subtitle="Últimas noticias y actualizaciones"
+      <AppLayout
+        title="Novedades"
+        subtitle="Información exclusiva y en tiempo real"
       >
         <LoadingState />
       </AppLayout>
@@ -52,7 +52,7 @@ export default function NovedadesPage() {
   return (
     <AppLayout
       title="Novedades"
-      subtitle="Últimas noticias y actualizaciones del mundo de los casinos"
+      subtitle="Información exclusiva y en tiempo real"
       badge={{
         text: "Actualizado",
         variant: "secondary",

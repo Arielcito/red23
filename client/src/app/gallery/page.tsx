@@ -142,7 +142,7 @@ export default function GalleryPage() {
 
   return (
     <AppLayout
-      title="Gallery"
+      title="GALERIA"
       subtitle="Almacenamiento de imágenes generadas"
       showBackButton={true}
       backHref="/dashboard"

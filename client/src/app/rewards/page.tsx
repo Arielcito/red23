@@ -172,7 +172,7 @@ export default function RewardsPage() {
               </li>
               <li className="flex items-start gap-2">
                 <div className="w-1.5 h-1.5 bg-primary rounded-full mt-2 flex-shrink-0" />
-                <span>Los ganadores son notificados por email y WhatsApp</span>
+                <span>Los ganadores son notificados por Telegram</span>
               </li>
               <li className="flex items-start gap-2">
                 <div className="w-1.5 h-1.5 bg-primary rounded-full mt-2 flex-shrink-0" />

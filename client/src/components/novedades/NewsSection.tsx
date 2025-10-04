@@ -37,7 +37,7 @@ export function NewsSection({ featuredNews, recentNews }: NewsSectionProps) {
               <h2 className="text-3xl font-bold">Últimas Noticias</h2>
             </div>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Mantente al día con las últimas novedades del mundo de los casinos
+              Información exclusiva en tiempo real con novedades, inconvenientes y promociones de todas las plataformas
             </p>
             <div className="text-center py-8 text-muted-foreground">
               <Newspaper className="h-12 w-12 mx-auto mb-2 text-gray-300" />
@@ -59,8 +59,7 @@ export function NewsSection({ featuredNews, recentNews }: NewsSectionProps) {
             <h2 className="text-3xl font-bold">Últimas Noticias</h2>
           </div>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Mantente al día con las últimas novedades, guías y promociones 
-            del mundo de los casinos online
+            Información exclusiva en tiempo real con novedades, inconvenientes y promociones de todas las plataformas
           </p>
         </div>
 

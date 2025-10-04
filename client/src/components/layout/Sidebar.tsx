@@ -73,7 +73,7 @@ export function Sidebar({ className }: SidebarProps) {
 
   const menuItems: MenuItem[] = [
     {
-      title: "Home",
+      title: "INICIO",
       href: "/dashboard",
       icon: Home,
       description: "Panel principal"

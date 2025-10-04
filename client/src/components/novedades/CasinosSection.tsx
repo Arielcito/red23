@@ -33,7 +33,7 @@ export function CasinosSection() {
         <div className="text-center space-y-4 mb-6 md:mb-12">
           <h2 className="text-3xl font-bold">Comparación de Casinos</h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Compara las características de nuestros casinos recomendados
+            Estas son las plataformas seleccionadas por nuestro equipo de expertos, basados en volumen, seguridad y experiencia de usuario
           </p>
         </div>
 
@@ -41,7 +41,7 @@ export function CasinosSection() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Settings className="h-5 w-5" />
-              Tabla Comparativa de Casinos
+              TABLA DE DATOS
             </CardTitle>
           </CardHeader>
           <CardContent>

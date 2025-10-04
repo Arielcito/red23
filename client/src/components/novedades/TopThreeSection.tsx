@@ -18,10 +18,10 @@ export function TopThreeSection({ topThree }: TopThreeSectionProps) {
           <div className="text-center space-y-4">
             <div className="flex items-center justify-center gap-2">
               <Crown className="h-8 w-8 text-yellow-500" />
-              <h2 className="text-3xl font-bold">Top 3 Casinos</h2>
+              <h2 className="text-3xl font-bold">MEJORES 3 PLATAFORMAS</h2>
             </div>
             <p className="text-muted-foreground">
-              Los mejores casinos seleccionados por nuestro equipo
+              Estas son las mejores 3 plataformas de casino online seleccionadas por nuestro equipo de expertos, basados en volumen, seguridad y experiencia de usuario
             </p>
             <div className="text-center py-8 text-muted-foreground">
               <Crown className="h-12 w-12 mx-auto mb-2 text-gray-300" />
@@ -39,11 +39,10 @@ export function TopThreeSection({ topThree }: TopThreeSectionProps) {
         <div className="text-center space-y-4 pb-6 md:pb-12">
           <div className="flex items-center justify-center gap-2">
             <Crown className="h-8 w-8 text-yellow-500" />
-            <h2 className="text-2xl font-bold">Top 3 Casinos</h2>
+            <h2 className="text-2xl font-bold">MEJORES 3 PLATAFORMAS</h2>
           </div>
           <p className="text-muted-foreground text-sm max-w-2xl mx-auto">
-            Los mejores casinos seleccionados por nuestro equipo de expertos,
-            evaluados por su calidad, seguridad y experiencia de usuario
+            Estas son las mejores 3 plataformas de casino online seleccionadas por nuestro equipo de expertos, basados en volumen, seguridad y experiencia de usuario
           </p>
         </div>
 
