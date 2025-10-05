@@ -75,7 +75,7 @@ export default function HelpPage() {
     },
     {
       title: "Tutoriales",
-      description: "Conectar cuenta para publicaciones automáticas",
+      description: "Aprende a usar Red23",
       href: "/tutorials",
       icon: Smartphone,
       color: "bg-green-600 hover:bg-green-700",
