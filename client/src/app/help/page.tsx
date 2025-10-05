@@ -3,68 +3,17 @@
 import { AppLayout } from "@/components/layout/AppLayout"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
 import {
-  BookOpen,
   MessageCircle,
-  Calendar,
   Images,
-  Upload,
-  Settings,
   HelpCircle,
   ExternalLink,
-  ChevronRight,
   Smartphone,
   Sparkles,
 } from "lucide-react"
 import Link from "next/link"
 
 export default function HelpPage() {
-  const sections = [
-    {
-      id: "getting-started",
-      title: "Primeros Pasos",
-      icon: BookOpen,
-      description: "Configuración inicial y conceptos básicos",
-      color: "bg-blue-100 text-blue-600",
-    },
-    {
-      id: "generate-images",
-      title: "Generar Imágenes con IA",
-      icon: MessageCircle,
-      description: "Cómo usar el chat para crear imágenes promocionales",
-      color: "bg-purple-100 text-purple-600",
-    },
-    {
-      id: "whatsapp-scheduling",
-      title: "Programar en WhatsApp",
-      icon: Calendar,
-      description: "Automatizar publicaciones en WhatsApp Stories",
-      color: "bg-green-100 text-green-600",
-    },
-    {
-      id: "gallery-management",
-      title: "Gestión de Galería",
-      icon: Images,
-      description: "Organizar y administrar tus imágenes",
-      color: "bg-orange-100 text-orange-600",
-    },
-    {
-      id: "upload-images",
-      title: "Subir Imágenes",
-      icon: Upload,
-      description: "Cargar tus propias imágenes al sistema",
-      color: "bg-teal-100 text-teal-600",
-    },
-    {
-      id: "account-settings",
-      title: "Configuración de Cuenta",
-      icon: Settings,
-      description: "Personalizar tu perfil y preferencias",
-      color: "bg-gray-100 text-gray-600",
-    },
-  ]
-
   const quickActions = [
     {
       title: "Generar mi primera imagen",
@@ -90,21 +39,74 @@ export default function HelpPage() {
   ]
 
   const faqs = [
+
     {
-      question: "¿Cómo genero mi primera imagen?",
-      answer: "Ve al Chat IA y describe lo que quieres crear. Por ejemplo: 'Banner promocional para jackpot de $1M con colores dorados'."
+      question: "¿Qué es un prompt?",
+      answer: "Un prompt es la descripción de la imagen que deseas crear."
     },
     {
-      question: "¿Puedo programar publicaciones automáticas?",
-      answer: "Sí, desde cualquier imagen puedes programar cuándo se publique en WhatsApp Stories usando nuestro calendario integrado."
+      question: "¿Cómo agrego mi logo a las imágenes que creo?",
+      answer: "Para agregar tu logo debes hacer click en subir archivo y elegir la posicion donde quieres que se vea."
     },
     {
-      question: "¿Qué formatos de imagen soporta?",
-      answer: "Soportamos JPG, PNG, GIF y WebP. Recomendamos imágenes de al menos 1024x1024 píxeles para mejor calidad."
+      question: "¿Cómo reclamo mis premios en caso de haber ganado?",
+      answer: "Una vez hayas ganado, alguien del equipo se va a contactar contigo por Telegram o WhatsApp."
     },
     {
-      question: "¿Cuántas imágenes puedo generar?",
-      answer: "Depende de tu plan. El Plan Pro incluye 500 imágenes mensuales. Puedes ver tu uso actual en el inicio."
+      question: "¿Cómo me beneficio de las novedades?",
+      answer: "Te beneficiarás con información exclusiva en tiempo real, que usarás para tomar ventaja de tu competencia."
+    },
+    {
+      question: "¿En qué se basan para seleccionar las mejores tres plataformas?",
+      answer: "Nos basamos en volumen, seguridad y experiencia de usuario. Información a la cual accedemos al trabajar de manera directa con ellos."
+    },
+    {
+      question: "¿Qué es el porcentaje RTP?",
+      answer: "El RTP es el porcentaje de retorno de dinero al jugador."
+    },
+    {
+      question: "¿En la base de datos, a qué se refiere en plataforma similar?",
+      answer: "Se refiere a que la plataforma mencionada comparte características similares a la principal."
+    },
+    {
+      question: "¿Dónde puedo ver mis imágenes creadas?",
+      answer: "Las imágenes previamente creadas las puedes ver desde la galería."
+    },
+    {
+      question: "¿Cómo participo en los premios?",
+      answer: "Al ser usuario activo de Red23 ya estás participando por los distintos premios."
+    },
+    {
+      question: "¿Es necesario completar la ruta de aprendizaje?",
+      answer: "Es indispensable completar la ruta de aprendizaje para poder usar y aprovechar al máximo todas las funciones del software."
+    },
+    {
+      question: "¿Cómo generar más clientes con mis anuncios?",
+      answer: "Para generar mejores anuncios debes completar el paso a paso de la ruta de aprendizaje."
+    },
+    {
+      question: "¿Cómo referir a otras personas?",
+      answer: "Debes generar tu enlace y compartir tu link a colegas, clientes y terceros."
+    },
+    {
+      question: "¿A quién puedo referir el software?",
+      answer: "El software se lo puedes referir a colegas, clientes y terceros."
+    },
+    {
+      question: "¿Cómo reclamo las ganancias que me generan mis referidos?",
+      answer: "Mantener tu suscripción activa y esperar a ser contactado por nosotros en un plazo de 48hs hábiles."
+    },
+    {
+      question: "¿Es importante el grupo oficial de Telegram?",
+      answer: "Es fundamental para estar al tanto de premios, descuentos, promociones, noticias y más."
+    },
+    {
+      question: "¿Por qué debo renovar mi suscripción?",
+      answer: "Es importante renovar tu suscripción para incrementar las ventas, ahorrar tiempo y contar con información exclusiva."
+    },
+    {
+      question: "¿Cómo me contacto con soporte?",
+      answer: "Te puedes contactar con soporte haciendo click aquí."
     },
   ]
 
@@ -137,7 +139,7 @@ export default function HelpPage() {
               {quickActions.map((action, index) => {
                 const Icon = action.icon
                 return (
-                  <Link key={index} href={action.href}>
+                  <Link key={action.href} href={action.href}>
                     <Button
                       variant="outline"
                       className={`w-full h-auto p-4 flex flex-col items-center space-y-2 hover:shadow-md transition-all ${action.color} text-white border-0`}
@@ -164,7 +166,7 @@ export default function HelpPage() {
           <CardContent>
             <div className="space-y-6">
               {faqs.map((faq, index) => (
-                <div key={index} className="border-b border-gray-200 dark:border-gray-700 last:border-0 pb-4 last:pb-0">
+                <div key={faq.question} className="border-b border-gray-200 dark:border-gray-700 last:border-0 pb-4 last:pb-0">
                   <h3 className="font-medium text-gray-900 dark:text-white mb-2">{faq.question}</h3>
                   <p className="text-gray-600 dark:text-gray-300 text-sm">{faq.answer}</p>
                 </div>
