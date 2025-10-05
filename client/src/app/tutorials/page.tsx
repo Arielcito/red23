@@ -40,7 +40,7 @@ export default function TutorialsPage() {
 
   return (
     <AppLayout
-      title="Tutoriales"
+      title="Rutas de Aprendizaje"
       subtitle="Aprende marketing digital con nuestros cursos"
       badge={{
         text: "Nuevo",

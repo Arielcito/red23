@@ -160,7 +160,7 @@ export function LearningPathForm({ learningPath, onSubmit, onCancel, isSubmittin
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Principiante">Principiante</SelectItem>
+                  <SelectItem value="Principiante">Cajeor</SelectItem>
                   <SelectItem value="Intermedio">Intermedio</SelectItem>
                   <SelectItem value="Avanzado">Avanzado</SelectItem>
                 </SelectContent>

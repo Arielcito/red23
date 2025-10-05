@@ -43,7 +43,7 @@ export function LearningPathBreadcrumb({
         href="/tutorials"
         className="text-muted-foreground hover:text-foreground transition-colors"
       >
-        Tutoriales
+        Rutas de Aprendizaje
       </Link>
       
       {pathTitle && (

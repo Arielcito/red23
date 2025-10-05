@@ -55,7 +55,7 @@ export function CasinosSection() {
                     <TableHead>Antigüedad</TableHead>
                     <TableHead>Precio</TableHead>
                     <TableHead>RTP</TableHead>
-                    <TableHead>Similar a</TableHead>
+                    <TableHead>Plataforma Similar</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>

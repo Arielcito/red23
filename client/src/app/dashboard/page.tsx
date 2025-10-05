@@ -65,7 +65,7 @@ export default function Dashboard() {
 
   return (
     <AppLayout
-      title="Dashboard"
+      title="INICIO"
       subtitle="Bienvenido de vuelta"
     >
       <div className="p-3 sm:p-4 lg:p-6 space-y-3 sm:space-y-4 lg:space-y-6">
@@ -162,9 +162,9 @@ export default function Dashboard() {
         <div>
           <div className="flex items-center justify-between mb-3 sm:mb-4">
             <h2 className="text-lg font-semibold">Mejores Casinos</h2>
-            <Link href="/admin/casinos">
+            <Link href="/novedades">
               <Button variant="outline" size="sm" className="text-xs sm:text-sm">
-                Gestionar casinos
+                Ver novedades
               </Button>
             </Link>
           </div>

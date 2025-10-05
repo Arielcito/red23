@@ -118,7 +118,7 @@ export default function ReferralsPage() {
   return (
     <AppLayout
       title="Sistema de Referidos"
-      subtitle="Refiere amigos y gana recompensas especiales"
+      subtitle="Referí a otras personas y gana $75.000 por cada uno"
       badge={{
         text: "Activo",
         variant: "secondary",

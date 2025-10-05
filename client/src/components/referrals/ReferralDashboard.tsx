@@ -81,12 +81,12 @@ export function ReferralDashboard({ className }: ReferralDashboardProps) {
         <div>
           <h2 className="text-2xl font-bold">Sistema de Referidos</h2>
           <p className="text-muted-foreground">
-            Refiere amigos y gana recompensas especiales
+            Referí a otras personas y gana $75.000 por cada uno
           </p>
         </div>
-        <Button 
-          onClick={handleRefresh} 
-          variant="outline" 
+        <Button
+          onClick={handleRefresh}
+          variant="outline"
           size="sm"
           disabled={isLoading}
         >

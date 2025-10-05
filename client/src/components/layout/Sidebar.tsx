@@ -112,7 +112,7 @@ export function Sidebar({ className }: SidebarProps) {
       description: "Sorteos y premios"
     },
     {
-      title: "Tutoriales",
+      title: "Rutas de Aprendizaje",
       href: "/tutorials",
       icon: GraduationCap,
       description: "Cursos de marketing"
@@ -154,7 +154,7 @@ export function Sidebar({ className }: SidebarProps) {
       isAdmin: true
     },
     {
-      title: "Admin Tutoriales",
+      title: "Admin Rutas de aprendizaje",
       href: "/admin/tutorials",
       icon: GraduationCap,
       badge: "Admin",

@@ -230,7 +230,7 @@ export default function AdminTutorialsPage() {
 
   return (
     <AppLayout
-      title="Administración de Tutoriales"
+      title="Administración de Rutas de Aprendizaje"
       subtitle="Gestionar rutas de aprendizaje, módulos y videos"
       badge={{
         text: "Admin",

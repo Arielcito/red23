@@ -146,7 +146,7 @@ export function useTutorials(): UseTutorialsReturn {
         setError(null)
       } catch (err) {
         console.error("Error loading tutorials:", err)
-        setError("Error al cargar los tutoriales")
+        setError("Error al cargar las Rutas de Aprendizaje")
       } finally {
         setIsLoading(false)
       }

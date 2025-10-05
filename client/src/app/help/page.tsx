@@ -74,9 +74,9 @@ export default function HelpPage() {
       color: "bg-primary-600 hover:bg-primary-700",
     },
     {
-      title: "Configurar WhatsApp",
+      title: "Tutoriales",
       description: "Conectar cuenta para publicaciones automáticas",
-      href: "/whatsapp-setup",
+      href: "/tutorials",
       icon: Smartphone,
       color: "bg-green-600 hover:bg-green-700",
     },
@@ -104,7 +104,7 @@ export default function HelpPage() {
     },
     {
       question: "¿Cuántas imágenes puedo generar?",
-      answer: "Depende de tu plan. El Plan Pro incluye 500 imágenes mensuales. Puedes ver tu uso actual en el dashboard."
+      answer: "Depende de tu plan. El Plan Pro incluye 500 imágenes mensuales. Puedes ver tu uso actual en el inicio."
     },
   ]
 
@@ -121,7 +121,7 @@ export default function HelpPage() {
               ¿Cómo podemos ayudarte?
             </h1>
             <p className="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-              Encuentra guías paso a paso, tutoriales y respuestas a las preguntas más frecuentes sobre Red23.
+              Encuentra guías paso a paso, rutas de aprendizaje y respuestas a las preguntas más frecuentes sobre Red23.
             </p>
           </div>
         </div>

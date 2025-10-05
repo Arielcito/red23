@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabase } from '@/lib/supabase/client'
-import type { AutomaticPrompt } from '@/lib/supabase/types'
+import { PromptsService } from '@/lib/services/promptsService'
 
 type RouteContext = {
   params: Promise<Record<string, string | string[] | undefined>>
@@ -19,8 +18,8 @@ export async function PUT(request: NextRequest, context: RouteContext) {
     const idString = Array.isArray(idValue) ? idValue[0] : idValue
     const id = parseInt(idString ?? '')
     const body = await request.json()
-    
-    console.log('📝 Updating prompt:', id, body)
+
+    console.log('📝 API: Updating prompt:', id)
 
     if (isNaN(id)) {
       return NextResponse.json(
@@ -51,23 +50,12 @@ export async function PUT(request: NextRequest, context: RouteContext) {
       )
     }
 
-    const { data: updatedPrompt, error: updateError } = await supabase
-      .from('automatic_prompts')
-      .update({
-        title: body.title.trim(),
-        content: body.content.trim(),
-        category: body.category || 'general',
-        is_active: body.is_active ?? true,
-        updated_at: new Date().toISOString()
-      })
-      .eq('id', id)
-      .select('*')
-      .single()
-
-    if (updateError && updateError.code !== 'PGRST116') {
-      console.error('Error updating prompt:', updateError)
-      throw updateError
-    }
+    const updatedPrompt = await PromptsService.updatePrompt(id, {
+      title: body.title,
+      content: body.content,
+      category: body.category,
+      is_active: body.is_active
+    })
 
     if (!updatedPrompt) {
       return NextResponse.json(
@@ -83,14 +71,12 @@ export async function PUT(request: NextRequest, context: RouteContext) {
       )
     }
 
-    console.log('✅ Updated prompt:', updatedPrompt?.id)
-
     return NextResponse.json({
       success: true,
       data: updatedPrompt
     })
   } catch (error) {
-    console.error('❌ Error updating prompt:', error)
+    console.error('❌ API Error updating prompt:', error)
     return NextResponse.json(
       {
         success: false,
@@ -111,8 +97,8 @@ export async function DELETE(request: NextRequest, context: RouteContext) {
     const idValue = params?.id
     const idString = Array.isArray(idValue) ? idValue[0] : idValue
     const id = parseInt(idString ?? '')
-    
-    console.log('🗑️ Deleting prompt:', id)
+
+    console.log('🗑️ API: Deleting prompt:', id)
 
     if (isNaN(id)) {
       return NextResponse.json(
@@ -128,40 +114,14 @@ export async function DELETE(request: NextRequest, context: RouteContext) {
       )
     }
 
-    const { data: deletedPrompt, error: deleteError } = await supabase
-      .from('automatic_prompts')
-      .delete()
-      .eq('id', id)
-      .select('*')
-      .single()
-
-    if (deleteError && deleteError.code !== 'PGRST116') {
-      console.error('Error deleting prompt:', deleteError)
-      throw deleteError
-    }
-
-    if (!deletedPrompt) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: {
-            code: 'NOT_FOUND',
-            message: 'Prompt not found',
-            details: [`Prompt with ID ${id} not found`]
-          }
-        },
-        { status: 404 }
-      )
-    }
-
-    console.log('✅ Deleted prompt:', deletedPrompt?.id)
+    await PromptsService.deletePrompt(id)
 
     return NextResponse.json({
       success: true,
-      data: deletedPrompt
+      message: 'Prompt deleted successfully'
     })
   } catch (error) {
-    console.error('❌ Error deleting prompt:', error)
+    console.error('❌ API Error deleting prompt:', error)
     return NextResponse.json(
       {
         success: false,
