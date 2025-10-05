@@ -392,7 +392,7 @@ export interface LearningPath {
   id: string
   title: string
   description: string
-  level: 'Principiante' | 'Intermedio' | 'Avanzado'
+  level: 'Cajero' | 'Administrador' | 'Proveedor'
   duration: string
   course_count: number
   icon: string
@@ -409,7 +409,7 @@ export interface LearningPath {
 export interface NewLearningPath {
   title: string
   description: string
-  level: 'Principiante' | 'Intermedio' | 'Avanzado'
+  level: 'Cajero' | 'Administrador' | 'Proveedor'
   duration: string
   course_count: number
   icon: string
@@ -426,7 +426,7 @@ export interface LearningPathFormatted {
   id: string
   title: string
   description: string
-  level: 'Principiante' | 'Intermedio' | 'Avanzado'
+  level: 'Cajero' | 'Administrador' | 'Proveedor'
   duration: string
   courseCount: number
   icon: string

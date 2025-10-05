@@ -1273,17 +1273,17 @@ export default function AdminCasinosPage() {
           setEditCoverImageFile(null)
         }
       }}>
-        <SheetContent className="w-[400px] sm:w-[540px]">
-          <SheetHeader>
+        <SheetContent className="w-[90vw] sm:w-[600px] md:w-[700px] lg:w-[800px] overflow-y-auto p-6">
+          <SheetHeader className="mb-6">
             <SheetTitle>Editar Casino</SheetTitle>
             <SheetDescription>
               {editingCasino?.casinoName}
             </SheetDescription>
           </SheetHeader>
-          
+
           {editingCasino && (
-            <div className="space-y-4 py-4">
-              <div className="space-y-4">
+            <div className="space-y-6 pb-6">
+              <div className="space-y-6">
                 <div>
                   <Label htmlFor="edit-casino-name">Nombre del Casino *</Label>
                   <Input
@@ -1390,7 +1390,21 @@ export default function AdminCasinosPage() {
                   {/* Preview del logo actual */}
                   {editingCasino.logo && !editCoverImageFile && (
                     <div className="mt-2 mb-3">
-                      <p className="text-xs text-muted-foreground mb-2">Logo actual:</p>
+                      <div className="flex items-center justify-between mb-2">
+                        <p className="text-xs text-muted-foreground">Logo actual:</p>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            setEditingCasino(prev => prev ? { ...prev, logo: null } : null)
+                          }}
+                          className="h-7 text-xs"
+                        >
+                          <Trash2 className="h-3 w-3 mr-1" />
+                          Quitar imagen
+                        </Button>
+                      </div>
                       <div className="relative w-32 h-32 rounded-lg border-2 border-muted bg-muted/10 overflow-hidden">
                         <Image
                           src={editingCasino.logo}
@@ -1409,9 +1423,23 @@ export default function AdminCasinosPage() {
                   {/* Preview de la nueva imagen seleccionada */}
                   {editCoverImageFile && (
                     <div className="mt-2 mb-3">
-                      <p className="text-xs text-green-600 mb-2">
-                        ✓ Nueva imagen seleccionada: {editCoverImageFile.name}
-                      </p>
+                      <div className="flex items-center justify-between mb-2">
+                        <p className="text-xs text-green-600">
+                          ✓ Nueva imagen seleccionada: {editCoverImageFile.name}
+                        </p>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            setEditCoverImageFile(null)
+                          }}
+                          className="h-7 text-xs"
+                        >
+                          <Trash2 className="h-3 w-3 mr-1" />
+                          Cancelar
+                        </Button>
+                      </div>
                       <div className="relative w-32 h-32 rounded-lg border-2 border-green-500 bg-muted/10 overflow-hidden">
                         <Image
                           src={URL.createObjectURL(editCoverImageFile)}

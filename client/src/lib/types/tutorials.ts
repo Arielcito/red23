@@ -50,7 +50,7 @@ export interface LearningPathWithContent {
   id: string
   title: string
   description: string
-  level: 'Principiante' | 'Intermedio' | 'Avanzado'
+  level: 'Cajero' | 'Administrador' | 'Proveedor'
   duration: string
   courseCount: number
   icon: string
@@ -69,7 +69,7 @@ export interface LearningPathWithContent {
 export interface LearningPathFormData {
   title: string
   description: string
-  level: 'Principiante' | 'Intermedio' | 'Avanzado'
+  level: 'Cajero' | 'Administrador' | 'Proveedor'
   duration: string
   courseCount: number
   icon: string
@@ -155,7 +155,7 @@ export interface VideoApiResponse {
 export const DEFAULT_LEARNING_PATH_FORM: LearningPathFormData = {
   title: '',
   description: '',
-  level: 'Principiante',
+  level: 'Cajero',
   duration: '',
   courseCount: 0,
   icon: '🎯',
@@ -185,9 +185,9 @@ export const DEFAULT_VIDEO_FORM: VideoFormData = {
 
 // Level color mapping
 export const LEVEL_COLORS = {
-  'Principiante': 'text-green-600 bg-green-100 border-green-200',
-  'Intermedio': 'text-yellow-600 bg-yellow-100 border-yellow-200',
-  'Avanzado': 'text-red-600 bg-red-100 border-red-200'
+  'Cajero': 'text-green-600 bg-green-100 border-green-200',
+  'Administrador': 'text-yellow-600 bg-yellow-100 border-yellow-200',
+  'Proveedor': 'text-red-600 bg-red-100 border-red-200'
 } as const
 
 // Color scheme options

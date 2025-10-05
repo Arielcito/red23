@@ -152,7 +152,7 @@ export function LearningPathForm({ learningPath, onSubmit, onCancel, isSubmittin
               <Label htmlFor="level">Nivel *</Label>
               <Select 
                 value={formData.level} 
-                onValueChange={(value: 'Principiante' | 'Intermedio' | 'Avanzado') => 
+                onValueChange={(value: 'Cajero' | 'Administrador' | 'Proveedor') => 
                   updateField('level', value)
                 }
               >
@@ -160,9 +160,9 @@ export function LearningPathForm({ learningPath, onSubmit, onCancel, isSubmittin
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Principiante">Cajeor</SelectItem>
-                  <SelectItem value="Intermedio">Intermedio</SelectItem>
-                  <SelectItem value="Avanzado">Avanzado</SelectItem>
+                  <SelectItem value="Cajero">Cajero</SelectItem>
+                  <SelectItem value="Administrador">Administrador</SelectItem>
+                  <SelectItem value="Proveedor">Proveedor</SelectItem>
                 </SelectContent>
               </Select>
             </div>

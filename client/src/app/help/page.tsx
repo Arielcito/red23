@@ -155,37 +155,6 @@ export default function HelpPage() {
           </CardContent>
         </Card>
 
-        {/* Help Sections */}
-        <div>
-          <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">Guías por Categoría</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {sections.map((section) => {
-              const Icon = section.icon
-              return (
-                <Card key={section.id} className="hover:shadow-md transition-shadow cursor-pointer group">
-                  <CardHeader className="pb-3">
-                    <div className={`w-10 h-10 rounded-lg ${section.color} flex items-center justify-center mb-3`}>
-                      <Icon className="h-5 w-5" />
-                    </div>
-                    <CardTitle className="text-base group-hover:text-primary-600 transition-colors">
-                      {section.title}
-                    </CardTitle>
-                    <CardDescription className="text-sm">
-                      {section.description}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="pt-0">
-                    <div className="flex items-center text-sm text-primary-600 group-hover:text-primary-700">
-                      <span>Leer guía</span>
-                      <ChevronRight className="h-4 w-4 ml-1 group-hover:translate-x-1 transition-transform" />
-                    </div>
-                  </CardContent>
-                </Card>
-              )
-            })}
-          </div>
-        </div>
-
         {/* FAQ Section */}
         <Card>
           <CardHeader>
