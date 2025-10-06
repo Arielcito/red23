@@ -83,11 +83,14 @@ export const useImageGeneration = (): ImageGenerationHook => {
       // Validar la respuesta usando Zod
       const validatedResponse = externalApiResponseSchema.parse(data)
 
-      // Extraer la URL de la imagen desde data.result
-      const imageUrl = validatedResponse.data.result
+      // Extraer las URLs con y sin logo cuando estén disponibles
+      const baseImageUrl = validatedResponse.data.result.trim()
+      const imageUrlWithLogoRaw = validatedResponse.data.result_with_logo
+      const imageUrlWithLogo = imageUrlWithLogoRaw ? imageUrlWithLogoRaw.trim() : undefined
+      const preferredImageUrl = imageUrlWithLogo || baseImageUrl
 
-      if (!imageUrl) {
-        console.error('❌ No se encontró URL de imagen en la respuesta:', {
+      if (!preferredImageUrl) {
+        console.error('❌ No se encontró URL de imagen válida en la respuesta:', {
           data: validatedResponse.data,
           requestId: validatedResponse.request_id
         })
@@ -95,14 +98,15 @@ export const useImageGeneration = (): ImageGenerationHook => {
       }
 
       console.log('✅ Imagen generada exitosamente:', {
-        imageUrl,
+        imageUrl: preferredImageUrl,
+        hasLogo: Boolean(imageUrlWithLogo),
         requestId: validatedResponse.request_id,
         createdAt: validatedResponse.data.created_at
       })
 
       return {
         success: true,
-        imageUrl
+        imageUrl: preferredImageUrl
       }
 
     } catch (err) {
