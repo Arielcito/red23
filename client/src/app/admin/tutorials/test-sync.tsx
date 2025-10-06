@@ -34,7 +34,7 @@ export function TestSyncComponent() {
       await createLearningPath({
         title: `Test Sync ${Date.now()}`,
         description: 'Ruta de prueba para validar sincronización',
-        level: 'Principiante',
+        level: 'Cajero',
         duration: '1 módulo • 5 minutos',
         courseCount: 1,
         icon: '🧪',

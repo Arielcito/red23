@@ -11,6 +11,7 @@ import type {
   TutorialVideoFormatted,
   LearningPathWithContent
 } from "@/lib/supabase/types"
+import type { LearningPathFormData } from "@/lib/types/tutorials"
 
 // =============================================
 // LEARNING PATHS OPERATIONS
@@ -75,20 +76,7 @@ export const TutorialsAdminService = {
     }
   },
 
-  async createLearningPath(data: {
-    title: string
-    description: string
-    level: 'Principiante' | 'Intermedio' | 'Avanzado'
-    duration: string
-    courseCount: number
-    icon: string
-    colorScheme: 'primary' | 'secondary' | 'tertiary'
-    slug: string
-    imageUrl?: string | null
-    isFeatured: boolean
-    isActive: boolean
-    displayOrder: number
-  }): Promise<LearningPathWithContent> {
+  async createLearningPath(data: LearningPathFormData): Promise<LearningPathWithContent> {
     console.log('🆕 Creating learning path:', data.title)
     
     try {
@@ -148,20 +136,7 @@ export const TutorialsAdminService = {
     }
   },
 
-  async updateLearningPath(id: string, updates: Partial<{
-    title: string
-    description: string
-    level: 'Principiante' | 'Intermedio' | 'Avanzado'
-    duration: string
-    courseCount: number
-    icon: string
-    colorScheme: 'primary' | 'secondary' | 'tertiary'
-    slug: string
-    imageUrl: string | null
-    isFeatured: boolean
-    isActive: boolean
-    displayOrder: number
-  }>): Promise<LearningPathWithContent> {
+  async updateLearningPath(id: string, updates: Partial<LearningPathFormData>): Promise<LearningPathWithContent> {
     console.log('✏️ Updating learning path:', id)
     
     try {
