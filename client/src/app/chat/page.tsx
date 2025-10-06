@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { useChat } from "@/lib/hooks/useChat"
+import { useChat, SendMessageOptions } from "@/lib/hooks/useChat"
 import { ChatMessage } from "@/components/chat/ChatMessage"
 import { LoadingIndicator } from "@/components/chat/LoadingIndicator"
 import { ChatInput } from "@/components/chat/ChatInput"
@@ -61,7 +61,8 @@ export default function ChatPage() {
       logoUrl: hasLogoUrl ? logoUrl.trim() : undefined,
       logoPosition: hasLogoPosition ? Number(logoPosition) : undefined,
       userEmail: user?.email,
-      aspectRatio
+      aspectRatio,
+      originalPrompt: inputValue.trim() // Solo el prompt original del usuario
     })
     setInputValue("")
     setLogoUrl("")

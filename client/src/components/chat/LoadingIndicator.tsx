@@ -15,14 +15,22 @@ export const LoadingIndicator = () => {
   const [progress, setProgress] = useState(10)
 
   useEffect(() => {
+    // Reset progress when component mounts
+    setProgress(10)
+    setCurrentMessageIndex(0)
+
     const messageInterval = setInterval(() => {
       setCurrentMessageIndex((prev) => (prev + 1) % loadingMessages.length)
     }, 3000)
 
     const progressInterval = setInterval(() => {
       setProgress((prev) => {
-        if (prev >= 95) return prev
-        return prev + Math.random() * 15 + 5 // Avance aleatorio entre 5-20%
+        // Never exceed 85% to avoid reaching 100% before completion
+        const maxProgress = 85
+        if (prev >= maxProgress) return prev
+        const increment = Math.random() * 8 + 3 // Random increment between 3-11%
+        const newProgress = prev + increment
+        return Math.min(newProgress, maxProgress)
       })
     }, 800)
 

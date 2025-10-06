@@ -1,7 +1,8 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useImageGeneration } from "./useImageGeneration"
 import { useImagesApi } from "./useImagesApi"
 import { useUser } from "./useUser"
+import { chatStorage } from "@/lib/utils/chatStorage"
 
 export interface Message {
   id: string
@@ -18,29 +19,51 @@ export interface ChatStats {
   usagePercentage: number
 }
 
-interface SendMessageOptions {
+export interface SendMessageOptions {
   logoUrl?: string
   logoPosition?: number
   userEmail?: string
   images?: string[]
   tokens?: number
   aspectRatio?: "9:16" | "16:9" | "1:1"
+  originalPrompt?: string
 }
 
 export const useChat = () => {
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: "1",
-      type: "ai",
-      content: "¡Hola! Soy tu asistente de IA especializado en marketing para casinos. ¿Qué tipo de imagen promocional te gustaría crear hoy?",
-      timestamp: new Date(Date.now() - 60000),
-    },
-  ])
+  const defaultMessage: Message = {
+    id: "1",
+    type: "ai",
+    content: "¡Hola! Soy tu asistente de IA especializado en marketing para casinos. ¿Qué tipo de imagen promocional te gustaría crear hoy?",
+    timestamp: new Date(Date.now() - 60000),
+  }
+
+  const [messages, setMessages] = useState<Message[]>([defaultMessage])
+  const [isLoadingFromCache, setIsLoadingFromCache] = useState(true)
 
   const [inputValue, setInputValue] = useState("")
   const { generateImage, isGenerating, error } = useImageGeneration()
   const { images: apiImages } = useImagesApi()
   const { user } = useUser()
+
+  useEffect(() => {
+    const loadCachedMessages = () => {
+      const cachedMessages = chatStorage.loadMessages()
+
+      if (cachedMessages && cachedMessages.length > 0) {
+        setMessages(cachedMessages)
+      }
+
+      setIsLoadingFromCache(false)
+    }
+
+    loadCachedMessages()
+  }, [])
+
+  useEffect(() => {
+    if (!isLoadingFromCache && messages.length > 0) {
+      chatStorage.saveMessages(messages)
+    }
+  }, [messages, isLoadingFromCache])
 
 
 
@@ -94,10 +117,11 @@ export const useChat = () => {
 
     if (result.success && result.imageUrl) {
       console.log('🎉 Imagen generada correctamente')
+      const promptToShow = options.originalPrompt || content.split('\n')[0] // Usar originalPrompt o primera línea si no está disponible
       aiMessage = {
         id: (Date.now() + 1).toString(),
         type: "ai",
-        content: `He creado una imagen de marketing para casino basada en tu descripción: "${content}". Aquí tienes el resultado optimizado para promociones:`,
+        content: `He creado una imagen de marketing para casino basada en tu descripción: "${promptToShow}". Aquí tienes el resultado optimizado para promociones:`,
         timestamp: new Date(),
         imageUrl: result.imageUrl,
       }
@@ -122,6 +146,12 @@ export const useChat = () => {
     setInputValue("")
   }
 
+  const clearChat = () => {
+    setMessages([defaultMessage])
+    chatStorage.clearMessages()
+    console.log('🗑️ Chat limpiado')
+  }
+
   return {
     messages,
     isGenerating,
@@ -131,6 +161,7 @@ export const useChat = () => {
     sendMessage,
     setQuickPrompt,
     clearInput,
+    clearChat,
     error,
   }
 }

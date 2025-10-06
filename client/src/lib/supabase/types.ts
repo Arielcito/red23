@@ -560,3 +560,36 @@ export interface LearningPathsWithContentApiResponse {
   success: boolean
   data: LearningPathWithContent[]
 }
+
+// =============================================
+// USER LOGOS SYSTEM TYPES
+// =============================================
+
+export interface UserLogo {
+  id: number
+  user_id: string
+  logo_url: string
+  logo_path: string
+  created_at: string
+  updated_at: string
+}
+
+export interface NewUserLogo {
+  user_id: string
+  logo_url: string
+  logo_path: string
+}
+
+// API Response types
+export interface UserLogoApiResponse {
+  success: boolean
+  data: UserLogo | null
+}
+
+export interface UserLogoUploadResponse {
+  success: boolean
+  data: {
+    logo: UserLogo
+    message: string
+  }
+}
