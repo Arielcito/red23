@@ -1,21 +1,20 @@
 "use client"
 
-import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
 import {
-  PlayCircle,
   Clock,
-  Users,
   Star,
   Target,
 } from "lucide-react"
 import { AppLayout } from "@/components/layout/AppLayout"
 import { useLearningPaths } from "@/lib/hooks/useLearningPaths"
 import { LearningPathsSection } from "@/components/tutorials/LearningPathsSection"
+import { LeadFormModal } from "@/components/tutorials/LeadFormModal"
+import { useLeadFormModal } from "@/lib/hooks/useLeadFormModal"
 
 export default function TutorialsPage() {
   const { learningPaths, isLoading } = useLearningPaths()
+  const { isOpen, handleClose } = useLeadFormModal()
 
   const stats = [
     {
@@ -39,16 +38,18 @@ export default function TutorialsPage() {
   ]
 
   return (
-    <AppLayout
-      title="Rutas de Aprendizaje"
-      subtitle="Aprende marketing digital con nuestros cursos"
-      badge={{
-        text: "Nuevo",
-        variant: "default",
-        className: "bg-primary-500 text-white"
-      }}
-    >
-      <div className="p-4 sm:p-6 space-y-6">
+    <>
+      <LeadFormModal open={isOpen} onOpenChange={handleClose} />
+      <AppLayout
+        title="Rutas de Aprendizaje"
+        subtitle="Aprende marketing digital con nuestros cursos"
+        badge={{
+          text: "Nuevo",
+          variant: "default",
+          className: "bg-primary-500 text-white"
+        }}
+      >
+        <div className="p-4 sm:p-6 space-y-6">
         {/* Stats Section */}
         <div className="grid grid-cols-3 gap-4">
           {stats.map((stat) => (
@@ -96,5 +97,6 @@ export default function TutorialsPage() {
         </Card>
       </div>
     </AppLayout>
+    </>
   )
 }
