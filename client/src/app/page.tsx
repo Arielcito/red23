@@ -1,23 +1,26 @@
-"use client"
+import { Header } from "@/components/header"
+import { HeroSection } from "@/components/hero-section"
+import { FeaturesSection } from "@/components/features-section"
+import { SecurityEffectivenessSection } from "@/components/security-effectiveness-section"
+import { AdComparisonSection } from "@/components/ad-comparison-section"
+import { ReferralBanner } from "@/components/referral-banner"
+import { PricingSection } from "@/components/pricing-section"
+import { ContactFormSection } from "@/components/contact-form-section"
+import { CtaSection } from "@/components/cta-section"
 
-import { Header } from "@/components/landing/Header"
-import { NexusHero } from "@/components/landing/NexusHero"
-import { MusicPlayerShowcase } from "@/components/landing/MusicPlayerShowcase"
-import { MethodCard } from "@/components/landing/MethodCard"
-import { CommunicationCTA } from "@/components/landing/CommunicationCTA"
-import { Footer } from "@/components/landing/Footer"
-
-export default function LandingPage() {
+export default function Home() {
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900">
+    <div className="min-h-screen bg-[#0a1628] text-white overflow-hidden">
       <Header />
-      <main className="min-h-screen">
-        <NexusHero />
-        <MusicPlayerShowcase />
-        <MethodCard />
-        <CommunicationCTA />
+      <main>
+        <HeroSection />
+        <FeaturesSection />
+        <SecurityEffectivenessSection />
+        <AdComparisonSection />
+        <ReferralBanner />
+        <ContactFormSection />
+        <CtaSection />
       </main>
-      <Footer />
     </div>
   )
 }
