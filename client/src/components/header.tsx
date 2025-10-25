@@ -35,17 +35,16 @@ export function Header() {
             <Link href="#features" className="text-sm text-gray-300 hover:text-cyan-400 transition-colors">
               Características
             </Link>
-            <Link href="#pricing" className="text-sm text-gray-300 hover:text-cyan-400 transition-colors">
-              Precios
-            </Link>
             <Link href="#referrals" className="text-sm text-gray-300 hover:text-cyan-400 transition-colors">
               Referidos
             </Link>
           </nav>
 
-          <Button className="hidden md:block bg-cyan-500 hover:bg-cyan-600 text-white rounded-full px-6">
-            Contáctanos
-          </Button>
+          <Link href="/login">
+            <Button className="hidden md:block bg-cyan-500 hover:bg-cyan-600 text-white rounded-full px-6">
+              Contáctanos
+            </Button>
+          </Link>
         </div>
 
         {isMenuOpen && (
@@ -65,20 +64,15 @@ export function Header() {
               Características
             </Link>
             <Link
-              href="#pricing"
-              className="text-sm text-gray-300 hover:text-cyan-400 transition-colors"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Precios
-            </Link>
-            <Link
               href="#referrals"
               className="text-sm text-gray-300 hover:text-cyan-400 transition-colors"
               onClick={() => setIsMenuOpen(false)}
             >
               Referidos
             </Link>
-            <Button className="bg-cyan-500 hover:bg-cyan-600 text-white rounded-full px-6 w-full">Contáctanos</Button>
+            <Link href="/login" className="w-full">
+              <Button className="bg-cyan-500 hover:bg-cyan-600 text-white rounded-full px-6 w-full">Contáctanos</Button>
+            </Link>
           </nav>
         )}
       </div>

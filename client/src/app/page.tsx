@@ -17,8 +17,6 @@ export default function Home() {
         <FeaturesSection />
         <SecurityEffectivenessSection />
         <AdComparisonSection />
-        <ReferralBanner />
-        <ContactFormSection />
         <CtaSection />
       </main>
     </div>

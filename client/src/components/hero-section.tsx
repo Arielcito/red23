@@ -22,10 +22,6 @@ export function HeroSection() {
 
       <div className="container mx-auto max-w-5xl">
         <div className="flex flex-col items-center text-center space-y-8 sm:space-y-12">
-          {/* Logo */}
-          <div className="w-24 h-24 sm:w-32 sm:h-32 relative">
-            <Image src="/logo.png" alt="Red23 Logo" fill className="object-contain" priority />
-          </div>
 
           {/* Text content */}
           <div className="space-y-4 sm:space-y-6 max-w-3xl">

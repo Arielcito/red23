@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import React, { useState } from "react";
+import { motion } from "framer-motion";
 import {
   Sparkles,
   Trophy,
@@ -9,15 +9,14 @@ import {
   BookOpen,
   Users,
 } from "lucide-react";
-import Image from "next/image";
 
 type Feature = {
   id: string;
   title: string;
   subtitle?: string;
-  description?: string;
+  onClick?: (id: string) => void;
   icon?: React.ReactNode;
-  angle?: number;
+  ariaLabel?: string;
 };
 
 type Props = {
@@ -31,426 +30,241 @@ type Props = {
 const defaultFeatures: Feature[] = [
   {
     id: "ai-images",
-    title: "GENERACIÓN DE IMÁGENES CON IA",
+    title: "Generación de Imágenes con IA",
     subtitle: "Crea imágenes personalizadas",
-    description: "Usa modelos de IA para generar visuales a medida.",
-    angle: 350,
-    icon: <Sparkles className="w-8 h-8" />,
+    icon: <Sparkles className="w-5 h-5 text-[#37abef]" />,
   },
   {
     id: "awards",
-    title: "PREMIOS DIARIOS Y MENSUALES",
+    title: "Premios Diarios y Mensuales",
     subtitle: "Recompensas automáticas",
-    description: "Participá por premios cada día y cada mes.",
-    angle: 30,
-    icon: <Trophy className="w-8 h-8" />,
+    icon: <Trophy className="w-5 h-5 text-[#46c0fa]" />,
   },
   {
     id: "news",
-    title: "PORTAL DE NOTICIAS",
+    title: "Portal de Noticias",
     subtitle: "Novedades y lanzamientos",
-    description: "Accedé a noticias y anuncios de la plataforma.",
-    angle: 110,
-    icon: <Newspaper className="w-8 h-8" />,
+    icon: <Newspaper className="w-5 h-5 text-[#0a6cce]" />,
   },
   {
     id: "tutorials",
-    title: "TUTORIALES",
+    title: "Tutoriales",
     subtitle: "Aprendé paso a paso",
-    description: "Guías y videos para dominar cada feature.",
-    angle: 230,
-    icon: <BookOpen className="w-8 h-8" />,
+    icon: <BookOpen className="w-5 h-5 text-[#37abef]" />,
   },
   {
     id: "referrals",
-    title: "REFERIDOS",
+    title: "Referidos",
     subtitle: "Cada 12 referidos gana $1.000.000",
-    description: "Invitá amigos y accedé a grandes premios.",
-    angle: 290,
-    icon: <Users className="w-8 h-8" />,
+    icon: <Users className="w-5 h-5 text-[#46c0fa]" />,
   },
 ];
 
+function Card({
+  feature,
+  onClick,
+}: {
+  feature: Feature;
+  onClick?: (id: string) => void;
+}) {
+  const [isHovered, setIsHovered] = useState(false);
+
+  return (
+    <motion.button
+      type="button"
+      whileHover={{ scale: 1.03 }}
+      whileFocus={{ scale: 1.02 }}
+      transition={{ type: "spring", stiffness: 260, damping: 20 }}
+      onClick={() => (onClick ? onClick(feature.id) : feature.onClick?.(feature.id))}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      aria-label={feature.ariaLabel ?? feature.title}
+      className="group w-full h-full rounded-2xl bg-[#0d1a2d] text-left p-4 shadow-[0_0_0_1px_rgba(10,108,206,0.3)] hover:shadow-[0_0_0_2px_rgba(70,192,250,0.6)] focus:outline-none focus:shadow-[0_0_0_2px_rgba(70,192,250,0.9)] transition-shadow duration-300"
+    >
+      <div className="flex items-center gap-3">
+        <motion.div
+          className="grid place-items-center w-10 h-10 rounded-xl bg-[#0a1628] shadow-[0_0_14px_rgba(10,108,206,0.3)]"
+          animate={{
+            boxShadow: isHovered
+              ? "0 0 20px rgba(70,192,250,0.5)"
+              : "0 0 14px rgba(10,108,206,0.3)",
+          }}
+          transition={{ duration: 0.3 }}
+        >
+          {feature.icon ?? <span className="text-sm opacity-80">★</span>}
+        </motion.div>
+        <div>
+          <div className="text-sm font-semibold text-white leading-tight">
+            {feature.title}
+          </div>
+          {feature.subtitle && (
+            <div className="text-xs text-gray-400 leading-tight mt-0.5">
+              {feature.subtitle}
+            </div>
+          )}
+        </div>
+      </div>
+    </motion.button>
+  );
+}
+
+/**
+ * Layout (desktop):
+ *
+ *          [  HUB  ]
+ *     [F1]         [F2]
+ *
+ *   [F3]    [F4]    [F5]
+ *
+ * Conexiones rectas desde el HUB a cada feature.
+ * En mobile, se apila vertical y las líneas se simplifican.
+ */
 export default function HubFeaturesDiagram({
   logoUrl,
-  centerLabel,
+  centerLabel = "TuMarca — Ecosistema",
   features = defaultFeatures,
   onFeatureClick,
   className = "",
 }: Props) {
-  const [hoveredFeature, setHoveredFeature] = useState<string | null>(null);
-  const [focusedFeature, setFocusedFeature] = useState<string | null>(null);
-
-  const activeFeature = hoveredFeature || focusedFeature;
-
-  const viewBoxSize = 800;
-  const centerX = viewBoxSize / 2;
-  const centerY = viewBoxSize / 2;
-  const hubRadius = 90;
-  const orbitRadius = 280;
-  const nodeRadius = 36;
-
-  const getFeaturePosition = (angle: number) => {
-    const radian = ((angle - 90) * Math.PI) / 180;
-    return {
-      x: centerX + orbitRadius * Math.cos(radian),
-      y: centerY + orbitRadius * Math.sin(radian),
-    };
-  };
-
-  const handleFeatureClick = (id: string) => {
-    onFeatureClick?.(id);
-  };
+  const [f1, f2, f3, f4, f5] = [
+    features[0] ?? defaultFeatures[0],
+    features[1] ?? defaultFeatures[1],
+    features[2] ?? defaultFeatures[2],
+    features[3] ?? defaultFeatures[3],
+    features[4] ?? defaultFeatures[4],
+  ];
 
   return (
-    <div className={`relative w-full ${className}`}>
-      {/* Desktop & Tablet: Radial SVG */}
-      <div className="hidden md:block">
+    <div
+      className={`relative w-full max-w-6xl mx-auto text-white ${className}`}
+      style={{
+        background:
+          "radial-gradient(1200px 600px at 50% -20%, rgba(10,108,206,0.12), transparent 60%), #0a1628",
+      }}
+    >
+      <div className="relative px-6 pt-10 pb-12">
+        {/* SVG de conexiones (solo en >= md) */}
         <svg
-          viewBox={`0 0 ${viewBoxSize} ${viewBoxSize}`}
-          className="w-full h-auto"
-          role="img"
-          aria-label="Hub de características con 5 funcionalidades conectadas"
+          className="absolute inset-0 w-full h-full hidden md:block pointer-events-none"
+          aria-hidden="true"
         >
           <defs>
-            <filter id="glow">
-              <feGaussianBlur stdDeviation="4" result="coloredBlur" />
+            <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+              <feGaussianBlur stdDeviation="2.5" result="coloredBlur" />
               <feMerge>
                 <feMergeNode in="coloredBlur" />
                 <feMergeNode in="SourceGraphic" />
               </feMerge>
             </filter>
-            <filter id="glow-strong">
-              <feGaussianBlur stdDeviation="8" result="coloredBlur" />
-              <feMerge>
-                <feMergeNode in="coloredBlur" />
-                <feMergeNode in="SourceGraphic" />
-              </feMerge>
-            </filter>
-            <clipPath id="logoClip">
-              <circle cx={centerX} cy={centerY} r={hubRadius - 10} />
-            </clipPath>
+            <linearGradient id="grad-left" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="#0a6cce" stopOpacity="0.8" />
+              <stop offset="100%" stopColor="#46c0fa" stopOpacity="0.8" />
+            </linearGradient>
+            <linearGradient id="grad-right" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="#37abef" stopOpacity="0.8" />
+              <stop offset="100%" stopColor="#46c0fa" stopOpacity="0.8" />
+            </linearGradient>
           </defs>
 
-          {/* Connection lines */}
-          {features.map((feature) => {
-            const pos = getFeaturePosition(feature.angle || 0);
-            const isActive = activeFeature === feature.id;
-            return (
-              <motion.line
-                key={`line-${feature.id}`}
-                x1={centerX}
-                y1={centerY}
-                x2={pos.x}
-                y2={pos.y}
-                stroke={isActive ? "#8b5cf6" : "#374151"}
-                strokeWidth={isActive ? 3 : 1.5}
-                opacity={isActive ? 0.9 : 0.4}
-                filter={isActive ? "url(#glow)" : undefined}
-                initial={{ pathLength: 0, opacity: 0 }}
-                animate={{ pathLength: 1, opacity: isActive ? 0.9 : 0.4 }}
-                transition={{ duration: 0.8, ease: "easeOut" }}
-              />
-            );
-          })}
-
-          {/* Central hub */}
-          <g>
-            <motion.circle
-              cx={centerX}
-              cy={centerY}
-              r={hubRadius}
-              fill="#1f2937"
-              stroke="#8b5cf6"
-              strokeWidth="2"
-              filter="url(#glow)"
-              initial={{ scale: 0, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ duration: 0.6, ease: "easeOut" }}
-            />
-            <motion.circle
-              cx={centerX}
-              cy={centerY}
-              r={hubRadius}
-              fill="none"
-              stroke="#a78bfa"
-              strokeWidth="1"
-              opacity="0.3"
-              animate={{
-                r: [hubRadius, hubRadius + 10, hubRadius],
-                opacity: [0.3, 0.6, 0.3],
-              }}
-              transition={{
-                duration: 3,
-                repeat: Infinity,
-                ease: "easeInOut",
-              }}
-            />
-
-            {/* Logo */}
-            <image
-              href={logoUrl}
-              x={centerX - hubRadius + 10}
-              y={centerY - hubRadius + 10}
-              width={(hubRadius - 10) * 2}
-              height={(hubRadius - 10) * 2}
-              clipPath="url(#logoClip)"
-              preserveAspectRatio="xMidYMid slice"
-            />
-
-            {centerLabel && (
-              <text
-                x={centerX}
-                y={centerY + hubRadius + 25}
-                textAnchor="middle"
-                fill="#e5e7eb"
-                fontSize="14"
-                fontWeight="600"
-              >
-                {centerLabel}
-              </text>
-            )}
-          </g>
-
-          {/* Feature nodes */}
-          {features.map((feature, index) => {
-            const pos = getFeaturePosition(feature.angle || 0);
-            const isActive = activeFeature === feature.id;
-
-            return (
-              <g key={feature.id}>
-                {/* Node circle */}
-                <motion.circle
-                  cx={pos.x}
-                  cy={pos.y}
-                  r={nodeRadius}
-                  fill="#111827"
-                  stroke={isActive ? "#8b5cf6" : "#4b5563"}
-                  strokeWidth="2"
-                  filter={isActive ? "url(#glow-strong)" : "url(#glow)"}
-                  className="cursor-pointer"
-                  initial={{ scale: 0, opacity: 0 }}
-                  animate={{ scale: isActive ? 1.15 : 1, opacity: 1 }}
-                  transition={{
-                    duration: 0.3,
-                    delay: index * 0.1,
-                    ease: "easeOut",
-                  }}
-                  onMouseEnter={() => setHoveredFeature(feature.id)}
-                  onMouseLeave={() => setHoveredFeature(null)}
-                  onFocus={() => setFocusedFeature(feature.id)}
-                  onBlur={() => setFocusedFeature(null)}
-                  onClick={() => handleFeatureClick(feature.id)}
-                  tabIndex={0}
-                  role="button"
-                  aria-label={`${feature.title}: ${feature.description || feature.subtitle}`}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" || e.key === " ") {
-                      e.preventDefault();
-                      handleFeatureClick(feature.id);
-                    }
-                  }}
-                />
-
-                {/* Icon */}
-                <foreignObject
-                  x={pos.x - 16}
-                  y={pos.y - 16}
-                  width="32"
-                  height="32"
-                  pointerEvents="none"
-                >
-                  <div className="flex items-center justify-center w-full h-full text-violet-300">
-                    {feature.icon || (
-                      <div className="w-4 h-4 rounded-full bg-violet-400" />
-                    )}
-                  </div>
-                </foreignObject>
-
-                {/* Title */}
-                <text
-                  x={pos.x}
-                  y={pos.y + nodeRadius + 20}
-                  textAnchor="middle"
-                  fill="#f3f4f6"
-                  fontSize="12"
-                  fontWeight="700"
-                  className="pointer-events-none select-none"
-                  style={{ maxWidth: "120px" }}
-                >
-                  <tspan x={pos.x} dy="0">
-                    {feature.title.split(" ").slice(0, 2).join(" ")}
-                  </tspan>
-                  {feature.title.split(" ").length > 2 && (
-                    <tspan x={pos.x} dy="14">
-                      {feature.title.split(" ").slice(2).join(" ")}
-                    </tspan>
-                  )}
-                </text>
-
-                {/* Subtitle */}
-                {feature.subtitle && (
-                  <text
-                    x={pos.x}
-                    y={pos.y + nodeRadius + 50}
-                    textAnchor="middle"
-                    fill="#9ca3af"
-                    fontSize="10"
-                    className="pointer-events-none select-none"
-                  >
-                    {feature.subtitle}
-                  </text>
-                )}
-
-                {/* Tooltip on hover/focus */}
-                <AnimatePresence>
-                  {isActive && feature.description && (
-                    <motion.g
-                      initial={{ opacity: 0, y: -10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
-                      transition={{ duration: 0.2 }}
-                    >
-                      <rect
-                        x={pos.x - 100}
-                        y={pos.y - nodeRadius - 60}
-                        width="200"
-                        height="50"
-                        rx="8"
-                        fill="#1f2937"
-                        stroke="#8b5cf6"
-                        strokeWidth="1"
-                        filter="url(#glow)"
-                      />
-                      <foreignObject
-                        x={pos.x - 90}
-                        y={pos.y - nodeRadius - 50}
-                        width="180"
-                        height="40"
-                        pointerEvents="none"
-                      >
-                        <div className="text-xs text-gray-200 text-center px-2">
-                          {feature.description}
-                        </div>
-                      </foreignObject>
-                    </motion.g>
-                  )}
-                </AnimatePresence>
-              </g>
-            );
-          })}
+          {/* Líneas de conexión con ángulos de 90 grados */}
+          {/* Línea a F1 (izquierda arriba) */}
+          <path
+            d="M 50% 16% L 50% 24% L 18% 24% L 18% 32%"
+            stroke="url(#grad-left)"
+            strokeWidth="2"
+            fill="none"
+            filter="url(#glow)"
+            opacity="0.7"
+          />
+          {/* Línea a F2 (derecha arriba) */}
+          <path
+            d="M 50% 16% L 50% 24% L 82% 24% L 82% 32%"
+            stroke="url(#grad-right)"
+            strokeWidth="2"
+            fill="none"
+            filter="url(#glow)"
+            opacity="0.7"
+          />
+          {/* Línea a F3 (izquierda abajo) */}
+          <path
+            d="M 50% 16% L 50% 50% L 24% 50% L 24% 84%"
+            stroke="url(#grad-left)"
+            strokeWidth="2"
+            fill="none"
+            filter="url(#glow)"
+            opacity="0.7"
+          />
+          {/* Línea a F4 (centro abajo) */}
+          <path
+            d="M 50% 16% L 50% 84%"
+            stroke="#37abef"
+            strokeWidth="2"
+            fill="none"
+            filter="url(#glow)"
+            opacity="0.7"
+          />
+          {/* Línea a F5 (derecha abajo) */}
+          <path
+            d="M 50% 16% L 50% 50% L 76% 50% L 76% 84%"
+            stroke="url(#grad-right)"
+            strokeWidth="2"
+            fill="none"
+            filter="url(#glow)"
+            opacity="0.7"
+          />
         </svg>
-      </div>
 
-      {/* Mobile: Vertical Layout */}
-      <div className="md:hidden space-y-6">
-        {/* Central Hub */}
-        <motion.div
-          className="flex flex-col items-center justify-center p-6"
-          initial={{ scale: 0, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 0.6 }}
-        >
-          <div className="relative">
+        {/* GRID de tarjetas */}
+        <div className="grid grid-cols-1 md:grid-cols-7 gap-4 relative">
+          {/* HUB (arriba al centro) */}
+          <div className="md:col-start-3 md:col-end-6">
             <motion.div
-              className="absolute inset-0 rounded-full bg-violet-500/20 blur-xl"
-              animate={{
-                scale: [1, 1.2, 1],
-                opacity: [0.3, 0.6, 0.3],
-              }}
-              transition={{
-                duration: 3,
-                repeat: Infinity,
-                ease: "easeInOut",
-              }}
-            />
-            <div className="relative w-32 h-32 rounded-full border-2 border-violet-500 overflow-hidden bg-gray-800 shadow-lg shadow-violet-500/50">
-              <Image
-                src={logoUrl}
-                alt="Logo"
-                fill
-                className="object-cover"
-              />
-            </div>
-          </div>
-          {centerLabel && (
-            <p className="mt-4 text-sm font-semibold text-gray-200">
-              {centerLabel}
-            </p>
-          )}
-        </motion.div>
-
-        {/* Features Grid */}
-        <div className="grid grid-cols-1 gap-4 px-4">
-          {features.map((feature, index) => {
-            const isActive = activeFeature === feature.id;
-            return (
-              <motion.button
-                key={feature.id}
-                className="relative p-4 rounded-xl bg-gray-900 border border-gray-700 hover:border-violet-500 transition-all focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2 focus:ring-offset-gray-950"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
-                onMouseEnter={() => setHoveredFeature(feature.id)}
-                onMouseLeave={() => setHoveredFeature(null)}
-                onFocus={() => setFocusedFeature(feature.id)}
-                onBlur={() => setFocusedFeature(null)}
-                onClick={() => handleFeatureClick(feature.id)}
-                aria-label={`${feature.title}: ${feature.description || feature.subtitle}`}
-              >
-                {/* Decorative connector */}
-                <motion.div
-                  className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-12 bg-gradient-to-b from-violet-500 to-transparent rounded-r"
-                  animate={{
-                    opacity: isActive ? 1 : 0.3,
-                    scaleY: isActive ? 1.2 : 1,
-                  }}
-                  transition={{ duration: 0.3 }}
-                />
-
-                <div className="flex items-start gap-4">
-                  {/* Icon */}
-                  <motion.div
-                    className="flex-shrink-0 w-12 h-12 rounded-lg bg-gray-800 border border-violet-500/30 flex items-center justify-center text-violet-300"
-                    animate={{
-                      scale: isActive ? 1.1 : 1,
-                      borderColor: isActive
-                        ? "rgb(139 92 246)"
-                        : "rgb(139 92 246 / 0.3)",
-                    }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    {feature.icon || (
-                      <div className="w-4 h-4 rounded-full bg-violet-400" />
-                    )}
-                  </motion.div>
-
-                  {/* Content */}
-                  <div className="flex-1 text-left">
-                    <h3 className="text-sm font-bold text-gray-100">
-                      {feature.title}
-                    </h3>
-                    {feature.subtitle && (
-                      <p className="mt-1 text-xs text-gray-400">
-                        {feature.subtitle}
-                      </p>
-                    )}
-                    {feature.description && isActive && (
-                      <motion.p
-                        className="mt-2 text-xs text-gray-300"
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: "auto" }}
-                        exit={{ opacity: 0, height: 0 }}
-                        transition={{ duration: 0.2 }}
-                      >
-                        {feature.description}
-                      </motion.p>
-                    )}
-                  </div>
+              initial={{ opacity: 0, y: -8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, ease: [0.43, 0.13, 0.23, 0.96] }}
+              className="rounded-2xl bg-[#0d1a2d] border border-[#0a6cce]/30 shadow-[0_0_40px_rgba(10,108,206,0.25)]"
+            >
+              <div className="flex flex-col items-center gap-3 px-5 py-6">
+                <div className="relative">
+                  <img
+                    src={logoUrl}
+                    alt="Logo"
+                    className="w-16 h-16 rounded-2xl object-contain ring-2 ring-[#37abef]/50 shadow-[0_0_30px_rgba(55,171,239,0.4)]"
+                  />
+                  <span className="absolute inset-0 rounded-2xl blur-2xl opacity-30 bg-[#46c0fa]/30" />
                 </div>
-              </motion.button>
-            );
-          })}
+                <div className="text-sm text-gray-200 font-medium">{centerLabel}</div>
+              </div>
+            </motion.div>
+          </div>
+
+          {/* Fila 1: F1 izquierda, F2 derecha */}
+          <div className="hidden md:block md:col-start-1 md:col-end-3 md:row-start-2">
+            <Card feature={f1} onClick={onFeatureClick} />
+          </div>
+          <div className="hidden md:block md:col-start-6 md:col-end-8 md:row-start-2">
+            <Card feature={f2} onClick={onFeatureClick} />
+          </div>
+
+          {/* Fila 2: F3, F4, F5 distribuidos */}
+          <div className="hidden md:block md:col-start-2 md:col-end-4 md:row-start-4">
+            <Card feature={f3} onClick={onFeatureClick} />
+          </div>
+          <div className="hidden md:block md:col-start-4 md:col-end-5 md:row-start-4">
+            <Card feature={f4} onClick={onFeatureClick} />
+          </div>
+          <div className="hidden md:block md:col-start-5 md:col-end-7 md:row-start-4">
+            <Card feature={f5} onClick={onFeatureClick} />
+          </div>
+
+          {/* Mobile layout (stacked) */}
+          <div className="md:hidden space-y-4 mt-4">
+            <Card feature={f1} onClick={onFeatureClick} />
+            <Card feature={f2} onClick={onFeatureClick} />
+            <Card feature={f3} onClick={onFeatureClick} />
+            <Card feature={f4} onClick={onFeatureClick} />
+            <Card feature={f5} onClick={onFeatureClick} />
+          </div>
         </div>
       </div>
     </div>
