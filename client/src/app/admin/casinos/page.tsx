@@ -96,11 +96,11 @@ function SortableCasinoItem({ casino, onEdit, onDelete, isDragging }: SortableCa
       ref={setNodeRef}
       style={style}
       className={cn(
-        "flex items-center justify-between p-4 border rounded-lg bg-background transition-all duration-200",
+        "flex flex-col sm:flex-row items-start sm:items-center justify-between p-3 sm:p-4 border rounded-lg bg-background transition-all duration-200 gap-3",
         itemIsDragging && "shadow-lg z-50 ring-2 ring-primary/20 scale-105"
       )}
     >
-      <div className="flex items-center gap-3 flex-1">
+      <div className="flex items-center gap-2 sm:gap-3 flex-1 w-full sm:w-auto">
         <div className="flex items-center gap-2">
           <div
             {...attributes}
@@ -161,7 +161,7 @@ function SortableCasinoItem({ casino, onEdit, onDelete, isDragging }: SortableCa
         </div>
       </div>
 
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
         <Badge
           variant="outline"
           className={cn(
@@ -177,15 +177,17 @@ function SortableCasinoItem({ casino, onEdit, onDelete, isDragging }: SortableCa
           variant="outline"
           size="sm"
           onClick={() => onEdit(casino)}
+          className="h-8 w-8 sm:h-9 sm:w-9 p-0"
         >
-          <Edit className="h-4 w-4" />
+          <Edit className="h-3 w-3 sm:h-4 sm:w-4" />
         </Button>
         <Button
           variant="outline"
           size="sm"
           onClick={() => onDelete(casino.id)}
+          className="h-8 w-8 sm:h-9 sm:w-9 p-0"
         >
-          <Trash2 className="h-4 w-4" />
+          <Trash2 className="h-3 w-3 sm:h-4 sm:w-4" />
         </Button>
       </div>
     </div>
@@ -662,20 +664,21 @@ export default function AdminCasinosPage() {
         className: "text-xs"
       }}
     >
-      <div className="p-6 space-y-6">
+      <div className="p-3 sm:p-4 md:p-6 space-y-4 sm:space-y-6">
         <Tabs defaultValue="top-three" className="w-full">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="top-three" className="gap-2">
-              <Crown className="h-4 w-4" />
-              Top 3
+          <TabsList className="grid w-full grid-cols-3 h-auto">
+            <TabsTrigger value="top-three" className="gap-1 sm:gap-2 text-xs sm:text-sm">
+              <Crown className="h-3 w-3 sm:h-4 sm:w-4" />
+              <span className="hidden xs:inline">Top 3</span>
+              <span className="xs:hidden">Top</span>
             </TabsTrigger>
-            <TabsTrigger value="casinos" className="gap-2">
-              <Settings className="h-4 w-4" />
-              Casinos
+            <TabsTrigger value="casinos" className="gap-1 sm:gap-2 text-xs sm:text-sm">
+              <Settings className="h-3 w-3 sm:h-4 sm:w-4" />
+              <span>Casinos</span>
             </TabsTrigger>
-            <TabsTrigger value="news" className="gap-2">
-              <Newspaper className="h-4 w-4" />
-              Noticias
+            <TabsTrigger value="news" className="gap-1 sm:gap-2 text-xs sm:text-sm">
+              <Newspaper className="h-3 w-3 sm:h-4 sm:w-4" />
+              <span>Noticias</span>
             </TabsTrigger>
           </TabsList>
 
@@ -816,7 +819,7 @@ export default function AdminCasinosPage() {
                         <CardTitle>Crear Nuevo Casino</CardTitle>
                       </CardHeader>
                       <CardContent className="space-y-4">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
                           <div>
                             <Label htmlFor="casino-name">Nombre del Casino *</Label>
                             <Input
@@ -973,9 +976,10 @@ export default function AdminCasinosPage() {
                   {/* Lista de casinos ordenable con drag and drop */}
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <GripVertical className="h-4 w-4" />
-                        <span>Arrastra los casinos para cambiar su orden</span>
+                      <div className="flex items-center gap-2 text-xs sm:text-sm text-muted-foreground">
+                        <GripVertical className="h-3 w-3 sm:h-4 sm:w-4" />
+                        <span className="hidden sm:inline">Arrastra los casinos para cambiar su orden</span>
+                        <span className="sm:hidden">Arrastra para reordenar</span>
                       </div>
                       <Badge variant="secondary" className="text-xs">
                         {casinos.length} casinos
@@ -1046,7 +1050,7 @@ export default function AdminCasinosPage() {
                         <CardTitle>Crear Nueva Noticia</CardTitle>
                       </CardHeader>
                       <CardContent className="space-y-4">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
                           <div className="md:col-span-2">
                             <Label htmlFor="news-title">Título de la Noticia</Label>
                             <Input

@@ -49,28 +49,28 @@ export default function TutorialsPage() {
           className: "bg-primary-500 text-white"
         }}
       >
-        <div className="p-4 sm:p-6 space-y-6">
+        <div className="p-4 sm:p-6 space-y-6 break-words overflow-x-hidden">
         {/* Stats Section */}
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-3 gap-4 break-words">
           {stats.map((stat) => (
-            <Card key={stat.title} className="p-3">
-              <div className="flex flex-col items-center text-center space-y-2">
+            <Card key={stat.title} className="p-3 break-words">
+              <div className="flex flex-col items-center text-center space-y-2 break-words">
                 <stat.icon className={`h-5 w-5 ${stat.color}`} />
-                <div className="text-lg font-bold">{stat.value}</div>
-                <div className="text-xs font-medium text-gray-600 dark:text-gray-400">{stat.title}</div>
+                <div className="text-lg font-bold break-words">{stat.value}</div>
+                <div className="text-xs font-medium text-gray-600 dark:text-gray-400 break-words">{stat.title}</div>
               </div>
             </Card>
           ))}
         </div>
 
         {/* Learning Path Section */}
-        <Card>
+        <Card className="break-words">
           <CardHeader>
-            <CardTitle className="flex items-center">
+            <CardTitle className="flex items-center break-words">
               <Target className="h-5 w-5 mr-2 text-primary-500" />
               Rutas de Aprendizaje
             </CardTitle>
-            <CardDescription>
+            <CardDescription className="break-words">
               Elige tu camino de aprendizaje y accede a cursos organizados por nivel
             </CardDescription>
           </CardHeader>

@@ -142,7 +142,7 @@ export default function AdminRewardsPage() {
         className: "text-xs"
       }}
     >
-      <div className="p-6 space-y-6">
+      <div className="p-3 sm:p-4 md:p-6 space-y-4 sm:space-y-6">
         {error && (
           <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
             <p className="text-sm">
@@ -250,7 +250,7 @@ export default function AdminRewardsPage() {
                 </div>
               ) : (
                 <>
-                  <div className="grid gap-4 md:grid-cols-2">
+                  <div className="grid gap-3 sm:gap-4 grid-cols-1 md:grid-cols-2">
                     <div className="space-y-2">
                       <Label htmlFor="banner-title">Título</Label>
                       <Input
@@ -298,7 +298,7 @@ export default function AdminRewardsPage() {
                     />
                   </div>
 
-                  <div className="grid gap-4 md:grid-cols-2">
+                  <div className="grid gap-3 sm:gap-4 grid-cols-1 md:grid-cols-2">
                     <div className="space-y-2">
                       <Label htmlFor="banner-cta-label">Texto del botón</Label>
                       <Input
@@ -343,7 +343,7 @@ export default function AdminRewardsPage() {
           </CardHeader>
           <CardContent className="space-y-6">
             <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="grid gap-4 md:grid-cols-2">
+              <div className="grid gap-3 sm:gap-4 grid-cols-1 md:grid-cols-2">
                 <div className="space-y-2">
                   <Label htmlFor="daily-prize-amount">Premio Diario</Label>
                   <Input
@@ -389,7 +389,7 @@ export default function AdminRewardsPage() {
                     <span>Fechas de Sorteo</span>
                   </div>
                   
-                  <div className="grid gap-4 md:grid-cols-2">
+                  <div className="grid gap-3 sm:gap-4 grid-cols-1 md:grid-cols-2">
                     <div className="space-y-2">
                       <Label>Próximo Sorteo Diario</Label>
                       <DateTimePicker
@@ -422,8 +422,8 @@ export default function AdminRewardsPage() {
                 </div>
               )}
 
-              <div className="flex flex-wrap items-center gap-3">
-                <Button type="submit" disabled={isSaving || !hasChanges}>
+              <div className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-2 sm:gap-3">
+                <Button type="submit" disabled={isSaving || !hasChanges} className="w-full sm:w-auto">
                   {isSaving ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Guardando
@@ -432,7 +432,7 @@ export default function AdminRewardsPage() {
                     "Guardar cambios"
                   )}
                 </Button>
-                <Button type="button" variant="outline" onClick={handleReset} disabled={isSaving}>
+                <Button type="button" variant="outline" onClick={handleReset} disabled={isSaving} className="w-full sm:w-auto">
                   Restaurar predeterminado
                 </Button>
                 {!hasChanges && !isSaving && (

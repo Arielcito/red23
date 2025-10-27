@@ -107,10 +107,10 @@ export default function ChatPage() {
       }}
       hideHeader={false}
     >
-      <div className="flex flex-col flex-1 min-h-0 w-full max-w-full">
+      <div className="flex flex-col flex-1 min-h-0 w-full max-w-full break-words overflow-x-hidden">
         {/* Chat Main Area */}
-        <div className="flex-1 flex flex-col min-w-0 min-h-0 w-full">
-          <div className="flex-1 overflow-y-auto overflow-x-visible p-3 sm:p-4 space-y-3 sm:space-y-4 w-full">
+        <div className="flex-1 flex flex-col min-w-0 min-h-0 w-full break-words">
+          <div className="flex-1 overflow-y-auto overflow-x-hidden p-3 sm:p-4 space-y-3 sm:space-y-4 w-full break-words">
             {error && (
               <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
                 <p className="text-sm">

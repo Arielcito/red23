@@ -124,7 +124,7 @@ export default function AdminPromptsPage() {
         className: "text-xs"
       }}
     >
-      <div className="p-6 space-y-6">
+      <div className="p-3 sm:p-4 md:p-6 space-y-4 sm:space-y-6">
         {/* Create/Edit Form */}
         {(isCreating || editingPrompt) && (
           <Card>
@@ -145,7 +145,7 @@ export default function AdminPromptsPage() {
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
                   <div>
                     <Label htmlFor="title">Título</Label>
                     <Input
@@ -198,12 +198,12 @@ export default function AdminPromptsPage() {
                   <Label htmlFor="active">Prompt activo</Label>
                 </div>
 
-                <div className="flex gap-2">
-                  <Button type="submit" disabled={isLoading}>
+                <div className="flex flex-col sm:flex-row gap-2">
+                  <Button type="submit" disabled={isLoading} className="w-full sm:w-auto">
                     <Save className="h-4 w-4 mr-2" />
                     {editingPrompt ? 'Actualizar' : 'Crear'} Prompt
                   </Button>
-                  <Button type="button" variant="outline" onClick={resetForm}>
+                  <Button type="button" variant="outline" onClick={resetForm} className="w-full sm:w-auto">
                     Cancelar
                   </Button>
                 </div>
@@ -221,7 +221,7 @@ export default function AdminPromptsPage() {
                 Prompts Automáticos ({prompts.length})
               </span>
               {!isCreating && !editingPrompt && (
-                <Button onClick={() => setIsCreating(true)}>
+                <Button onClick={() => setIsCreating(true)} className="w-full sm:w-auto">
                   <Plus className="h-4 w-4 mr-2" />
                   Nuevo Prompt
                 </Button>
@@ -248,23 +248,23 @@ export default function AdminPromptsPage() {
             ) : (
               <div className="space-y-3">
                 {prompts.map((prompt) => (
-                  <div key={prompt.id} className="flex items-start gap-4 p-4 border rounded-lg">
-                    <div className="flex-shrink-0">
+                  <div key={prompt.id} className="flex flex-col sm:flex-row items-start gap-3 sm:gap-4 p-3 sm:p-4 border rounded-lg">
+                    <div className="hidden sm:block flex-shrink-0">
                       <GripVertical className="h-5 w-5 text-muted-foreground cursor-move" />
                     </div>
-                    
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-start justify-between gap-4">
-                        <div className="flex-1">
+
+                    <div className="flex-1 min-w-0 w-full">
+                      <div className="flex flex-col sm:flex-row items-start justify-between gap-3">
+                        <div className="flex-1 w-full">
                           <h3 className="font-medium truncate">{prompt.title}</h3>
                           <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
                             {prompt.content}
                           </p>
-                          <div className="flex items-center gap-2 mt-2">
+                          <div className="flex flex-wrap items-center gap-2 mt-2">
                             <Badge variant="outline" className="text-xs">
                               {prompt.category}
                             </Badge>
-                            <Badge 
+                            <Badge
                               variant={prompt.is_active ? "default" : "secondary"}
                               className="text-xs"
                             >
@@ -272,8 +272,8 @@ export default function AdminPromptsPage() {
                             </Badge>
                           </div>
                         </div>
-                        
-                        <div className="flex items-center gap-2 flex-shrink-0">
+
+                        <div className="flex items-center gap-2 flex-shrink-0 w-full sm:w-auto justify-end">
                           <Switch
                             checked={prompt.is_active}
                             onCheckedChange={() => handleToggleActive(prompt)}
@@ -282,15 +282,17 @@ export default function AdminPromptsPage() {
                             variant="outline"
                             size="sm"
                             onClick={() => handleEdit(prompt)}
+                            className="h-8 w-8 sm:h-9 sm:w-9 p-0"
                           >
-                            <Edit className="h-4 w-4" />
+                            <Edit className="h-3 w-3 sm:h-4 sm:w-4" />
                           </Button>
                           <Button
                             variant="outline"
                             size="sm"
                             onClick={() => handleDelete(prompt.id)}
+                            className="h-8 w-8 sm:h-9 sm:w-9 p-0"
                           >
-                            <Trash2 className="h-4 w-4" />
+                            <Trash2 className="h-3 w-3 sm:h-4 sm:w-4" />
                           </Button>
                         </div>
                       </div>

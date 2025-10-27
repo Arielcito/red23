@@ -238,20 +238,20 @@ export default function AdminTutorialsPage() {
         className: "text-xs"
       }}
     >
-      <div className="p-6 space-y-6">
+      <div className="p-3 sm:p-4 md:p-6 space-y-4 sm:space-y-6">
         <Tabs defaultValue="learning-paths" className="w-full">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="learning-paths" className="gap-2">
-              <Target className="h-4 w-4" />
-              Rutas
+          <TabsList className="grid w-full grid-cols-3 h-auto">
+            <TabsTrigger value="learning-paths" className="gap-1 sm:gap-2 text-xs sm:text-sm">
+              <Target className="h-3 w-3 sm:h-4 sm:w-4" />
+              <span>Rutas</span>
             </TabsTrigger>
-            <TabsTrigger value="modules" className="gap-2">
-              <BookOpen className="h-4 w-4" />
-              Módulos
+            <TabsTrigger value="modules" className="gap-1 sm:gap-2 text-xs sm:text-sm">
+              <BookOpen className="h-3 w-3 sm:h-4 sm:w-4" />
+              <span>Módulos</span>
             </TabsTrigger>
-            <TabsTrigger value="videos" className="gap-2">
-              <Video className="h-4 w-4" />
-              Videos
+            <TabsTrigger value="videos" className="gap-1 sm:gap-2 text-xs sm:text-sm">
+              <Video className="h-3 w-3 sm:h-4 sm:w-4" />
+              <span>Videos</span>
             </TabsTrigger>
           </TabsList>
 
@@ -301,13 +301,13 @@ export default function AdminTutorialsPage() {
                     ) : (
                       learningPaths.map((path) => (
                         <Card key={path.id} className="border-2">
-                          <CardContent className="p-4">
-                            <div className="flex items-center justify-between">
-                              <div className="flex items-center gap-3">
-                                <div className="text-2xl">{path.icon}</div>
-                                <div>
-                                  <div className="flex items-center gap-2">
-                                    <h3 className="font-medium">{path.title}</h3>
+                          <CardContent className="p-3 sm:p-4">
+                            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                              <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto">
+                                <div className="text-xl sm:text-2xl">{path.icon}</div>
+                                <div className="flex-1">
+                                  <div className="flex flex-wrap items-center gap-1 sm:gap-2">
+                                    <h3 className="font-medium text-sm sm:text-base">{path.title}</h3>
                                     <Badge 
                                       variant="outline" 
                                       className={cn("text-xs", LEVEL_COLORS[path.level])}
@@ -331,28 +331,31 @@ export default function AdminTutorialsPage() {
                                   </p>
                                 </div>
                               </div>
-                              <div className="flex items-center gap-2">
+                              <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
                                 <Button
                                   variant="outline"
                                   size="sm"
                                   onClick={() => setEditingPath(path)}
+                                  className="h-8 w-8 sm:h-9 sm:w-9 p-0"
                                 >
-                                  <Edit className="h-4 w-4" />
+                                  <Edit className="h-3 w-3 sm:h-4 sm:w-4" />
                                 </Button>
                                 <Button
                                   variant="outline"
                                   size="sm"
                                   onClick={() => handleDeletePath(path.id)}
+                                  className="h-8 w-8 sm:h-9 sm:w-9 p-0"
                                 >
-                                  <Trash2 className="h-4 w-4" />
+                                  <Trash2 className="h-3 w-3 sm:h-4 sm:w-4" />
                                 </Button>
                                 <Button
                                   variant="outline"
                                   size="sm"
                                   onClick={() => togglePathExpansion(path.id)}
+                                  className="h-8 w-8 sm:h-9 sm:w-9 p-0"
                                 >
                                   <ChevronDown className={cn(
-                                    "h-4 w-4 transition-transform",
+                                    "h-3 w-3 sm:h-4 sm:w-4 transition-transform",
                                     expandedPaths.has(path.id) && "rotate-180"
                                   )} />
                                 </Button>

@@ -1,5 +1,4 @@
 import { useState, useCallback, useEffect } from 'react'
-import { getApiConfig } from '@/lib/config/imageGenerator'
 import type {
   GetImagesRequest,
   GetImagesResponse,
@@ -34,13 +33,11 @@ export const useImagesApi = (): ImagesApiHook => {
 
   const getImages = useCallback(async (params?: GetImagesRequest): Promise<GetImagesResponse | null> => {
     try {
-      console.log('🔄 Obteniendo imágenes desde la API:', params)
-      
+      console.log('🔄 Obteniendo imágenes desde Supabase:', params)
+
       setIsLoading(true)
       setError(null)
 
-      const apiConfig = getApiConfig()
-      
       // Construir query params
       const queryParams = new URLSearchParams()
       const effectiveUserEmail = params?.user_email || userEmail || ''
@@ -52,15 +49,14 @@ export const useImagesApi = (): ImagesApiHook => {
       if (params?.end_date) queryParams.append('end_date', params.end_date)
 
       const queryString = queryParams.toString()
-      const url = `${apiConfig.baseUrl}/images${queryString ? `?${queryString}` : ''}`
+      const url = `/api/images${queryString ? `?${queryString}` : ''}`
 
-      console.log('🌐 URL de consulta:', url)
+      console.log('🌐 URL de consulta local:', url)
 
       const response = await fetch(url, {
         method: 'GET',
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': apiConfig.authorizationToken
+          'Content-Type': 'application/json'
         }
       })
 
