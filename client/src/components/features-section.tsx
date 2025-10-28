@@ -27,7 +27,6 @@ export function FeaturesSection() {
         <HubFeaturesDiagram
           logoUrl="/logo.png"
           centerLabel="RED23"
-          onFeatureClick={(id) => console.log(`Feature clicked: ${id}`)}
         />
       </div>
     </section>
