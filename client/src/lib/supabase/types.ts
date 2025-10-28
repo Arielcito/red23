@@ -78,6 +78,8 @@ export interface UserReferral {
   referral_code: string
   referred_by_code?: string | null
   referred_by_user_id?: string | null
+  terms_accepted_at?: string | null
+  terms_version?: string | null
   created_at: string
   updated_at: string
 }
@@ -87,6 +89,8 @@ export interface NewUserReferral {
   referral_code: string
   referred_by_code?: string | null
   referred_by_user_id?: string | null
+  terms_accepted_at?: string | null
+  terms_version?: string | null
 }
 
 export interface ReferralTracking {

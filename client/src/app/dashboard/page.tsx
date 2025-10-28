@@ -19,11 +19,15 @@ import { useLearningPaths } from "@/lib/hooks/useLearningPaths"
 import { CountdownTimer } from "@/components/rewards/CountdownTimer"
 import { TopThreeSection } from "@/components/novedades/TopThreeSection"
 import { LearningPathsSection } from "@/components/tutorials/LearningPathsSection"
+import { TermsAcceptanceModal } from "@/components/legal/TermsAcceptanceModal"
+import { useTermsAcceptance } from "@/lib/hooks/useTermsAcceptance"
+
 export default function Dashboard() {
   const { winners } = useWinnersApi()
   const { topThree } = useCasinosData()
   const { nextDailyPrize, nextMonthlyPrize } = useRewardsData()
   const { featuredPaths } = useLearningPaths()
+  const { needsAcceptance, isAccepting, acceptTerms } = useTermsAcceptance()
 
   // Usar el primer ganador de la API o un fallback
   const dailyWinner = winners.length > 0 ? {
@@ -194,6 +198,13 @@ export default function Dashboard() {
 
 
       </div>
+
+      {/* Terms Acceptance Modal */}
+      <TermsAcceptanceModal
+        open={needsAcceptance}
+        onAccept={acceptTerms}
+        isAccepting={isAccepting}
+      />
     </AppLayout>
   )
 }
