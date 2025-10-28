@@ -105,8 +105,8 @@ export function AdComparisonSection() {
                 </Card>
               </div>
 
-              {/* Bad Ad Below Good One */}
-              <Card className="bg-[#0f1f3a]/40 border-red-500/20 p-3 sm:p-4 backdrop-blur-sm transition-all duration-300 hover:scale-105">
+              {/* Bad Ad Below Good One - Hidden on mobile */}
+              <Card className="hidden lg:block bg-[#0f1f3a]/40 border-red-500/20 p-3 sm:p-4 backdrop-blur-sm transition-all duration-300 hover:scale-105">
                 <div className="aspect-video bg-gradient-to-br from-gray-700/50 to-gray-800/50 rounded-lg mb-2 sm:mb-3 flex items-center justify-center">
                   <ThumbsDown className="w-6 h-6 sm:w-8 sm:h-8 text-red-400/70" />
                 </div>

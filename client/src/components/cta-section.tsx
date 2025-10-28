@@ -1,20 +1,18 @@
 import { Button } from "@/components/ui/button"
 import { ArrowRight } from "lucide-react"
-import Image from "next/image"
 
 export function CtaSection() {
   return (
-    <section className="py-24 sm:py-32 md:py-40 lg:py-48 px-4 sm:px-6 relative overflow-hidden">
-      <div className="absolute inset-0 z-0">
-        <Image
-          src="/stand-out-the-crowd.jpg"
-          alt="Stand out from the crowd"
-          fill
-          className="object-cover object-center"
-          priority
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0a1628] via-[#0a1628]/70 via-30% to-[#0a1628]/40 to-70%" />
-      </div>
+    <section 
+      className="py-24 sm:py-32 md:py-40 lg:py-48 px-4 sm:px-6 relative overflow-hidden"
+      style={{
+        backgroundImage: 'url(/stand-out-the-crowd.png)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat'
+      }}
+    >
+      <div className="absolute inset-0 bg-gradient-to-b from-[#0a1628]/30 via-[#0a1628]/60 via-50% to-[#0a1628] to-100%" />
 
       <div className="container mx-auto text-center relative z-10">
         <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mb-6 sm:mb-8 text-balance drop-shadow-2xl px-4">

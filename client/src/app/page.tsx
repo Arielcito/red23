@@ -18,7 +18,7 @@ export default function Home() {
         <SecurityEffectivenessSection />
         <AdComparisonSection />
         <CtaSection />
-      </main>
+      </main> 
     </div>
   )
 }
