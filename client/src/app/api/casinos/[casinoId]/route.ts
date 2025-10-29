@@ -110,6 +110,7 @@ export async function PUT(request: NextRequest, context: RouteParamsContext) {
       updateData.position = body.position === null ? null : Number(body.position)
     }
     if (body.image_url !== undefined) updateData.image_url = body.image_url
+    if (body.is_regulated !== undefined) updateData.is_regulated = Boolean(body.is_regulated)
     if (body.is_active !== undefined) updateData.is_active = body.is_active
 
     console.log('📝 Datos a actualizar:', Object.keys(updateData))

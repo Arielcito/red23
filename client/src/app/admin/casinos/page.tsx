@@ -221,7 +221,8 @@ export default function AdminCasinosPage() {
     rtp: 0,
     platSimilar: '',
     position: null as number | null,
-    coverImageFile: null as File | null
+    coverImageFile: null as File | null,
+    isRegulated: false
   })
   
   // News management state
@@ -353,7 +354,8 @@ export default function AdminCasinosPage() {
         platSimilar: newCasinoForm.platSimilar || null,
         position: newCasinoForm.position,
         logo: coverImageUrl, // Guardar la imagen en la columna 'logo'
-        imageUrl: undefined
+        imageUrl: undefined,
+        isRegulated: newCasinoForm.isRegulated
       })
       
       // Reset form
@@ -364,7 +366,8 @@ export default function AdminCasinosPage() {
         rtp: 0,
         platSimilar: '',
         position: null,
-        coverImageFile: null
+        coverImageFile: null,
+        isRegulated: false
       })
       setFormErrors({})
       setShowCreateForm(false)
@@ -599,7 +602,8 @@ export default function AdminCasinosPage() {
         rtp: editingCasino.rtp,
         platSimilar: editingCasino.platSimilar,
         logo: logoUrl, // Guardar la imagen en la columna 'logo'
-        position: editingCasino.position
+        position: editingCasino.position,
+        isRegulated: editingCasino.isRegulated
       })
       setEditingCasino(null)
       setEditFormErrors({})
@@ -918,6 +922,16 @@ export default function AdminCasinosPage() {
                               value={newCasinoForm.platSimilar}
                               onChange={(e) => setNewCasinoForm(prev => ({ ...prev, platSimilar: e.target.value }))}
                             />
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <Switch
+                              id="casino-regulated"
+                              checked={newCasinoForm.isRegulated}
+                              onCheckedChange={(checked) =>
+                                setNewCasinoForm(prev => ({ ...prev, isRegulated: checked }))
+                              }
+                            />
+                            <Label htmlFor="casino-regulated">Casino Regulado</Label>
                           </div>
                           <div className="md:col-span-2">
                             <Label htmlFor="casino-cover-image">Imagen de Portada (opcional)</Label>
@@ -1388,6 +1402,18 @@ export default function AdminCasinosPage() {
                     onChange={(e) => setEditingCasino(prev => prev ? { ...prev, platSimilar: e.target.value } : null)}
                   />
                 </div>
+
+                <div className="flex items-center space-x-2">
+                  <Switch
+                    id="edit-casino-regulated"
+                    checked={editingCasino.isRegulated}
+                    onCheckedChange={(checked) =>
+                      setEditingCasino(prev => prev ? { ...prev, isRegulated: checked } : null)
+                    }
+                  />
+                  <Label htmlFor="edit-casino-regulated">Casino Regulado</Label>
+                </div>
+
                 <div>
                   <Label htmlFor="edit-casino-cover-image">Logo del Casino</Label>
 

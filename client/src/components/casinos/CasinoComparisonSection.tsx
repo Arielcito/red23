@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
+import { Disclaimer } from '@/components/ui/disclaimer'
 import { TopCasinoCard } from './TopCasinoCard'
 import { DynamicCasinoTable } from './DynamicCasinoTable'
 import { useCasinosData } from '@/lib/hooks/useCasinosData'
@@ -147,7 +148,7 @@ export function CasinoComparisonSection({
               </div>
             </CardHeader>
             <CardContent className="p-0">
-              <DynamicCasinoTable 
+              <DynamicCasinoTable
                 casinos={casinos}
                 className="px-6 pb-6"
               />

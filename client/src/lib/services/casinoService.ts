@@ -179,6 +179,7 @@ export class CasinoService {
         antiguedad: casino.antiguedad,
         precio: casino.precio,
         rtp: casino.rtp,
+        isRegulated: casino.is_regulated ?? false,
         imageUrl: casino.image_url || '/placeholder-casino.svg',
         position: casino.position
       })) || []
@@ -376,6 +377,7 @@ export class CasinoService {
       platSimilar: dbCasino.plat_similar,
       position: dbCasino.position,
       imageUrl: dbCasino.image_url,
+      isRegulated: dbCasino.is_regulated ?? false,
       createdAt: dbCasino.created_at,
       updatedAt: dbCasino.updated_at
     }
@@ -390,7 +392,8 @@ export class CasinoService {
       rtp: casinoData.rtp,
       plat_similar: casinoData.platSimilar,
       position: casinoData.position,
-      image_url: casinoData.imageUrl
+      image_url: casinoData.imageUrl,
+      is_regulated: casinoData.isRegulated
     }
   }
 }

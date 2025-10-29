@@ -103,6 +103,7 @@ export async function POST(request: NextRequest) {
       plat_similar: body.plat_similar?.trim() || null,
       position: positionValue,
       image_url: body.image_url || null,
+      is_regulated: body.is_regulated !== undefined ? Boolean(body.is_regulated) : false,
       is_active: body.is_active !== undefined ? body.is_active : true
     }
 

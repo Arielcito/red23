@@ -1,6 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { Disclaimer } from "@/components/ui/disclaimer"
 import { Newspaper, Star, Calendar, ExternalLink } from "lucide-react"
 import Image from "next/image"
 import { cn, formatNewsDate } from "@/lib/utils"
@@ -235,6 +236,11 @@ export function NewsSection({ featuredNews, recentNews }: NewsSectionProps) {
               </div>
             </div>
           )}
+
+          {/* Disclaimer */}
+          <div className="max-w-4xl mx-auto mt-8">
+            <Disclaimer text="Las noticias son actualizadas regularmente. Red23 se desliga de toda responsabilidad legal." />
+          </div>
         </div>
       </div>
     </section>

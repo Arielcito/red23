@@ -82,6 +82,7 @@ export function useCasinosData(): CasinosDataHook {
       precio: casino.precio,
       rtp: casino.rtp,
       logo: casino.logo,
+      isRegulated: casino.isRegulated,
       position: casino.position!
     }))
 
@@ -99,7 +100,8 @@ export function useCasinosData(): CasinosDataHook {
       rtp: casinoData.rtp,
       plat_similar: casinoData.platSimilar,
       position: casinoData.position,
-      image_url: casinoData.imageUrl
+      image_url: casinoData.imageUrl,
+      is_regulated: casinoData.isRegulated
     }
       
       const response = await apiCall('/api/casinos', {
@@ -135,6 +137,7 @@ export function useCasinosData(): CasinosDataHook {
       if (updates.platSimilar !== undefined) apiUpdates.plat_similar = updates.platSimilar
       if (updates.position !== undefined) apiUpdates.position = updates.position
       if (updates.imageUrl !== undefined) apiUpdates.image_url = updates.imageUrl
+      if (updates.isRegulated !== undefined) apiUpdates.is_regulated = updates.isRegulated
       
       const response = await apiCall(`/api/casinos/${id}`, {
         method: 'PUT',

@@ -214,6 +214,7 @@ export interface Casino {
   plat_similar?: string | null
   position?: number | null
   image_url?: string | null
+  is_regulated: boolean
   is_active: boolean
   created_at: string
   updated_at: string
@@ -228,6 +229,7 @@ export interface NewCasino {
   plat_similar?: string | null
   position?: number | null
   image_url?: string | null
+  is_regulated?: boolean
   is_active?: boolean
 }
 
@@ -264,6 +266,7 @@ export interface CasinoWithFields {
   position?: number | null
   coverImageUrl?: string | null
   imageUrl?: string | null
+  isRegulated: boolean
   createdAt: string
   updatedAt: string
 }
@@ -275,6 +278,7 @@ export interface TopCasino {
   precio: PrecioValue
   rtp: number
   logo?: string | null
+  isRegulated: boolean
   position: number
 }
 
