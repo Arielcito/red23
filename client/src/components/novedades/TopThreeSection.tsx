@@ -69,7 +69,7 @@ export function TopThreeSection({ topThree }: TopThreeSectionProps) {
               >
                 <CardContent className="p-0">
                 {/* Casino Logo */}
-                <div className="relative aspect-[3/2] w-full bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 flex items-center justify-center">
+                <div className="relative aspect-[3/2] w-full bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 flex items-center justify-center border border-gray-300 dark:border-gray-700">
                   {casino.logo ? (
                     <div className="relative w-full h-full p-4">
                       <Image
