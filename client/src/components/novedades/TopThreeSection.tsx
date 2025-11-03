@@ -13,7 +13,7 @@ interface TopThreeSectionProps {
 export function TopThreeSection({ topThree }: TopThreeSectionProps) {
   if (!topThree || topThree.length === 0) {
     return (
-      <section className="py-12">
+      <section className="py-12 border-x border-border">
         <div className="container mx-auto">
           <div className="text-center space-y-4">
             <div className="flex items-center justify-center gap-2">
@@ -34,7 +34,7 @@ export function TopThreeSection({ topThree }: TopThreeSectionProps) {
   }
 
   return (
-    <section className="py-6 md:py-12 px-4 md:px-6">
+    <section className="py-6 md:py-12 px-4 md:px-6 border-x border-border">
       <div className="container mx-auto">
         <div className="text-center space-y-4 pb-6 md:pb-12">
           <div className="flex items-center justify-center gap-2">

@@ -239,7 +239,7 @@ export function NewsSection({ featuredNews, recentNews }: NewsSectionProps) {
 
           {/* Disclaimer */}
           <div className="max-w-4xl mx-auto mt-8">
-            <Disclaimer text="Las noticias son actualizadas regularmente. Red23 se desliga de toda responsabilidad legal." />
+            <Disclaimer text="Las noticias son actualizadas regularmente. Red23 se desliga de cualquier uso indebido de esta información." />
           </div>
         </div>
       </div>

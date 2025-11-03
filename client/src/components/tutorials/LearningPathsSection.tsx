@@ -16,6 +16,7 @@ interface LearningPathsSectionProps {
   className?: string
   maxPaths?: number
   gridCols?: 'auto' | 2 | 3 | 4
+  gap?: 'sm' | 'md' | 'lg' | 'xl'
 }
 
 const getLevelIcon = (level: string) => {
@@ -67,7 +68,8 @@ export function LearningPathsSection({
   showHeader = true,
   className,
   maxPaths = 3,
-  gridCols = 'auto'
+  gridCols = 'auto',
+  gap = 'md'
 }: LearningPathsSectionProps) {
   if (!learningPaths || learningPaths.length === 0) {
     return (
@@ -106,6 +108,21 @@ export function LearningPathsSection({
     return `grid-cols-1 sm:grid-cols-2 lg:grid-cols-${Math.min(gridCols, displayedPaths.length)}`
   }
 
+  const getGapClasses = () => {
+    switch (gap) {
+      case 'sm':
+        return 'gap-4 sm:gap-2'
+      case 'md':
+        return 'gap-6 sm:gap-4'
+      case 'lg':
+        return 'gap-8 sm:gap-6'
+      case 'xl':
+        return 'gap-10 sm:gap-8'
+      default:
+        return 'gap-6 sm:gap-4'
+    }
+  }
+
   return (
     <section className={cn("py-8", className)}>
       <div className="container mx-auto px-6">
@@ -121,7 +138,7 @@ export function LearningPathsSection({
           </div>
         )}
 
-        <div className={cn("grid gap-4 max-w-6xl mx-auto", getGridClasses())}>
+        <div className={cn("grid max-w-7xl mx-auto", getGridClasses(), getGapClasses())}>
           {displayedPaths.map((path) => {
             const IconComponent = getLevelIcon(path.level)
             const colorClasses = getLevelColorClasses(path.colorScheme)

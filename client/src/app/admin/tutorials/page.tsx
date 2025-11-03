@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import { AppLayout } from "@/components/layout/AppLayout"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -17,9 +18,9 @@ import { useTutorialsAdmin } from "@/lib/hooks/useTutorialsAdmin"
 import { LearningPathForm } from "@/components/admin/tutorials/LearningPathForm"
 import { ModuleForm } from "@/components/admin/tutorials/ModuleForm"
 import { VideoForm } from "@/components/admin/tutorials/VideoForm"
-import type { 
-  LearningPathWithContent, 
-  TutorialModule, 
+import type {
+  LearningPathWithContent,
+  TutorialModule,
   TutorialVideo,
   LearningPathFormData,
   ModuleFormData,
@@ -39,14 +40,16 @@ import {
   ChevronDown,
   PlayCircle,
   ExternalLink,
-  Clock
+  Clock,
+  ArrowRight
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 export default function AdminTutorialsPage() {
-  const { 
-    learningPaths, 
-    isLoading, 
+  const router = useRouter()
+  const {
+    learningPaths,
+    isLoading,
     error,
     createLearningPath,
     updateLearningPath,
@@ -61,7 +64,6 @@ export default function AdminTutorialsPage() {
 
   // Form states
   const [showCreatePathForm, setShowCreatePathForm] = useState(false)
-  const [editingPath, setEditingPath] = useState<LearningPathWithContent | null>(null)
   const [showCreateModuleForm, setShowCreateModuleForm] = useState(false)
   const [selectedPathForModule, setSelectedPathForModule] = useState<LearningPathWithContent | null>(null)
   const [editingModule, setEditingModule] = useState<TutorialModule | null>(null)
@@ -89,38 +91,16 @@ export default function AdminTutorialsPage() {
   const handleCreatePath = async (data: LearningPathFormData) => {
     setIsSubmitting(true)
     try {
-      await createLearningPath(data)
+      const newPath = await createLearningPath(data)
       setShowCreatePathForm(false)
+      // Navigate to the new learning path detail page
+      if (newPath?.id) {
+        router.push(`/admin/tutorials/${newPath.id}`)
+      }
     } catch (error) {
       console.error('Error creating learning path:', error)
     } finally {
       setIsSubmitting(false)
-    }
-  }
-
-  const handleUpdatePath = async (data: LearningPathFormData) => {
-    if (!editingPath) return
-    
-    setIsSubmitting(true)
-    try {
-      await updateLearningPath(editingPath.id, data)
-      setEditingPath(null)
-    } catch (error) {
-      console.error('Error updating learning path:', error)
-    } finally {
-      setIsSubmitting(false)
-    }
-  }
-
-  const handleDeletePath = async (pathId: string) => {
-    if (!confirm('¿Estás seguro de que quieres eliminar esta ruta de aprendizaje? Se eliminarán todos sus módulos y videos.')) {
-      return
-    }
-
-    try {
-      await deleteLearningPath(pathId)
-    } catch (error) {
-      console.error('Error deleting learning path:', error)
     }
   }
 
@@ -269,22 +249,13 @@ export default function AdminTutorialsPage() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  <Button 
-                    onClick={() => setShowCreatePathForm(!showCreatePathForm)}
+                  <Button
+                    onClick={() => setShowCreatePathForm(true)}
                     className="w-full md:w-auto"
                   >
                     <Plus className="h-4 w-4 mr-2" />
-                    {showCreatePathForm ? 'Cancelar' : 'Nueva Ruta de Aprendizaje'}
+                    Nueva Ruta de Aprendizaje
                   </Button>
-
-                  {/* Create Path Form */}
-                  {showCreatePathForm && (
-                    <LearningPathForm
-                      onSubmit={handleCreatePath}
-                      onCancel={() => setShowCreatePathForm(false)}
-                      isSubmitting={isSubmitting}
-                    />
-                  )}
 
                   {/* Learning Paths List */}
                   <div className="space-y-3">
@@ -300,7 +271,11 @@ export default function AdminTutorialsPage() {
                       </div>
                     ) : (
                       learningPaths.map((path) => (
-                        <Card key={path.id} className="border-2">
+                        <Card
+                          key={path.id}
+                          className="border-2 hover:border-primary-500 transition-colors cursor-pointer"
+                          onClick={() => router.push(`/admin/tutorials/${path.id}`)}
+                        >
                           <CardContent className="p-3 sm:p-4">
                             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                               <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto">
@@ -308,8 +283,8 @@ export default function AdminTutorialsPage() {
                                 <div className="flex-1">
                                   <div className="flex flex-wrap items-center gap-1 sm:gap-2">
                                     <h3 className="font-medium text-sm sm:text-base">{path.title}</h3>
-                                    <Badge 
-                                      variant="outline" 
+                                    <Badge
+                                      variant="outline"
                                       className={cn("text-xs", LEVEL_COLORS[path.level])}
                                     >
                                       {path.level}
@@ -335,92 +310,17 @@ export default function AdminTutorialsPage() {
                                 <Button
                                   variant="outline"
                                   size="sm"
-                                  onClick={() => setEditingPath(path)}
-                                  className="h-8 w-8 sm:h-9 sm:w-9 p-0"
+                                  onClick={(e) => {
+                                    e.stopPropagation()
+                                    router.push(`/admin/tutorials/${path.id}`)
+                                  }}
+                                  className="flex items-center gap-1"
                                 >
-                                  <Edit className="h-3 w-3 sm:h-4 sm:w-4" />
-                                </Button>
-                                <Button
-                                  variant="outline"
-                                  size="sm"
-                                  onClick={() => handleDeletePath(path.id)}
-                                  className="h-8 w-8 sm:h-9 sm:w-9 p-0"
-                                >
-                                  <Trash2 className="h-3 w-3 sm:h-4 sm:w-4" />
-                                </Button>
-                                <Button
-                                  variant="outline"
-                                  size="sm"
-                                  onClick={() => togglePathExpansion(path.id)}
-                                  className="h-8 w-8 sm:h-9 sm:w-9 p-0"
-                                >
-                                  <ChevronDown className={cn(
-                                    "h-3 w-3 sm:h-4 sm:w-4 transition-transform",
-                                    expandedPaths.has(path.id) && "rotate-180"
-                                  )} />
+                                  <span className="hidden sm:inline">Ver detalles</span>
+                                  <ArrowRight className="h-3 w-3 sm:h-4 sm:w-4" />
                                 </Button>
                               </div>
                             </div>
-                            
-                            {expandedPaths.has(path.id) && (
-                              <div className="border-t pt-4 mt-4">
-                                <div className="flex items-center justify-between mb-3">
-                                  <h4 className="font-medium text-sm">Módulos ({path.modules.length})</h4>
-                                  <Button
-                                    size="sm"
-                                    variant="outline"
-                                    onClick={() => {
-                                      setSelectedPathForModule(path)
-                                      setShowCreateModuleForm(true)
-                                    }}
-                                  >
-                                    <Plus className="h-3 w-3 mr-1" />
-                                    Módulo
-                                  </Button>
-                                </div>
-                                
-                                {path.modules.length === 0 ? (
-                                  <p className="text-xs text-muted-foreground py-2">
-                                    No hay módulos en esta ruta
-                                  </p>
-                                ) : (
-                                  <div className="space-y-2">
-                                    {path.modules
-                                      .sort((a, b) => a.order - b.order)
-                                      .map((module) => (
-                                      <div key={module.id} className="flex items-center justify-between p-2 bg-muted/30 rounded text-sm">
-                                        <div className="flex items-center gap-2">
-                                          <BookOpen className="h-3 w-3" />
-                                          <span className="font-medium">{module.title}</span>
-                                          <Badge variant="outline" className="text-xs">
-                                            {module.videos.length} videos
-                                          </Badge>
-                                          {!module.isActive && (
-                                            <EyeOff className="h-3 w-3 text-muted-foreground" />
-                                          )}
-                                        </div>
-                                        <div className="flex items-center gap-1">
-                                          <Button
-                                            variant="ghost"
-                                            size="sm"
-                                            onClick={() => setEditingModule(module)}
-                                          >
-                                            <Edit className="h-3 w-3" />
-                                          </Button>
-                                          <Button
-                                            variant="ghost"
-                                            size="sm"
-                                            onClick={() => handleDeleteModule(module.id)}
-                                          >
-                                            <Trash2 className="h-3 w-3" />
-                                          </Button>
-                                        </div>
-                                      </div>
-                                    ))}
-                                  </div>
-                                )}
-                              </div>
-                            )}
                           </CardContent>
                         </Card>
                       ))
@@ -653,26 +553,27 @@ export default function AdminTutorialsPage() {
         </Tabs>
       </div>
 
-      {/* Edit Learning Path Sheet */}
-      <Sheet open={!!editingPath} onOpenChange={(open) => !open && setEditingPath(null)}>
+      {/* Create Learning Path Sheet */}
+      <Sheet open={showCreatePathForm} onOpenChange={(open) => {
+        if (!open) {
+          setShowCreatePathForm(false)
+        }
+      }}>
         <SheetContent className="w-[400px] sm:w-[600px] overflow-y-auto">
           <SheetHeader>
-            <SheetTitle>Editar Ruta de Aprendizaje</SheetTitle>
+            <SheetTitle>Nueva Ruta de Aprendizaje</SheetTitle>
             <SheetDescription>
-              {editingPath?.title}
+              Crea una nueva ruta de aprendizaje para tus usuarios
             </SheetDescription>
           </SheetHeader>
-          
-          {editingPath && (
-            <div className="py-4">
-              <LearningPathForm
-                learningPath={editingPath}
-                onSubmit={handleUpdatePath}
-                onCancel={() => setEditingPath(null)}
-                isSubmitting={isSubmitting}
-              />
-            </div>
-          )}
+
+          <div className="py-4">
+            <LearningPathForm
+              onSubmit={handleCreatePath}
+              onCancel={() => setShowCreatePathForm(false)}
+              isSubmitting={isSubmitting}
+            />
+          </div>
         </SheetContent>
       </Sheet>
 

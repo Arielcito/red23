@@ -91,6 +91,7 @@ export default function TutorialsPage() {
                 learningPaths={learningPaths}
                 showHeader={false}
                 className="py-0"
+                gap="xl"
               />
             )}
           </CardContent>
