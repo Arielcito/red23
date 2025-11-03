@@ -150,9 +150,9 @@ export default function HubFeaturesDiagram({
                   <img
                     src={logoUrl}
                     alt="RED23 Logo"
-                    className="w-16 h-16 md:w-32 md:h-32 rounded-2xl object-contain shadow-[0_0_30px_rgba(55,171,239,0.4)]"
+                    className="w-24 h-24 md:w-48 md:h-48 rounded-2xl object-contain shadow-[0_0_30px_rgba(55,171,239,0.4)]"
                   />
-                  <span className="absolute inset-0 rounded-2xl blur-2xl opacity-30 bg-[#46c0fa]/30 pointer-events-none" />
+                  <span className="absolute inset-0 rounded-2xl opacity-30 bg-[#46c0fa]/30 pointer-events-none" />
                 </div>
               </motion.div>
 

@@ -14,15 +14,15 @@ export function SecurityEffectivenessSection() {
       </div>
 
       <div className="relative max-w-7xl mx-auto">
-        {/* Hand with security image - responsive positioning */}
-        <div className="relative md:absolute md:top-1/2 md:-translate-y-1/2 md:right-0 w-full md:w-[500px] lg:w-[600px] mb-12 md:mb-0 opacity-90 hover:opacity-100 transition-all duration-700 hover:scale-105 z-0">
+        {/* Security image - positioned behind title */}
+        <div className="absolute inset-0 flex items-center justify-center opacity-30 md:opacity-20 z-0">
           <div className="absolute inset-0 bg-cyan-500/20 blur-3xl" />
           <Image
             src="/security.png"
             alt="Sistema Seguro y Eficaz"
             width={600}
             height={600}
-            className="w-full h-auto object-contain relative z-10 mx-auto"
+            className="w-full max-w-[600px] h-auto object-contain"
           />
         </div>
 
