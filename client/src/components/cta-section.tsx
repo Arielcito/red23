@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button"
 import { ArrowRight } from "lucide-react"
+import { MathBackgroundDecoration } from "@/components/math-background-decoration"
 
 export function CtaSection() {
   return (
@@ -13,6 +14,8 @@ export function CtaSection() {
       }}
     >
       <div className="absolute inset-0 bg-gradient-to-b from-[#0a1628]/30 via-[#0a1628]/60 via-50% to-[#0a1628] to-100%" />
+
+      <MathBackgroundDecoration />
 
       <div className="container mx-auto text-center relative z-10">
         <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mb-6 sm:mb-8 text-balance drop-shadow-2xl px-4">

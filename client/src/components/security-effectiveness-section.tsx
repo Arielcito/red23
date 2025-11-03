@@ -1,4 +1,5 @@
 import Image from "next/image"
+import { MathBackgroundDecoration } from "@/components/math-background-decoration"
 
 export function SecurityEffectivenessSection() {
   return (
@@ -12,6 +13,8 @@ export function SecurityEffectivenessSection() {
         <div className="absolute top-40 right-20 w-1 h-1 bg-cyan-400 rounded-full animate-pulse delay-100" />
         <div className="absolute bottom-32 left-1/4 w-1 h-1 bg-cyan-400 rounded-full animate-pulse delay-200" />
       </div>
+
+      <MathBackgroundDecoration />
 
       <div className="relative max-w-7xl mx-auto">
         {/* Security image - positioned behind title */}
@@ -31,7 +34,7 @@ export function SecurityEffectivenessSection() {
           <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 px-4">
             SISTEMA <span className="text-cyan-400">100% EFICAZ</span> Y <span className="text-cyan-400">SEGURO</span>
           </h2>
-          <p className="text-gray-400 text-base sm:text-lg max-w-2xl mx-auto px-4">
+          <p className="text-white text-base sm:text-lg max-w-2xl mx-auto px-4">
             Tecnología de vanguardia que garantiza resultados excepcionales con la máxima seguridad
           </p>
         </div>

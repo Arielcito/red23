@@ -3,6 +3,7 @@
 import { Play } from "lucide-react"
 import { useState } from "react"
 import Image from "next/image"
+import { MathBackgroundDecoration } from "@/components/math-background-decoration"
 
 export function HeroSection() {
   const [isPlaying, setIsPlaying] = useState(false)
@@ -19,6 +20,8 @@ export function HeroSection() {
         <div className="absolute w-1 h-1 bg-cyan-400 rounded-full top-60 right-[30%] animate-pulse delay-200" />
         <div className="absolute w-1 h-1 bg-cyan-400 rounded-full bottom-40 right-[15%] animate-pulse delay-300" />
       </div>
+
+      <MathBackgroundDecoration />
 
       <div className="container mx-auto max-w-5xl">
         <div className="flex flex-col items-center text-center space-y-8 sm:space-y-12">

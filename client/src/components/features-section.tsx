@@ -1,6 +1,7 @@
 "use client";
 
 import HubFeaturesDiagram from "./hub-features-diagram"
+import { MathBackgroundDecoration } from "@/components/math-background-decoration"
 
 export function FeaturesSection() {
   return (
@@ -15,6 +16,8 @@ export function FeaturesSection() {
         <div className="absolute bottom-32 left-1/4 w-1 h-1 bg-cyan-400 rounded-full animate-pulse delay-200" />
         <div className="absolute top-60 right-1/3 w-1 h-1 bg-cyan-400 rounded-full animate-pulse delay-300" />
       </div>
+
+      <MathBackgroundDecoration />
 
       <div className="container mx-auto relative z-10">
         <div className="text-center mb-12 sm:mb-16">
