@@ -33,10 +33,10 @@ export function VideoCard({ video, videoNumber, className }: VideoCardProps) {
 
   return (
     <Card className={cn("group hover:shadow-md transition-shadow", className)}>
-      <CardContent className="p-4">
-        <div className="flex items-center gap-4">
+      <CardContent className="p-3 sm:p-4">
+        <div className="flex items-start gap-2 sm:gap-4">
           {/* Video Thumbnail */}
-          <div className="relative w-24 h-16 rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800 flex-shrink-0">
+          <div className="relative w-20 h-14 sm:w-24 sm:h-16 rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800 flex-shrink-0">
             {isYouTubeVideo ? (
               <img
                 src={getVideoThumbnail(video.videoUrl)}
@@ -49,55 +49,55 @@ export function VideoCard({ video, videoNumber, className }: VideoCardProps) {
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center">
-                <PlayCircle className="h-8 w-8 text-gray-400" />
+                <PlayCircle className="h-6 w-6 sm:h-8 sm:w-8 text-gray-400" />
               </div>
             )}
             <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-colors flex items-center justify-center">
-              <PlayCircle className="h-6 w-6 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
+              <PlayCircle className="h-4 w-4 sm:h-6 sm:w-6 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
             </div>
           </div>
 
           {/* Video Info */}
           <div className="flex-1 min-w-0">
-            <div className="flex items-start justify-between gap-2">
+            <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 sm:gap-2">
               <div className="flex-1 min-w-0">
-                <h4 className="font-medium text-sm leading-tight">
+                <h4 className="font-medium text-xs sm:text-sm leading-tight break-words">
                   {videoNumber}. {video.title}
                 </h4>
                 {video.description && (
-                  <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
+                  <p className="text-xs text-muted-foreground mt-1 line-clamp-2 break-words">
                     {video.description}
                   </p>
                 )}
-                <div className="flex items-center gap-2 mt-2">
+                <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 mt-2">
                   {video.duration && (
-                    <Badge variant="secondary" className="text-xs">
-                      <Clock className="h-3 w-3 mr-1" />
+                    <Badge variant="secondary" className="text-xs shrink-0">
+                      <Clock className="h-2.5 w-2.5 sm:h-3 sm:w-3 mr-1" />
                       {video.duration}
                     </Badge>
                   )}
-                  <Badge variant="outline" className="text-xs">
+                  <Badge variant="outline" className="text-xs shrink-0">
                     Video {videoNumber}
                   </Badge>
                 </div>
               </div>
 
               {/* Action Buttons */}
-              <div className="flex items-center gap-2 flex-shrink-0">
+              <div className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={handleWatchVideo}
-                  className="text-xs"
+                  className="text-xs h-7 sm:h-8 px-2 sm:px-3"
                 >
                   <PlayCircle className="h-3 w-3 mr-1" />
-                  Ver
+                  <span className="hidden sm:inline">Ver</span>
                 </Button>
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={handleWatchVideo}
-                  className="p-2"
+                  className="p-1.5 sm:p-2 h-7 sm:h-8 w-7 sm:w-8"
                 >
                   <ExternalLink className="h-3 w-3" />
                 </Button>

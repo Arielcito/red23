@@ -65,7 +65,6 @@ export default function NovedadesPage() {
 
         {/* Casinos Section */}
         <CasinosSection />
-
         {/* News Section */}
         <NewsSection 
           featuredNews={featuredNews} 

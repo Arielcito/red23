@@ -129,7 +129,7 @@ export function LearningPathsSection({
             return (
               <Link key={path.id} href={path.href}>
                 <Card className={cn(
-                  "p-4 border-2 border-dashed transition-colors cursor-pointer h-full hover:shadow-md",
+                  "p-4 border border-solid transition-colors cursor-pointer h-full hover:shadow-md",
                   colorClasses.border
                 )}>
                   <div className="flex items-center justify-between mb-3">
