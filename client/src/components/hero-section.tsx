@@ -10,7 +10,7 @@ export function HeroSection() {
 
   return (
     <section
-      className="relative pt-24 sm:pt-32 pb-12 sm:pb-20 px-4 sm:px-6 overflow-hidden min-h-screen flex items-center"
+      className="relative pt-16 sm:pt-20 pb-8 sm:pb-12 px-4 sm:px-6 overflow-hidden min-h-screen flex items-center"
       id="home"
     >
       {/* Background particles */}
@@ -24,10 +24,10 @@ export function HeroSection() {
       <MathBackgroundDecoration />
 
       <div className="container mx-auto max-w-5xl">
-        <div className="flex flex-col items-center text-center space-y-8 sm:space-y-12">
+        <div className="flex flex-col items-center text-center space-y-6 sm:space-y-8">
 
           {/* Text content */}
-          <div className="space-y-4 sm:space-y-6 max-w-3xl">
+          <div className="space-y-3 sm:space-y-4 max-w-3xl">
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight text-balance">
               Escala tu negocio de forma <span className="text-cyan-400">predecible</span>
             </h1>

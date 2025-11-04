@@ -21,10 +21,15 @@ function AuthPageContent() {
 
   useEffect(() => {
     const referralParam = searchParams.get('referral')
+    const tabParam = searchParams.get('tab')
+
     if (referralParam) {
       setReferralCode(referralParam)
       console.log('[AuthPage] Código de referido detectado:', referralParam)
       // Auto-cambiar a la tab de demo si viene con código de referido
+      setActiveTab("demo")
+    } else if (tabParam === 'demo') {
+      console.log('[AuthPage] Tab demo activado desde header')
       setActiveTab("demo")
     }
   }, [searchParams])

@@ -27,51 +27,32 @@ export function Header() {
             {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
 
-          {/* Desktop navigation */}
-          <nav className="hidden md:flex items-center gap-8">
-            <Link href="#home" className="text-sm text-cyan-400 hover:text-cyan-300 transition-colors">
-              Inicio
+          {/* Desktop actions */}
+          <div className="hidden md:flex items-center gap-4">
+            <Link href="/login?tab=demo">
+              <Button variant="outline" className="border-cyan-500 text-cyan-400 hover:bg-cyan-500/10 rounded-full px-6">
+                Solicitar Demo
+              </Button>
             </Link>
-            <Link href="#features" className="text-sm text-gray-300 hover:text-cyan-400 transition-colors">
-              Características
+            <Link href="/login">
+              <Button className="bg-cyan-500 hover:bg-cyan-600 text-white rounded-full px-6">
+                Contáctanos
+              </Button>
             </Link>
-            <Link href="#referrals" className="text-sm text-gray-300 hover:text-cyan-400 transition-colors">
-              Referidos
-            </Link>
-          </nav>
-
-          <Link href="/login">
-            <Button className="hidden md:block bg-cyan-500 hover:bg-cyan-600 text-white rounded-full px-6">
-              Contáctanos
-            </Button>
-          </Link>
+          </div>
         </div>
 
         {isMenuOpen && (
-          <nav className="md:hidden mt-4 pb-4 flex flex-col gap-4 border-t border-cyan-500/10 pt-4">
-            <Link
-              href="#home"
-              className="text-sm text-cyan-400 hover:text-cyan-300 transition-colors"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Inicio
+          <nav className="md:hidden mt-4 pb-4 flex flex-col gap-3 border-t border-cyan-500/10 pt-4">
+            <Link href="/login?tab=demo" className="w-full" onClick={() => setIsMenuOpen(false)}>
+              <Button variant="outline" className="border-cyan-500 text-cyan-400 hover:bg-cyan-500/10 rounded-full px-6 w-full">
+                Solicitar Demo
+              </Button>
             </Link>
-            <Link
-              href="#features"
-              className="text-sm text-gray-300 hover:text-cyan-400 transition-colors"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Características
-            </Link>
-            <Link
-              href="#referrals"
-              className="text-sm text-gray-300 hover:text-cyan-400 transition-colors"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Referidos
-            </Link>
-            <Link href="/login" className="w-full">
-              <Button className="bg-cyan-500 hover:bg-cyan-600 text-white rounded-full px-6 w-full">Contáctanos</Button>
+            <Link href="/login" className="w-full" onClick={() => setIsMenuOpen(false)}>
+              <Button className="bg-cyan-500 hover:bg-cyan-600 text-white rounded-full px-6 w-full">
+                Contáctanos
+              </Button>
             </Link>
           </nav>
         )}
