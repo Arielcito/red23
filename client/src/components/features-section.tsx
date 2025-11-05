@@ -5,7 +5,7 @@ import { MathBackgroundDecoration } from "@/components/math-background-decoratio
 
 export function FeaturesSection() {
   return (
-    <section className="py-8 sm:py-14 px-4 sm:px-6 relative overflow-hidden" id="features">
+    <section className="py-6 sm:py-6 px-4 sm:px-6 relative overflow-hidden" id="features">
       {/* Smooth gradient background */}
       <div className="absolute inset-0 bg-gradient-to-b from-[#0a1628] via-[#0d1f3a] to-[#0a1628]" />
 

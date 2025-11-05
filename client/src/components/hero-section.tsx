@@ -10,7 +10,7 @@ export function HeroSection() {
 
   return (
     <section
-      className="relative pt-16 sm:pt-20 pb-8 sm:pb-12 px-4 sm:px-6 overflow-hidden min-h-screen flex items-center"
+      className="relative pt-22 sm:pt-16 sm:pb-4 px-4 sm:px-6 overflow-hidden flex items-start"
       id="home"
     >
       {/* Background particles */}
@@ -24,7 +24,7 @@ export function HeroSection() {
       <MathBackgroundDecoration />
 
       <div className="container mx-auto max-w-5xl">
-        <div className="flex flex-col items-center text-center space-y-6 sm:space-y-8">
+        <div className="flex flex-col items-center text-center space-y-2 sm:space-y-8">
 
           {/* Text content */}
           <div className="space-y-3 sm:space-y-4 max-w-3xl">
