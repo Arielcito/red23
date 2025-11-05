@@ -4,11 +4,11 @@ import { ArrowRight } from "lucide-react"
 export function CtaSection() {
   return (
     <section
-      className="min-h-[70vh] sm:min-h-[80vh] md:min-h-[85vh] lg:min-h-[90vh] flex items-start justify-center pt-16 sm:pt-20 md:pt-24 lg:pt-28 pb-16 sm:pb-20 md:pb-24 lg:pb-28 px-4 sm:px-6 relative overflow-hidden"
+      className="min-h-[60vh] sm:min-h-[65vh] md:min-h-[70vh] lg:min-h-[75vh] flex items-start justify-center pt-16 sm:pt-20 md:pt-24 lg:pt-28 pb-16 sm:pb-20 md:pb-24 lg:pb-28 px-4 sm:px-6 relative overflow-hidden"
       style={{
         backgroundImage: 'url(/stand-out-the-crowd.jpg)',
         backgroundSize: 'cover',
-        backgroundPosition: 'center',
+        backgroundPosition: 'center top',
         backgroundRepeat: 'no-repeat'
       }}
     >

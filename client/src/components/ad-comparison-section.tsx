@@ -38,7 +38,7 @@ const goodAd = {
 
 export function AdComparisonSection() {
   return (
-    <section className="py-12 sm:py-20 px-4 sm:px-6 relative bg-[#0a1628] overflow-hidden">
+    <section className="py-6 sm:py-20 px-4 sm:px-6 relative bg-[#0a1628] overflow-hidden">
       <div className="absolute inset-0 bg-gradient-radial from-cyan-500/20 via-transparent to-transparent opacity-50" />
 
       <MathBackgroundDecoration />
