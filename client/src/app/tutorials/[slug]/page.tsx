@@ -95,12 +95,12 @@ export default function LearningPathPage() {
         <div className="p-4 sm:p-6">
           <div className="max-w-4xl mx-auto space-y-4 sm:space-y-6">
             <div className="animate-pulse">
-              <div className="h-6 sm:h-8 bg-gray-200 rounded mb-3 sm:mb-4"></div>
-              <div className="h-3 sm:h-4 bg-gray-200 rounded mb-4 sm:mb-6 w-2/3"></div>
+              <div className="h-6 sm:h-8 bg-muted rounded mb-3 sm:mb-4"></div>
+              <div className="h-3 sm:h-4 bg-muted rounded mb-4 sm:mb-6 w-2/3"></div>
               {[1, 2, 3].map((i) => (
-                <div key={i} className="border border-gray-200 rounded-lg p-4 sm:p-6 mb-3 sm:mb-4">
-                  <div className="h-5 sm:h-6 bg-gray-200 rounded mb-2 sm:mb-3"></div>
-                  <div className="h-3 sm:h-4 bg-gray-200 rounded w-1/2"></div>
+                <div key={i} className="border border-border rounded-lg p-4 sm:p-6 mb-3 sm:mb-4">
+                  <div className="h-5 sm:h-6 bg-muted rounded mb-2 sm:mb-3"></div>
+                  <div className="h-3 sm:h-4 bg-muted rounded w-1/2"></div>
                 </div>
               ))}
             </div>
@@ -115,11 +115,11 @@ export default function LearningPathPage() {
       <AppLayout title="Error" subtitle="Problema cargando la ruta">
         <div className="p-4 sm:p-6">
           <div className="max-w-4xl mx-auto">
-            <Card className="bg-gray-100">
+            <Card>
               <CardContent className="p-4 sm:p-6">
                 <div className="text-center space-y-3 sm:space-y-4">
-                  <Target className="h-10 w-10 sm:h-12 sm:w-12 text-muted-foreground mx-auto" />
-                  <h2 className="text-lg sm:text-xl font-semibold">Ruta no encontrada</h2>
+                  <Target className="h-10 w-10 sm:h-12 sm:w-12 text-muted-foreground mx-auto opacity-50" />
+                  <h2 className="text-lg sm:text-xl font-semibold text-card-foreground">Ruta no encontrada</h2>
                   <p className="text-sm sm:text-base text-muted-foreground px-2">
                     {error || 'La ruta de aprendizaje que buscas no existe o no está disponible.'}
                   </p>
@@ -159,7 +159,7 @@ export default function LearningPathPage() {
         <div className="max-w-4xl mx-auto space-y-4 sm:space-y-6">
 
           {/* Header Card */}
-          <Card className="border-2 border-solid border-primary-200 bg-gray-100">
+          <Card className="border-2 border-solid border-primary-200 dark:border-primary-800">
             <CardContent className="p-4 sm:p-6">
               <div className="flex-1 min-w-0">
                 <div className="flex items-start gap-2 sm:gap-3 mb-2">
@@ -167,14 +167,14 @@ export default function LearningPathPage() {
                     {learningPath.icon}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h1 className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold break-words mb-2">{learningPath.title}</h1>
+                    <h1 className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold break-words mb-2 text-card-foreground">{learningPath.title}</h1>
                     <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
                       <Badge variant="outline" className={cn("text-xs shrink-0", LEVEL_COLORS[learningPath.level])}>
                         <LevelIcon className="h-3 w-3 mr-1" />
                         {learningPath.level}
                       </Badge>
                       {learningPath.isFeatured && (
-                        <Badge variant="outline" className="text-xs bg-yellow-100 text-yellow-800 border-yellow-200 shrink-0">
+                        <Badge variant="outline" className="text-xs bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300 border-yellow-200 dark:border-yellow-800 shrink-0">
                           <Star className="h-3 w-3 mr-1 fill-current" />
                           Destacada
                         </Badge>
@@ -185,21 +185,21 @@ export default function LearningPathPage() {
                   <p className="text-sm sm:text-base text-muted-foreground mb-3 sm:mb-4 break-words">
                     {learningPath.description}
                   </p>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 text-xs sm:text-sm">
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 text-xs sm:text-sm text-muted-foreground">
                     <div className="flex items-center gap-1.5 sm:gap-2">
-                      <BookOpen className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary-500 flex-shrink-0" />
+                      <BookOpen className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary-500 dark:text-primary-400 flex-shrink-0" />
                       <span className="truncate">{learningPath.modules.length} módulos</span>
                     </div>
                     <div className="flex items-center gap-1.5 sm:gap-2">
-                      <Video className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-secondary-500 flex-shrink-0" />
+                      <Video className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-secondary-500 dark:text-secondary-400 flex-shrink-0" />
                       <span className="truncate">{totalVideos} videos</span>
                     </div>
                     <div className="flex items-center gap-1.5 sm:gap-2">
-                      <Clock className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-tertiary-500 flex-shrink-0" />
+                      <Clock className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-tertiary-500 dark:text-tertiary-400 flex-shrink-0" />
                       <span className="truncate">{formatDuration(totalDuration)}</span>
                     </div>
                     <div className="flex items-center gap-1.5 sm:gap-2">
-                      <Users className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-gray-500 flex-shrink-0" />
+                      <Users className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-muted-foreground flex-shrink-0" />
                       <span className="truncate">Estudiantes activos</span>
                     </div>
                   </div>
@@ -208,11 +208,11 @@ export default function LearningPathPage() {
           </Card>
 
           {/* Progress and Actions */}
-          <Card className="bg-gray-100">
+          <Card>
             <CardContent className="p-4 sm:p-6">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0 mb-4">
                 <div>
-                  <h3 className="text-sm sm:text-base font-semibold">Progreso del curso</h3>
+                  <h3 className="text-sm sm:text-base font-semibold text-card-foreground">Progreso del curso</h3>
                   <p className="text-xs sm:text-sm text-muted-foreground">0% completado</p>
                 </div>
                 <div className="flex gap-2">
@@ -241,18 +241,18 @@ export default function LearningPathPage() {
           {/* Modules List */}
           <div className="space-y-3 sm:space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-0">
-              <h2 className="text-lg sm:text-xl font-semibold">Contenido del curso</h2>
+              <h2 className="text-lg sm:text-xl font-semibold text-card-foreground">Contenido del curso</h2>
               <Badge variant="secondary" className="text-xs w-fit">
                 {learningPath.modules.length} módulos • {totalVideos} videos
               </Badge>
             </div>
 
             {learningPath.modules.length === 0 ? (
-              <Card className="bg-gray-100">
+              <Card>
                 <CardContent className="p-6 sm:p-12">
                   <div className="text-center space-y-3 sm:space-y-4">
-                    <BookOpen className="h-10 w-10 sm:h-12 sm:w-12 text-muted-foreground mx-auto" />
-                    <h3 className="text-base sm:text-lg font-semibold">Contenido próximamente</h3>
+                    <BookOpen className="h-10 w-10 sm:h-12 sm:w-12 text-muted-foreground mx-auto opacity-50" />
+                    <h3 className="text-base sm:text-lg font-semibold text-card-foreground">Contenido próximamente</h3>
                     <p className="text-sm sm:text-base text-muted-foreground px-2">
                       Esta ruta de aprendizaje está en construcción. Los módulos y videos estarán disponibles pronto.
                     </p>

@@ -74,17 +74,17 @@ export function CourseCard({ course, className }: CourseCardProps) {
         {/* Overlay Badges */}
         <div className="absolute top-3 left-3 flex flex-wrap gap-2">
           {course.isNew && (
-            <Badge className="bg-primary-500 text-white text-xs">
+            <Badge className="bg-primary dark:bg-primary text-primary-foreground text-xs">
               Nuevo
             </Badge>
           )}
           {course.isPopular && (
-            <Badge className="bg-orange-500 text-white text-xs">
+            <Badge className="bg-orange-500 dark:bg-orange-600 text-white text-xs">
               🔥 Popular
             </Badge>
           )}
           {course.isFree && (
-            <Badge className="bg-green-500 text-white text-xs">
+            <Badge className="bg-green-500 dark:bg-green-600 text-white text-xs">
               Gratis
             </Badge>
           )}
@@ -95,7 +95,7 @@ export function CourseCard({ course, className }: CourseCardProps) {
           <Button
             size="sm"
             variant="secondary"
-            className="h-8 w-8 p-0 bg-white/90 hover:bg-white"
+            className="h-8 w-8 p-0 bg-card/90 hover:bg-card dark:bg-card/80 dark:hover:bg-card"
             onClick={(e) => {
               e.preventDefault()
               setIsFavorited(!isFavorited)
@@ -106,10 +106,9 @@ export function CourseCard({ course, className }: CourseCardProps) {
           <Button
             size="sm"
             variant="secondary"
-            className="h-8 w-8 p-0 bg-white/90 hover:bg-white"
+            className="h-8 w-8 p-0 bg-card/90 hover:bg-card dark:bg-card/80 dark:hover:bg-card"
             onClick={(e) => {
               e.preventDefault()
-              // Share functionality
             }}
           >
             <Share2 className="h-4 w-4" />
@@ -120,7 +119,7 @@ export function CourseCard({ course, className }: CourseCardProps) {
         <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
           <Button
             size="lg"
-            className="opacity-0 group-hover:opacity-100 transition-opacity bg-white/90 text-primary-600 hover:bg-white"
+            className="opacity-0 group-hover:opacity-100 transition-opacity bg-card/90 text-primary-600 dark:text-primary-400 hover:bg-card"
           >
             <PlayCircle className="h-6 w-6 mr-2" />
             Ver Curso
@@ -134,14 +133,14 @@ export function CourseCard({ course, className }: CourseCardProps) {
           <Badge variant="outline" className={levelColors[course.level]}>
             {course.level}
           </Badge>
-          <div className="flex items-center text-sm text-gray-500">
-            <Star className="h-4 w-4 mr-1 fill-current text-yellow-400" />
+          <div className="flex items-center text-sm text-muted-foreground">
+            <Star className="h-4 w-4 mr-1 fill-current text-yellow-400 dark:text-yellow-500" />
             <span className="font-medium">{course.rating}</span>
             <span className="ml-1">({course.reviewsCount})</span>
           </div>
         </div>
 
-        <CardTitle className="text-lg leading-tight line-clamp-2 group-hover:text-primary-600 transition-colors">
+        <CardTitle className="text-lg leading-tight line-clamp-2 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
           {course.title}
         </CardTitle>
         
@@ -155,15 +154,15 @@ export function CourseCard({ course, className }: CourseCardProps) {
         {course.progress !== undefined && (
           <div className="mb-4">
             <div className="flex items-center justify-between text-sm mb-2">
-              <span className="text-gray-600 dark:text-gray-300">Progreso</span>
-              <span className="font-medium">{course.progress}%</span>
+              <span className="text-muted-foreground">Progreso</span>
+              <span className="font-medium text-card-foreground">{course.progress}%</span>
             </div>
             <Progress value={course.progress} className="h-2" />
           </div>
         )}
 
         {/* Course Info */}
-        <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400 mb-4">
+        <div className="flex items-center justify-between text-sm text-muted-foreground mb-4">
           <div className="flex items-center">
             <Clock className="h-4 w-4 mr-1" />
             <span>{course.duration}</span>
@@ -179,22 +178,22 @@ export function CourseCard({ course, className }: CourseCardProps) {
         </div>
 
         {/* Instructor */}
-        <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
-          Por <span className="font-medium">{course.instructor}</span>
+        <p className="text-sm text-muted-foreground mb-4">
+          Por <span className="font-medium text-card-foreground">{course.instructor}</span>
         </p>
 
         {/* Price and CTA */}
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
             {course.isFree ? (
-              <span className="text-lg font-bold text-green-600">Gratis</span>
+              <span className="text-lg font-bold text-green-600 dark:text-green-400">Gratis</span>
             ) : (
               <div className="flex items-center space-x-2">
-                <span className="text-lg font-bold text-primary-600">
+                <span className="text-lg font-bold text-primary-600 dark:text-primary-400">
                   ${course.price}
                 </span>
                 {course.originalPrice && (
-                  <span className="text-sm text-gray-400 line-through">
+                  <span className="text-sm text-muted-foreground line-through">
                     ${course.originalPrice}
                   </span>
                 )}
@@ -207,7 +206,7 @@ export function CourseCard({ course, className }: CourseCardProps) {
               size="sm" 
               className={cn(
                 "group/btn",
-                course.progress !== undefined ? "bg-secondary-500 hover:bg-secondary-600" : ""
+                course.progress !== undefined ? "bg-secondary dark:bg-secondary hover:bg-secondary/90" : ""
               )}
             >
               {course.progress !== undefined ? "Continuar" : "Comenzar"}

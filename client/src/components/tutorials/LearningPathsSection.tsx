@@ -36,27 +36,27 @@ const getLevelColorClasses = (colorScheme: string) => {
   switch (colorScheme) {
     case 'primary':
       return {
-        badge: 'text-primary-600 border-primary-300',
-        border: 'border-primary-200 hover:border-primary-400',
-        icon: 'text-primary-500'
+        badge: 'text-primary-600 dark:text-primary-400 border-primary-300 dark:border-primary-700',
+        border: 'border-primary-200 dark:border-primary-800 hover:border-primary-400 dark:hover:border-primary-600',
+        icon: 'text-primary-500 dark:text-primary-400'
       }
     case 'secondary':
       return {
-        badge: 'text-secondary-600 border-secondary-300',
-        border: 'border-secondary-200 hover:border-secondary-400',
-        icon: 'text-secondary-500'
+        badge: 'text-secondary-600 dark:text-secondary-400 border-secondary-300 dark:border-secondary-700',
+        border: 'border-secondary-200 dark:border-secondary-800 hover:border-secondary-400 dark:hover:border-secondary-600',
+        icon: 'text-secondary-500 dark:text-secondary-400'
       }
     case 'tertiary':
       return {
-        badge: 'text-tertiary-600 border-tertiary-300',
-        border: 'border-tertiary-200 hover:border-tertiary-400',
-        icon: 'text-tertiary-500'
+        badge: 'text-tertiary-600 dark:text-tertiary-400 border-tertiary-300 dark:border-tertiary-700',
+        border: 'border-tertiary-200 dark:border-tertiary-800 hover:border-tertiary-400 dark:hover:border-tertiary-600',
+        icon: 'text-tertiary-500 dark:text-tertiary-400'
       }
     default:
       return {
-        badge: 'text-primary-600 border-primary-300',
-        border: 'border-primary-200 hover:border-primary-400',
-        icon: 'text-primary-500'
+        badge: 'text-primary-600 dark:text-primary-400 border-primary-300 dark:border-primary-700',
+        border: 'border-primary-200 dark:border-primary-800 hover:border-primary-400 dark:hover:border-primary-600',
+        icon: 'text-primary-500 dark:text-primary-400'
       }
   }
 }
@@ -85,7 +85,7 @@ export function LearningPathsSection({
                 {subtitle}
               </p>
               <div className="text-center py-8 text-muted-foreground">
-                <Target className="h-12 w-12 mx-auto mb-2 text-gray-300" />
+                <Target className="h-12 w-12 mx-auto mb-2 text-muted-foreground opacity-50" />
                 <p className="text-sm">No hay rutas de aprendizaje configuradas</p>
               </div>
             </div>
@@ -146,7 +146,7 @@ export function LearningPathsSection({
             return (
               <Link key={path.id} href={path.href}>
                 <Card className={cn(
-                  "p-4 border border-solid transition-colors cursor-pointer h-full hover:shadow-md bg-gray-100 dark:bg-gray-800",
+                  "p-4 border border-solid transition-colors cursor-pointer h-full hover:shadow-md hover:shadow-primary/10 dark:hover:shadow-primary/20",
                   colorClasses.border
                 )}>
                   <div className="flex items-center justify-between mb-3">
@@ -159,16 +159,16 @@ export function LearningPathsSection({
                     </div>
                   </div>
                   
-                  <h4 className="font-semibold mb-2 text-gray-900 dark:text-white">
+                  <h4 className="font-semibold mb-2 text-card-foreground">
                     {path.title}
                   </h4>
                   
-                  <p className="text-sm text-gray-600 dark:text-gray-300 mb-3 line-clamp-2">
+                  <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
                     {path.description}
                   </p>
                   
                   <div className="flex items-center justify-between">
-                    <span className="text-xs text-gray-500">
+                    <span className="text-xs text-muted-foreground">
                       {path.duration}
                     </span>
                     <Button size="sm" variant="outline">
