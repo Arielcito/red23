@@ -38,15 +38,19 @@ const goodAd = {
 
 export function AdComparisonSection() {
   return (
-    <section className="py-6 sm:py-20 px-4 sm:px-6 relative bg-[#0a1628] overflow-hidden">
+    <section className="py-6 sm:py-20 px-2 sm:px-4 md:px-6 relative bg-[#0a1628] overflow-hidden">
       <div className="absolute inset-0 bg-gradient-radial from-cyan-500/20 via-transparent to-transparent opacity-50" />
 
       <MathBackgroundDecoration />
 
       <div className="container mx-auto relative z-10">
         <div className="text-center mb-12 sm:mb-16">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-6 text-balance px-4">
-            Deja de perder tiempo y dinero con <span className="text-red-400">anuncios de mala calidad</span>
+          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-6 px-2 sm:px-3 md:px-4">
+            <div className="block">Deja de perder</div>
+            <div className="block">tiempo y dinero con</div>
+            <div className="block">
+              <span className="text-cyan-400 whitespace-nowrap">anuncios de mala calidad</span>
+            </div>
           </h2>
         </div>
 
@@ -58,10 +62,10 @@ export function AdComparisonSection() {
               {badAds.slice(0, 2).map((ad, index) => (
                 <Card
                   key={index}
-                  className="bg-[#0f1f3a]/40 border-red-500/20 p-3 sm:p-4 backdrop-blur-sm transition-all duration-300 hover:scale-105"
+                  className="bg-[#0f1f3a]/40 border-cyan-500/20 p-3 sm:p-4 backdrop-blur-sm transition-all duration-300 hover:scale-105"
                 >
                   <div className="aspect-video bg-gradient-to-br from-gray-700/50 to-gray-800/50 rounded-lg mb-2 sm:mb-3 flex items-center justify-center">
-                    <ThumbsDown className="w-6 h-6 sm:w-8 sm:h-8 text-red-400/70" />
+                    <ThumbsDown className="w-6 h-6 sm:w-8 sm:h-8 text-cyan-400/70" />
                   </div>
                   <h3 className="text-xs sm:text-sm font-semibold mb-2 text-gray-400">{ad.title}</h3>
                   <div className="flex items-center gap-2 sm:gap-3 text-xs text-gray-500">
@@ -109,9 +113,9 @@ export function AdComparisonSection() {
               </div>
 
               {/* Bad Ad Below Good One - Hidden on mobile */}
-              <Card className="hidden lg:block bg-[#0f1f3a]/40 border-red-500/20 p-3 sm:p-4 backdrop-blur-sm transition-all duration-300 hover:scale-105">
+              <Card className="hidden lg:block bg-[#0f1f3a]/40 border-cyan-500/20 p-3 sm:p-4 backdrop-blur-sm transition-all duration-300 hover:scale-105">
                 <div className="aspect-video bg-gradient-to-br from-gray-700/50 to-gray-800/50 rounded-lg mb-2 sm:mb-3 flex items-center justify-center">
-                  <ThumbsDown className="w-6 h-6 sm:w-8 sm:h-8 text-red-400/70" />
+                  <ThumbsDown className="w-6 h-6 sm:w-8 sm:h-8 text-cyan-400/70" />
                 </div>
                 <h3 className="text-xs sm:text-sm font-semibold mb-2 text-gray-400">{badAds[2].title}</h3>
                 <div className="flex items-center gap-2 sm:gap-3 text-xs text-gray-500">
@@ -132,10 +136,10 @@ export function AdComparisonSection() {
               {badAds.slice(3, 5).map((ad, index) => (
                 <Card
                   key={index}
-                  className="bg-[#0f1f3a]/40 border-red-500/20 p-3 sm:p-4 backdrop-blur-sm transition-all duration-300 hover:scale-105"
+                  className="bg-[#0f1f3a]/40 border-cyan-500/20 p-3 sm:p-4 backdrop-blur-sm transition-all duration-300 hover:scale-105"
                 >
                   <div className="aspect-video bg-gradient-to-br from-gray-700/50 to-gray-800/50 rounded-lg mb-2 sm:mb-3 flex items-center justify-center">
-                    <ThumbsDown className="w-6 h-6 sm:w-8 sm:h-8 text-red-400/70" />
+                    <ThumbsDown className="w-6 h-6 sm:w-8 sm:h-8 text-cyan-400/70" />
                   </div>
                   <h3 className="text-xs sm:text-sm font-semibold mb-2 text-gray-400">{ad.title}</h3>
                   <div className="flex items-center gap-2 sm:gap-3 text-xs text-gray-500">
