@@ -8,7 +8,7 @@ export function CtaSection() {
       style={{
         backgroundImage: 'url(/stand-out-the-crowd.jpg)',
         backgroundSize: 'cover',
-        backgroundPosition: 'center top',
+        backgroundPosition: 'center 20%',
         backgroundRepeat: 'no-repeat'
       }}
     >

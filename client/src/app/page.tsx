@@ -14,7 +14,7 @@ export default function Home() {
         <FeaturesSection />
         <SecurityEffectivenessSection />
         <AdComparisonSection />
-        <div className="h-32 sm:h-40 md:h-48 bg-gradient-to-b from-[#0a1628] via-[#0a1628]/80 to-transparent -mt-16 sm:-mt-20 md:-mt-24 relative z-0" />
+        <div className="h-32 sm:h-40 md:h-48 bg-gradient-to-b from-[#0a1628] via-[#0a1628]/80 to-[#061431] -mt-16 sm:-mt-20 md:-mt-24 relative z-0" />
         <CtaSection />
       </main> 
     </div>
