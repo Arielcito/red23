@@ -2,7 +2,6 @@
 
 import { useReferralsWithAutoSetup } from '@/lib/hooks/useReferralsWithAutoSetup'
 import { ReferralCodeDisplay } from './ReferralCodeDisplay'
-import { ReferralStats } from './ReferralStats'
 import { ReferralList } from './ReferralList'
 import { ReferralSetup } from './ReferralSetup'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -54,7 +53,7 @@ export function ReferralDashboard({ className }: ReferralDashboardProps) {
   // Error general (después de setup exitoso)
   if (error && !stats && !isLoading) {
     return (
-      <Card className={className}>
+      <Card className={cn("bg-gray-100 dark:bg-gray-800", className)}>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <AlertCircle className="h-5 w-5 text-red-500" />
@@ -114,7 +113,7 @@ export function ReferralDashboard({ className }: ReferralDashboardProps) {
       </div>
 
       {/* Información adicional */}
-      <Card>
+      <Card className="bg-gray-100 dark:bg-gray-800">
         <CardHeader>
           <CardTitle className="text-lg">¿Cómo funciona?</CardTitle>
         </CardHeader>

@@ -16,14 +16,14 @@ export function ReferralList({
 }: ReferralListProps) {
   if (isLoading) {
     return (
-      <Card className={className}>
+      <Card className={cn('bg-gray-100 dark:bg-gray-800', className)}>
         <CardHeader>
           <CardTitle>Mis Referencias</CardTitle>
           <CardDescription>Lista de usuarios que has referido</CardDescription>
         </CardHeader>
         <CardContent className="space-y-3">
-          {Array.from({ length: 3 }).map((_, i) => (
-            <div key={i} className="flex items-center justify-between p-3 border rounded-lg">
+          {Array.from({ length: 3 }, (_, i) => `skeleton-${i}`).map((id) => (
+            <div key={id} className="flex items-center justify-between p-3 border rounded-lg">
               <div className="flex items-center gap-3">
                 <Skeleton className="h-8 w-8 rounded-full" />
                 <div className="space-y-1">
@@ -73,7 +73,7 @@ export function ReferralList({
   }
 
   return (
-    <Card className={className}>
+    <Card className={cn('bg-gray-100 dark:bg-gray-800', className)}>
       <CardHeader>
         <CardTitle>Mis Referencias</CardTitle>
         <CardDescription>

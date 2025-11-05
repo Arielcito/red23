@@ -77,7 +77,7 @@ export function NewsSection({ featuredNews, recentNews }: NewsSectionProps) {
                 {featuredNews.map((article) => (
                   <Card 
                     key={article.id} 
-                    className="group overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-xl border-yellow-200 dark:border-yellow-800"
+                    className="group overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-xl border-yellow-200 dark:border-yellow-800 bg-gray-100 dark:bg-gray-800"
                   >
                     <CardContent className="p-0">
                       {/* Article Image */}
@@ -163,7 +163,7 @@ export function NewsSection({ featuredNews, recentNews }: NewsSectionProps) {
                 {recentNews.filter(article => !article.isFeatured).map((article) => (
                   <Card 
                     key={article.id} 
-                    className="group overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-lg"
+                    className="group overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-lg bg-gray-100 dark:bg-gray-800"
                   >
                     <CardContent className="p-0">
                       {/* Article Image */}

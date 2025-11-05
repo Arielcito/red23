@@ -87,7 +87,7 @@ export function ReferralCodeDisplay({
 
   return (
     <>
-      <Card className={cn('w-full', className)}>
+      <Card className={cn('w-full bg-gray-100 dark:bg-gray-800', className)}>
         <CardHeader className="text-center">
           <div className="flex items-center justify-between">
             <div className="flex-1">

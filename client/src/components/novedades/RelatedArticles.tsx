@@ -43,7 +43,7 @@ export function RelatedArticles({ articles }: RelatedArticlesProps) {
         {articles.map((article) => (
           <Card
             key={article.id}
-            className="group overflow-hidden transition-all duration-300 hover:scale-102 hover:shadow-lg cursor-pointer"
+            className="group overflow-hidden transition-all duration-300 hover:scale-102 hover:shadow-lg cursor-pointer bg-gray-100 dark:bg-gray-800"
             onClick={() => router.push(`/novedades/${article.id}`)}
           >
             <CardContent className="p-0">
