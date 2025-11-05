@@ -27,7 +27,7 @@ export default function HelpPage() {
       description: "Aprende a usar Red23",
       href: "/tutorials",
       icon: Smartphone,
-      color: "bg-green-600 hover:bg-green-700",
+      color: "bg-blue-500 hover:bg-blue-600",
     },
     {
       title: "Ver mis imágenes",

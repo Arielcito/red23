@@ -55,7 +55,7 @@ export function NotificationDropdown({ className }: NotificationDropdownProps) {
             className
           )}
         >
-          <Bell className="h-4 w-4 sm:h-5 sm:w-5" />
+          <Bell className={cn("h-4 w-4 sm:h-5 sm:w-5", className?.includes("text-white") && "text-white")} />
           <NotificationBadge count={unreadCount} />
         </Button>
       </DropdownMenuTrigger>
