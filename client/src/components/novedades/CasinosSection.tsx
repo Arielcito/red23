@@ -71,7 +71,7 @@ export function CasinosSection() {
                       {/* Casino Name with Logo */}
                       <TableCell className="font-medium">
                         <div className="flex items-center gap-3">
-                          <div className="relative w-8 h-8 rounded bg-muted flex items-center justify-center overflow-hidden">
+                          <div className="relative w-8 h-8 rounded bg-gray-800 flex items-center justify-center overflow-hidden">
                             {casino.logo ? (
                               <Image
                                 src={casino.logo}
@@ -84,12 +84,12 @@ export function CasinosSection() {
                                   target.style.display = 'none'
                                   const parent = target.parentElement
                                   if (parent) {
-                                    parent.innerHTML = `<span class="text-xs font-bold text-primary">${casino.casinoName.charAt(0)}</span>`
+                                    parent.innerHTML = `<span class="text-xs font-bold text-white">${casino.casinoName.charAt(0)}</span>`
                                   }
                                 }}
                               />
                             ) : (
-                              <span className="text-xs font-bold text-primary">
+                              <span className="text-xs font-bold text-white">
                                 {casino.casinoName.charAt(0)}
                               </span>
                             )}

@@ -26,7 +26,7 @@ export default function Dashboard() {
   const { winners } = useWinnersApi()
   const { topThree } = useCasinosData()
   const { nextDailyPrize, nextMonthlyPrize } = useRewardsData()
-  const { featuredPaths } = useLearningPaths()
+  const { learningPaths, featuredPaths } = useLearningPaths()
   const { needsAcceptance, isAccepting, acceptTerms } = useTermsAcceptance()
 
   // Usar el primer ganador de la API o un fallback
@@ -84,7 +84,7 @@ export default function Dashboard() {
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4 lg:gap-6">
             {quickActions.map((action) => (
               <Link key={action.href} href={action.href}>
-                <Card className="hover:shadow-md transition-shadow cursor-pointer h-full">
+                <Card className="hover:shadow-md transition-shadow cursor-pointer h-full bg-gray-100 dark:bg-gray-800">
                   <CardHeader className="pb-2 sm:pb-3 px-4 sm:px-6 text-center">
                     <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-lg ${action.color} flex items-center justify-center mb-2 mx-auto`}>
                       <action.icon className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
@@ -188,10 +188,10 @@ export default function Dashboard() {
           </div>
           
           <LearningPathsSection 
-            learningPaths={featuredPaths}
+            learningPaths={featuredPaths.length > 0 ? featuredPaths : learningPaths}
             showHeader={false}
-            maxPaths={2}
-            gridCols={2}
+            maxPaths={3}
+            gridCols={3}
             className="py-0"
           />
         </div>

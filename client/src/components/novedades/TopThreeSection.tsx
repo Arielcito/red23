@@ -65,11 +65,11 @@ export function TopThreeSection({ topThree }: TopThreeSectionProps) {
               </div>
 
               <Card
-                className="relative overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-xl"
+                className="relative overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-xl bg-gray-100 dark:bg-gray-800"
               >
                 <CardContent className="p-0">
                 {/* Casino Logo */}
-                <div className="relative aspect-[3/2] w-full bg-white dark:bg-gradient-to-br dark:from-gray-800 dark:to-gray-900 flex items-center justify-center border border-gray-200 dark:border-gray-700">
+                <div className="relative aspect-[3/2] w-full bg-gray-800 flex items-center justify-center border border-gray-700">
                   {casino.logo ? (
                     <div className="relative w-full h-full p-4">
                       <Image
@@ -82,13 +82,13 @@ export function TopThreeSection({ topThree }: TopThreeSectionProps) {
                           target.style.display = 'none'
                           const parent = target.parentElement?.parentElement
                           if (parent) {
-                            parent.innerHTML = `<span class="text-4xl font-bold text-muted-foreground">${casino.casinoName.charAt(0)}</span>`
+                            parent.innerHTML = `<span class="text-4xl font-bold text-white">${casino.casinoName.charAt(0)}</span>`
                           }
                         }}
                       />
                     </div>
                   ) : (
-                    <span className="text-4xl font-bold text-muted-foreground">
+                    <span className="text-4xl font-bold text-white">
                       {casino.casinoName.charAt(0)}
                     </span>
                   )}

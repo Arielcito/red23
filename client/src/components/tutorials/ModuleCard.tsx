@@ -49,7 +49,7 @@ export function ModuleCard({
   }
 
   return (
-    <Card className="border border-solid border-gray-200 hover:border-primary-300 transition-colors">
+    <Card className="border border-solid border-gray-200 hover:border-primary-300 transition-colors bg-gray-50 dark:bg-transparent">
       <CardHeader 
         className="cursor-pointer p-4 sm:p-6"
         onClick={toggleExpand}

@@ -10,7 +10,6 @@ import { Progress } from "@/components/ui/progress"
 import { ArrowLeft, Target, Award, TrendingUp, BookOpen, Video, Clock, Users, Star } from "lucide-react"
 import { useLearningPath } from "@/lib/hooks/useLearningPath"
 import { ModuleCard } from "@/components/tutorials/ModuleCard"
-import { LearningPathBreadcrumb } from "@/components/tutorials/LearningPathBreadcrumb"
 import { cn } from "@/lib/utils"
 import { LEVEL_COLORS } from "@/lib/types/tutorials"
 
@@ -116,7 +115,7 @@ export default function LearningPathPage() {
       <AppLayout title="Error" subtitle="Problema cargando la ruta">
         <div className="p-4 sm:p-6">
           <div className="max-w-4xl mx-auto">
-            <Card>
+            <Card className="bg-gray-100">
               <CardContent className="p-4 sm:p-6">
                 <div className="text-center space-y-3 sm:space-y-4">
                   <Target className="h-10 w-10 sm:h-12 sm:w-12 text-muted-foreground mx-auto" />
@@ -158,30 +157,31 @@ export default function LearningPathPage() {
     >
       <div className="p-4 sm:p-6">
         <div className="max-w-4xl mx-auto space-y-4 sm:space-y-6">
-          {/* Navigation */}
-          <LearningPathBreadcrumb pathTitle={learningPath.title} />
 
           {/* Header Card */}
-          <Card className="border-2 border-solid border-primary-200 bg-gradient-to-r">
+          <Card className="border-2 border-solid border-primary-200 bg-gray-100">
             <CardContent className="p-4 sm:p-6">
-              <div className="flex flex-col sm:flex-row items-start gap-3 sm:gap-4">
-                <div className="text-3xl sm:text-4xl flex-shrink-0">
-                  {learningPath.icon}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex flex-wrap items-center gap-2 sm:gap-3 mb-2">
-                    <h1 className="text-lg sm:text-xl md:text-2xl font-bold break-words">{learningPath.title}</h1>
-                    <Badge variant="outline" className={cn("text-xs shrink-0", LEVEL_COLORS[learningPath.level])}>
-                      <LevelIcon className="h-3 w-3 mr-1" />
-                      {learningPath.level}
-                    </Badge>
-                    {learningPath.isFeatured && (
-                      <Badge variant="outline" className="text-xs bg-yellow-100 text-yellow-800 border-yellow-200 shrink-0">
-                        <Star className="h-3 w-3 mr-1 fill-current" />
-                        Destacada
-                      </Badge>
-                    )}
+              <div className="flex-1 min-w-0">
+                <div className="flex items-start gap-2 sm:gap-3 mb-2">
+                  <div className="text-xl sm:text-2xl md:text-3xl flex-shrink-0">
+                    {learningPath.icon}
                   </div>
+                  <div className="flex-1 min-w-0">
+                    <h1 className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold break-words mb-2">{learningPath.title}</h1>
+                    <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+                      <Badge variant="outline" className={cn("text-xs shrink-0", LEVEL_COLORS[learningPath.level])}>
+                        <LevelIcon className="h-3 w-3 mr-1" />
+                        {learningPath.level}
+                      </Badge>
+                      {learningPath.isFeatured && (
+                        <Badge variant="outline" className="text-xs bg-yellow-100 text-yellow-800 border-yellow-200 shrink-0">
+                          <Star className="h-3 w-3 mr-1 fill-current" />
+                          Destacada
+                        </Badge>
+                      )}
+                    </div>
+                  </div>
+                </div>
                   <p className="text-sm sm:text-base text-muted-foreground mb-3 sm:mb-4 break-words">
                     {learningPath.description}
                   </p>
@@ -204,12 +204,11 @@ export default function LearningPathPage() {
                     </div>
                   </div>
                 </div>
-              </div>
             </CardContent>
           </Card>
 
           {/* Progress and Actions */}
-          <Card>
+          <Card className="bg-gray-100">
             <CardContent className="p-4 sm:p-6">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0 mb-4">
                 <div>
@@ -249,7 +248,7 @@ export default function LearningPathPage() {
             </div>
 
             {learningPath.modules.length === 0 ? (
-              <Card>
+              <Card className="bg-gray-100">
                 <CardContent className="p-6 sm:p-12">
                   <div className="text-center space-y-3 sm:space-y-4">
                     <BookOpen className="h-10 w-10 sm:h-12 sm:w-12 text-muted-foreground mx-auto" />
