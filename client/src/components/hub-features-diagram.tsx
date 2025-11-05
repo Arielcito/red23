@@ -123,9 +123,9 @@ export default function HubFeaturesDiagram({
                       duration: 0.3,
                       ease: [0.43, 0.13, 0.23, 0.96]
                     }}
-                    className="absolute left-1/2 -translate-x-1/2 top-full mt-4 px-4 py-2 bg-[#0d1a2d]/95 backdrop-blur-sm rounded-lg shadow-[0_0_20px_rgba(10,108,206,0.3)] whitespace-nowrap z-10"
+                    className="absolute left-1/2 -translate-x-1/2 top-full mt-2 md:mt-4 px-2 py-1.5 md:px-4 md:py-2 bg-[#0d1a2d]/95 backdrop-blur-sm rounded-lg shadow-[0_0_20px_rgba(10,108,206,0.3)] z-10 max-w-[140px] md:max-w-none text-center"
                   >
-                    <div className="text-sm text-gray-200 font-medium">
+                    <div className="text-xs md:text-sm text-gray-200 font-medium leading-tight">
                       Premios Diarios y Mensuales
                     </div>
                   </motion.div>
@@ -166,9 +166,9 @@ export default function HubFeaturesDiagram({
                       duration: 0.3,
                       ease: [0.43, 0.13, 0.23, 0.96]
                     }}
-                    className="absolute left-1/2 -translate-x-1/2 top-full mt-4 px-4 py-2 bg-[#0d1a2d]/95 backdrop-blur-sm rounded-lg shadow-[0_0_20px_rgba(10,108,206,0.3)] whitespace-nowrap z-10"
+                    className="absolute left-1/2 -translate-x-1/2 top-full mt-2 md:mt-4 px-2 py-1.5 md:px-4 md:py-2 bg-[#0d1a2d]/95 backdrop-blur-sm rounded-lg shadow-[0_0_20px_rgba(10,108,206,0.3)] z-10 max-w-[100px] md:max-w-none text-center"
                   >
-                    <div className="text-sm text-gray-200 font-medium">
+                    <div className="text-xs md:text-sm text-gray-200 font-medium leading-tight">
                       {centerLabel}
                     </div>
                   </motion.div>
@@ -208,9 +208,9 @@ export default function HubFeaturesDiagram({
                       duration: 0.3,
                       ease: [0.43, 0.13, 0.23, 0.96]
                     }}
-                    className="absolute left-1/2 -translate-x-1/2 top-full mt-4 px-4 py-2 bg-[#0d1a2d]/95 backdrop-blur-sm rounded-lg shadow-[0_0_20px_rgba(10,108,206,0.3)] whitespace-nowrap z-10"
+                    className="absolute left-1/2 -translate-x-1/2 top-full mt-2 md:mt-4 px-2 py-1.5 md:px-4 md:py-2 bg-[#0d1a2d]/95 backdrop-blur-sm rounded-lg shadow-[0_0_20px_rgba(10,108,206,0.3)] z-10 max-w-[140px] md:max-w-none text-center"
                   >
-                    <div className="text-sm text-gray-200 font-medium">
+                    <div className="text-xs md:text-sm text-gray-200 font-medium leading-tight">
                       Generación de Imágenes con IA
                     </div>
                   </motion.div>
@@ -253,9 +253,9 @@ export default function HubFeaturesDiagram({
                       duration: 0.3,
                       ease: [0.43, 0.13, 0.23, 0.96]
                     }}
-                    className="absolute left-1/2 -translate-x-1/2 top-full mt-4 px-4 py-2 bg-[#0d1a2d]/95 backdrop-blur-sm rounded-lg shadow-[0_0_20px_rgba(10,108,206,0.3)] whitespace-nowrap z-10"
+                    className="absolute left-1/2 -translate-x-1/2 top-full mt-2 md:mt-4 px-2 py-1.5 md:px-4 md:py-2 bg-[#0d1a2d]/95 backdrop-blur-sm rounded-lg shadow-[0_0_20px_rgba(10,108,206,0.3)] z-10 max-w-[120px] md:max-w-none text-center"
                   >
-                    <div className="text-sm text-gray-200 font-medium">
+                    <div className="text-xs md:text-sm text-gray-200 font-medium leading-tight">
                       Portal de Noticias
                     </div>
                   </motion.div>
@@ -295,9 +295,9 @@ export default function HubFeaturesDiagram({
                       duration: 0.3,
                       ease: [0.43, 0.13, 0.23, 0.96]
                     }}
-                    className="absolute left-1/2 -translate-x-1/2 top-full mt-4 px-4 py-2 bg-[#0d1a2d]/95 backdrop-blur-sm rounded-lg shadow-[0_0_20px_rgba(10,108,206,0.3)] whitespace-nowrap z-10"
+                    className="absolute left-1/2 -translate-x-1/2 top-full mt-2 md:mt-4 px-2 py-1.5 md:px-4 md:py-2 bg-[#0d1a2d]/95 backdrop-blur-sm rounded-lg shadow-[0_0_20px_rgba(10,108,206,0.3)] z-10 max-w-[100px] md:max-w-none text-center"
                   >
-                    <div className="text-sm text-gray-200 font-medium">
+                    <div className="text-xs md:text-sm text-gray-200 font-medium leading-tight">
                       Tutoriales
                     </div>
                   </motion.div>
@@ -337,9 +337,9 @@ export default function HubFeaturesDiagram({
                       duration: 0.3,
                       ease: [0.43, 0.13, 0.23, 0.96]
                     }}
-                    className="absolute left-1/2 -translate-x-1/2 top-full mt-4 px-4 py-2 bg-[#0d1a2d]/95 backdrop-blur-sm rounded-lg shadow-[0_0_20px_rgba(10,108,206,0.3)] whitespace-nowrap z-10"
+                    className="absolute left-1/2 -translate-x-1/2 top-full mt-2 md:mt-4 px-2 py-1.5 md:px-4 md:py-2 bg-[#0d1a2d]/95 backdrop-blur-sm rounded-lg shadow-[0_0_20px_rgba(10,108,206,0.3)] z-10 max-w-[100px] md:max-w-none text-center"
                   >
-                    <div className="text-sm text-gray-200 font-medium">
+                    <div className="text-xs md:text-sm text-gray-200 font-medium leading-tight">
                       Referidos
                     </div>
                   </motion.div>
