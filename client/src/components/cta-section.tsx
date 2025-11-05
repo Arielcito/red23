@@ -4,17 +4,14 @@ import { ArrowRight } from "lucide-react"
 export function CtaSection() {
   return (
     <section
-      className="min-h-[60vh] sm:min-h-[65vh] md:min-h-[70vh] lg:min-h-[75vh] flex items-start justify-center pt-16 sm:pt-20 md:pt-24 lg:pt-28 pb-16 sm:pb-20 md:pb-24 lg:pb-28 px-4 sm:px-6 relative overflow-hidden"
+      className="min-h-[35vh] sm:min-h-[65vh] md:min-h-[70vh] lg:min-h-[75vh] flex items-start justify-center relative overflow-hidden bg-[center_20%] md:bg-[center_50%] bg-cover bg-no-repeat"
       style={{
         backgroundImage: 'url(/stand-out-the-crowd.jpg)',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center 20%',
-        backgroundRepeat: 'no-repeat'
       }}
     >
       <div className="absolute inset-0 bg-gradient-to-b from-[#0a1628]/30 via-[#0a1628]/60 via-50% to-[#0a1628] to-100%" />
 
-      <div className="container mx-auto text-center relative z-10">
+      <div className="container text-center relative z-10 w-full">
         <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mb-4 sm:mb-6 text-balance drop-shadow-2xl px-4">
           Empezá hoy y comenzá a <br />
           <span className="text-cyan-400">diferenciarte de tu competencia</span>

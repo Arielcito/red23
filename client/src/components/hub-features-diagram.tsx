@@ -83,11 +83,11 @@ export default function HubFeaturesDiagram({
           {/* Línea vertical hacia abajo desde Logo */}
           <div className="electric-line-vertical absolute left-1/2 -translate-x-1/2 top-[120px] md:top-[192px] w-[2px] h-[70px] md:h-[100px] shadow-[0_0_10px_rgba(55,171,239,0.5)]" />
           {/* Línea horizontal inferior izquierda (Centro - Noticias) */}
-          <div className="electric-line-horizontal absolute top-[225px] md:top-[348px] left-[calc(50%-60px)] md:left-[calc(50%-85px)] w-[50px] md:w-[75px] h-[2px] shadow-[0_0_10px_rgba(55,171,239,0.5)]" />
+          <div className="electric-line-horizontal absolute top-[254px] md:top-[396px] left-[calc(50%-60px)] md:left-[calc(50%-85px)] w-[50px] md:w-[75px] h-[2px] shadow-[0_0_10px_rgba(55,171,239,0.5)]" />
           {/* Línea vertical inferior centro (Centro - Tutoriales) */}
-          <div className="electric-line-vertical absolute top-[190px] md:top-[292px] left-1/2 -translate-x-1/2 w-[2px] h-[35px] md:h-[56px] shadow-[0_0_10px_rgba(55,171,239,0.5)]" />
+          <div className="electric-line-vertical absolute top-[254px] md:top-[396px] left-1/2 -translate-x-1/2 w-[2px] h-[35px] md:h-[56px] shadow-[0_0_10px_rgba(55,171,239,0.5)]" />
           {/* Línea horizontal inferior derecha (Centro - Referidos) */}
-          <div className="electric-line-horizontal absolute top-[225px] md:top-[348px] right-[calc(50%-60px)] md:right-[calc(50%-85px)] w-[50px] md:w-[75px] h-[2px] shadow-[0_0_10px_rgba(55,171,239,0.5)]" />
+          <div className="electric-line-horizontal absolute top-[254px] md:top-[396px] right-[calc(50%-60px)] md:right-[calc(50%-85px)] w-[50px] md:w-[75px] h-[2px] shadow-[0_0_10px_rgba(55,171,239,0.5)]" />
 
           {/* Fila superior: Premios - Logo - IA */}
           <div className="flex items-center justify-center gap-8 md:gap-16">
