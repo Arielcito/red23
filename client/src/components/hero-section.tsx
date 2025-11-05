@@ -10,7 +10,7 @@ export function HeroSection() {
 
   return (
     <section
-      className="relative pt-22 sm:pt-16 sm:pb-4 pb-12 px-4 sm:px-6 overflow-hidden flex items-start"
+      className="relative pt-32 sm:pt-16 sm:pb-4 pb-12 px-4 sm:px-6 overflow-hidden flex items-start"
       id="home"
     >
       {/* Background particles */}
@@ -27,7 +27,7 @@ export function HeroSection() {
         <div className="flex flex-col items-center text-center space-y-2 sm:space-y-8">
 
           {/* Text content */}
-          <div className="space-y-3 sm:space-y-4 max-w-3xl">
+          <div className="space-y-3 sm:space-y-4 max-w-3xl pb-3">
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight text-balance">
               Escala tu negocio de forma <span className="text-cyan-400">predecible</span>
             </h1>
