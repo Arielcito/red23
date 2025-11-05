@@ -1,21 +1,18 @@
 import { Button } from "@/components/ui/button"
 import { ArrowRight } from "lucide-react"
-import { MathBackgroundDecoration } from "@/components/math-background-decoration"
 
 export function CtaSection() {
   return (
     <section
-      className="py-16 sm:py-20 md:py-24 lg:py-28 px-4 sm:px-6 relative overflow-hidden"
+      className="min-h-[70vh] sm:min-h-[80vh] md:min-h-[85vh] lg:min-h-[90vh] flex items-start justify-center pt-16 sm:pt-20 md:pt-24 lg:pt-28 pb-16 sm:pb-20 md:pb-24 lg:pb-28 px-4 sm:px-6 relative overflow-hidden"
       style={{
-        backgroundImage: 'url(/stand-out-the-crowd.png)',
+        backgroundImage: 'url(/stand-out-the-crowd.jpg)',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat'
       }}
     >
       <div className="absolute inset-0 bg-gradient-to-b from-[#0a1628]/30 via-[#0a1628]/60 via-50% to-[#0a1628] to-100%" />
-
-      <MathBackgroundDecoration />
 
       <div className="container mx-auto text-center relative z-10">
         <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mb-4 sm:mb-6 text-balance drop-shadow-2xl px-4">

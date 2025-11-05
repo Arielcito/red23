@@ -10,7 +10,7 @@ export function HeroSection() {
 
   return (
     <section
-      className="relative pt-22 sm:pt-16 sm:pb-4 px-4 sm:px-6 overflow-hidden flex items-start"
+      className="relative pt-22 sm:pt-16 sm:pb-4 pb-12 px-4 sm:px-6 overflow-hidden flex items-start"
       id="home"
     >
       {/* Background particles */}

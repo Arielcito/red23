@@ -22,9 +22,9 @@ export function FeaturesSection() {
       <div className="container mx-auto relative z-10">
         <div className="text-center mb-8 sm:mb-10">
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4">
-            <span className="text-cyan-400">IMPACTANTE</span>
+            <span className="text-cyan-400">BENEFICIOS</span>
           </h2>
-          <p className="text-gray-400 text-base sm:text-lg">Sistema 100% eficaz y seguro</p>
+          <p className="text-gray-400 text-base sm:text-lg">Estas son las herramientas que ofrecemos</p>
         </div>
 
         <HubFeaturesDiagram
