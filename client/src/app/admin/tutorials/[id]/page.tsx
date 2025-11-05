@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
+import { useRouter, useParams } from "next/navigation"
 import { AppLayout } from "@/components/layout/AppLayout"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -37,8 +37,9 @@ import {
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 
-export default function LearningPathDetailPage({ params }: { params: { id: string } }) {
+export default function LearningPathDetailPage() {
   const router = useRouter()
+  const params = useParams<{ id: string }>()
   const {
     learningPaths,
     isLoading,
