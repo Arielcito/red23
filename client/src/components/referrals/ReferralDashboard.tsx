@@ -53,7 +53,7 @@ export function ReferralDashboard({ className }: ReferralDashboardProps) {
   // Error general (después de setup exitoso)
   if (error && !stats && !isLoading) {
     return (
-      <Card className={cn("bg-gray-100 dark:bg-gray-800", className)}>
+      <Card className={cn('bg-gray-100 dark:bg-card', className)}>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <AlertCircle className="h-5 w-5 text-red-500" />
@@ -113,7 +113,7 @@ export function ReferralDashboard({ className }: ReferralDashboardProps) {
       </div>
 
       {/* Información adicional */}
-      <Card className="bg-gray-100 dark:bg-gray-800">
+      <Card className="bg-gray-100 dark:bg-card">
         <CardHeader>
           <CardTitle className="text-lg">¿Cómo funciona?</CardTitle>
         </CardHeader>

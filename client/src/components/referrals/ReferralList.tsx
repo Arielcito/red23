@@ -16,7 +16,7 @@ export function ReferralList({
 }: ReferralListProps) {
   if (isLoading) {
     return (
-      <Card className={cn('bg-gray-100 dark:bg-gray-800', className)}>
+      <Card className={cn('bg-gray-100 dark:bg-card', className)}>
         <CardHeader>
           <CardTitle>Mis Referencias</CardTitle>
           <CardDescription>Lista de usuarios que has referido</CardDescription>
@@ -73,7 +73,7 @@ export function ReferralList({
   }
 
   return (
-    <Card className={cn('bg-gray-100 dark:bg-gray-800', className)}>
+    <Card className={cn('bg-gray-100 dark:bg-card', className)}>
       <CardHeader>
         <CardTitle>Mis Referencias</CardTitle>
         <CardDescription>

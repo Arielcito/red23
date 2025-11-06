@@ -84,23 +84,6 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
-
-  /* Winner Banner Colors */
-  --color-winner-card-bg-start: var(--winner-card-bg-start);
-  --color-winner-card-bg-end: var(--winner-card-bg-end);
-  --color-winner-card-border: var(--winner-card-border);
-  --color-winner-avatar-start: var(--winner-avatar-start);
-  --color-winner-avatar-end: var(--winner-avatar-end);
-  --color-winner-crown-bg: var(--winner-crown-bg);
-  --color-winner-crown-text: var(--winner-crown-text);
-  --color-winner-icon: var(--winner-icon);
-  --color-winner-badge-bg: var(--winner-badge-bg);
-  --color-winner-badge-text: var(--winner-badge-text);
-  --color-winner-badge-border: var(--winner-badge-border);
-  --color-winner-title: var(--winner-title);
-  --color-winner-inner-bg: var(--winner-inner-bg);
-  --color-winner-text: var(--winner-text);
-  --color-winner-secondary-text: var(--winner-secondary-text);
 }
 
 :root {
@@ -141,23 +124,6 @@
   --sidebar-accent-foreground: oklch(0.2 0 0);
   --sidebar-border: oklch(0.95 0 0);
   --sidebar-ring: oklch(0.85 0 0);
-
-  /* Winner Banner Colors - Light Mode (Tailwind gray values) */
-  --winner-card-bg-start: #f3f4f6;
-  --winner-card-bg-end: #e5e7eb;
-  --winner-card-border: #d1d5db;
-  --winner-avatar-start: #4b5563;
-  --winner-avatar-end: #374151;
-  --winner-crown-bg: #6b7280;
-  --winner-crown-text: #111827;
-  --winner-icon: #4b5563;
-  --winner-badge-bg: #e5e7eb;
-  --winner-badge-text: #1f2937;
-  --winner-badge-border: #9ca3af;
-  --winner-title: #111827;
-  --winner-inner-bg: rgba(255, 255, 255, 0.5);
-  --winner-text: #4b5563;
-  --winner-secondary-text: #374151;
 }
 
 .dark {
@@ -197,23 +163,6 @@
   --sidebar-accent-foreground: oklch(0.95 0 0);
   --sidebar-border: oklch(0.3 0 0);
   --sidebar-ring: oklch(0.556 0 0);
-
-  /* Winner Banner Colors - Dark Mode (Tailwind gray values) */
-  --winner-card-bg-start: rgba(31, 41, 55, 0.4);
-  --winner-card-bg-end: rgba(55, 65, 81, 0.4);
-  --winner-card-border: #4b5563;
-  --winner-avatar-start: #4b5563;
-  --winner-avatar-end: #374151;
-  --winner-crown-bg: #6b7280;
-  --winner-crown-text: #111827;
-  --winner-icon: #4b5563;
-  --winner-badge-bg: rgba(55, 65, 81, 0.4);
-  --winner-badge-text: #d1d5db;
-  --winner-badge-border: #6b7280;
-  --winner-title: #ffffff;
-  --winner-inner-bg: rgba(31, 41, 55, 0.5);
-  --winner-text: #4b5563;
-  --winner-secondary-text: #d1d5db;
 }
 
 @layer base {
