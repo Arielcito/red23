@@ -65,11 +65,11 @@ export function TopThreeSection({ topThree }: TopThreeSectionProps) {
               </div>
 
               <Card
-                className="relative overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-xl bg-gray-100 dark:bg-gray-800"
+                className="relative overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-xl bg-gray-100 dark:bg-gray-950"
               >
                 <CardContent className="p-0">
                 {/* Casino Logo */}
-                <div className="relative aspect-[3/2] w-full bg-gray-800 flex items-center justify-center border border-gray-700">
+                <div className="relative aspect-[3/2] w-full bg-gray-800 dark:bg-gray-950 flex items-center justify-center border border-gray-700 dark:border-gray-800">
                   {casino.logo ? (
                     <div className="relative w-full h-full p-4">
                       <Image

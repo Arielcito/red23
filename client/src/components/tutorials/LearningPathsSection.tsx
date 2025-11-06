@@ -37,25 +37,25 @@ const getLevelColorClasses = (colorScheme: string) => {
     case 'primary':
       return {
         badge: 'text-primary-600 dark:text-primary-400 border-primary-300 dark:border-primary-700',
-        border: 'border-primary-200 dark:border-primary-800 hover:border-primary-400 dark:hover:border-primary-600',
+        border: 'border-primary-200 dark:border-white hover:border-primary-400 dark:hover:border-white',
         icon: 'text-primary-500 dark:text-primary-400'
       }
     case 'secondary':
       return {
         badge: 'text-secondary-600 dark:text-secondary-400 border-secondary-300 dark:border-secondary-700',
-        border: 'border-secondary-200 dark:border-secondary-800 hover:border-secondary-400 dark:hover:border-secondary-600',
+        border: 'border-secondary-200 dark:border-white hover:border-secondary-400 dark:hover:border-white',
         icon: 'text-secondary-500 dark:text-secondary-400'
       }
     case 'tertiary':
       return {
         badge: 'text-tertiary-600 dark:text-tertiary-400 border-tertiary-300 dark:border-tertiary-700',
-        border: 'border-tertiary-200 dark:border-tertiary-800 hover:border-tertiary-400 dark:hover:border-tertiary-600',
+        border: 'border-tertiary-200 dark:border-white hover:border-tertiary-400 dark:hover:border-white',
         icon: 'text-tertiary-500 dark:text-tertiary-400'
       }
     default:
       return {
         badge: 'text-primary-600 dark:text-primary-400 border-primary-300 dark:border-primary-700',
-        border: 'border-primary-200 dark:border-primary-800 hover:border-primary-400 dark:hover:border-primary-600',
+        border: 'border-primary-200 dark:border-white hover:border-primary-400 dark:hover:border-white',
         icon: 'text-primary-500 dark:text-primary-400'
       }
   }
