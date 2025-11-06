@@ -64,17 +64,17 @@ export function NavigationHeader({
 
 
   return (
-    <header className="sticky top-0 z-50 bg-gradient-to-r from-blue-500 to-blue-600 dark:bg-card dark:border-b border-b border-blue-400 dark:border-border px-3 sm:px-4 md:px-6 py-2 sm:py-3 md:py-4">
+    <header className="sticky top-0 z-50 bg-gradient-to-r from-blue-500 to-blue-600 dark:bg-gradient-to-br dark:from-primary/5 dark:to-primary/20 border-b border-blue-400 dark:border-gray-700 px-3 sm:px-4 md:px-6 py-2 sm:py-3 md:py-4">
       <div className="flex flex-wrap items-center gap-2 sm:gap-3 lg:gap-4">
         <div className="flex items-center gap-2 sm:gap-3 lg:gap-4 min-w-0 flex-1">
-          <SidebarTrigger className="h-9 w-9 sm:h-10 sm:w-10 text-white dark:text-foreground hover:bg-blue-600/80 dark:hover:bg-accent" />
+          <SidebarTrigger className="h-9 w-9 sm:h-10 sm:w-10" />
 
           {showBackButton && (
             <Link href={backHref}>
               <Button
                 variant="ghost"
                 size="sm"
-                className="text-xs sm:text-sm h-9 w-9 sm:h-10 sm:w-auto px-2 sm:px-3 touch-manipulation flex-shrink-0 text-white dark:text-foreground hover:bg-blue-600/80 dark:hover:bg-accent"
+                className="text-xs sm:text-sm h-9 w-9 sm:h-10 sm:w-auto px-2 sm:px-3 touch-manipulation flex-shrink-0"
               >
                 <ArrowLeft className="h-4 w-4 sm:h-4 sm:w-4" />
                 <span className="hidden sm:inline ml-1 sm:ml-2">Volver</span>
@@ -94,7 +94,7 @@ export function NavigationHeader({
 
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-2 mb-1">
-              <h1 className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold text-white dark:text-foreground truncate">
+              <h1 className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold text-white dark:text-white truncate">
                 {title}
               </h1>
               {badge && (
@@ -104,7 +104,7 @@ export function NavigationHeader({
               )}
             </div>
             {subtitle && (
-              <p className="text-xs sm:text-sm md:text-base text-white dark:text-muted-foreground truncate sm:block">
+              <p className="text-xs sm:text-sm md:text-base text-white dark:text-gray-300 truncate sm:block">
                 {subtitle}
               </p>
             )}
@@ -114,18 +114,18 @@ export function NavigationHeader({
         <div className="flex items-center gap-1 sm:gap-2 md:gap-3 lg:gap-4 ml-auto flex-shrink-0">
 
           <div className="hidden sm:block">
-            <ThemeToggle className="text-white dark:text-foreground hover:bg-blue-600/80 dark:hover:bg-accent border-blue-400 dark:border-border" />
+            <ThemeToggle />
           </div>
 
           {isAuthenticated && (
             <>
-              <NotificationDropdown className="text-white dark:text-foreground hover:bg-blue-600/80 dark:hover:bg-accent" />
+              <NotificationDropdown />
 
               <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
                 variant="ghost"
-                className="relative h-9 w-9 sm:h-10 sm:w-10 rounded-full touch-manipulation p-0 text-white dark:text-foreground hover:bg-blue-600/80 dark:hover:bg-accent"
+                className="relative h-9 w-9 sm:h-10 sm:w-10 rounded-full touch-manipulation p-0"
               >
                 <Avatar className="h-8 w-8 sm:h-9 sm:w-9">
                   <AvatarImage src={user?.imageUrl} alt={user?.fullName || "Usuario"} />
