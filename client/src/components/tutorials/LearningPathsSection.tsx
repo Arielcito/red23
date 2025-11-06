@@ -139,15 +139,17 @@ export function LearningPathsSection({
         )}
 
         <div className={cn("grid max-w-7xl mx-auto", getGridClasses(), getGapClasses())}>
-          {displayedPaths.map((path) => {
+          {displayedPaths.map((path, index) => {
             const IconComponent = getLevelIcon(path.level)
             const colorClasses = getLevelColorClasses(path.colorScheme)
+            const isFirstCard = index === 0
             
             return (
               <Link key={path.id} href={path.href}>
                 <Card className={cn(
                   "p-4 border border-solid transition-colors cursor-pointer h-full hover:shadow-md hover:shadow-primary/10 dark:hover:shadow-primary/20",
-                  colorClasses.border
+                  colorClasses.border,
+                  isFirstCard && "dark:border-white"
                 )}>
                   <div className="flex items-center justify-between mb-3">
                     <Badge variant="outline" className={colorClasses.badge}>
