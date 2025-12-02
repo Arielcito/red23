@@ -32,12 +32,17 @@ export function HeroSection() {
           <div className="w-full max-w-4xl">
             <div className="relative rounded-2xl overflow-hidden bg-gradient-to-b from-slate-900 via-slate-900 to-purple-900/50 border border-slate-800 shadow-2xl shadow-purple-500/20">
               <div className="relative aspect-video">
-                <iframe
-                  src="https://drive.google.com/file/d/1v_mAiUiBn5omwYMB681DnSlBM7S7yqzh/preview"
-                  className="absolute inset-0 w-full h-full"
-                  allow="autoplay"
-                  allowFullScreen
-                />
+                <video
+                  className="absolute inset-0 w-full h-full object-cover"
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  poster="/vsl-poster.jpg"
+                >
+                  <source src="/vsl-optimized.mp4" type="video/mp4" />
+                  Your browser does not support the video tag.
+                </video>
               </div>
             </div>
           </div>

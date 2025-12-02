@@ -1,7 +1,11 @@
 .cursor/mcp.json
 
-# Videos grandes
+# Videos grandes (excepto optimizados)
 client/public/*.mp4
 client/public/*.mov
 client/public/*.avi
 client/public/*.webm
+
+# Permitir videos optimizados
+!client/public/vsl-optimized.mp4
+!client/public/vsl-poster.jpg
