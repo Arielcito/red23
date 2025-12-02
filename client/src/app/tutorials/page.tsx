@@ -42,7 +42,7 @@ export default function TutorialsPage() {
       <LeadFormModal open={isOpen} onOpenChange={handleClose} />
       <AppLayout
         title="Rutas de Aprendizaje"
-        subtitle="Aprende marketing digital con nuestros cursos"
+        subtitle="Cursos de Marketing Digital"
         badge={{
           text: "Nuevo",
           variant: "default",

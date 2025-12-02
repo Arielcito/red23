@@ -41,7 +41,6 @@ export function AppLayout({
             showBackButton={showBackButton}
             backHref={backHref}
             showLogo={false}
-            badge={badge}
           />
         )}
         <main className={cn("flex flex-col flex-1 min-w-0 min-h-0 w-full overflow-x-hidden", className)}>

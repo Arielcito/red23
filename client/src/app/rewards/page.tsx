@@ -21,7 +21,7 @@ export default function RewardsPage() {
   return (
     <AppLayout
       title="Premios y Sorteos"
-      subtitle="Participa en nuestros sorteos diarios y mensuales"
+      subtitle="Gana premios increibles"
       badge={{
         text: "Activo",
         variant: "secondary",

@@ -78,7 +78,7 @@ export function ReferralDashboard({ className }: ReferralDashboardProps) {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold">Sistema de Referidos</h2>
+
           <p className="text-muted-foreground">
             Referí a otras personas y gana $75.000 por cada uno
           </p>

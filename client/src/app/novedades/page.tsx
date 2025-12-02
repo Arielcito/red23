@@ -53,11 +53,6 @@ export default function NovedadesPage() {
     <AppLayout
       title="Novedades"
       subtitle="Información exclusiva y en tiempo real"
-      badge={{
-        text: "Actualizado",
-        variant: "secondary",
-        className: "text-xs"
-      }}
     >
       <div className="space-y-6 md:space-y-12  dark:md:to-indigo-950/20 p-4 md:p-6">
         {/* Top 3 Section */}
