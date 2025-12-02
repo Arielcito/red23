@@ -147,7 +147,7 @@ export function LearningPathsSection({
             return (
               <Link key={path.id} href={path.href}>
                 <Card className={cn(
-                  "p-4 border border-solid transition-colors cursor-pointer h-full hover:shadow-md hover:shadow-primary/10 dark:hover:shadow-primary/20",
+                  "p-4 border-[0.25px] border-solid transition-colors cursor-pointer h-full hover:shadow-md hover:shadow-primary/10 dark:hover:shadow-primary/20",
                   colorClasses.border,
                   isFirstCard && "dark:border-white"
                 )}>

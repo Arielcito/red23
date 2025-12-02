@@ -53,7 +53,7 @@ export default function TutorialsPage() {
         {/* Stats Section */}
         <div className="grid grid-cols-3 gap-4 break-words">
           {stats.map((stat) => (
-            <Card key={stat.title} className="p-3 break-words">
+            <Card key={stat.title} className="p-3 break-words dark:bg-transparent" style={{ backgroundColor: 'var(--color-gray-100)' }}>
               <div className="flex flex-col items-center text-center space-y-2 break-words">
                 <stat.icon className={`h-5 w-5 ${stat.color}`} />
                 <div className="text-lg font-bold break-words">{stat.value}</div>

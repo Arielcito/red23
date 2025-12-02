@@ -94,6 +94,7 @@
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
+  --color-gray-100: lab(96.1596% -.0823438 -1.13575);
 
   /* Updated primary, secondary, tertiary to use our custom colors */
   --primary: oklch(0.52 0.24 240);

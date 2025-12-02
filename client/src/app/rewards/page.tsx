@@ -53,7 +53,7 @@ export default function RewardsPage() {
 
         {/* Countdowns de premios */}
         <div className="grid md:grid-cols-2 gap-4">
-          <Card className="relative overflow-hidden">
+          <Card className="relative overflow-hidden dark:bg-transparent" style={{ backgroundColor: 'var(--color-gray-100)' }}>
             <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-primary/20" />
             <CardHeader className="relative">
               <div className="flex items-center gap-2">
@@ -77,7 +77,7 @@ export default function RewardsPage() {
             </CardContent>
           </Card>
 
-          <Card className="relative overflow-hidden">
+          <Card className="relative overflow-hidden dark:bg-transparent" style={{ backgroundColor: 'var(--color-gray-100)' }}>
             <div className="absolute inset-0 bg-gradient-to-br from-secondary/5 to-secondary/20" />
             <CardHeader className="relative">
               <div className="flex items-center gap-2">
@@ -104,7 +104,7 @@ export default function RewardsPage() {
         </div>
 
         {/* Información sobre cómo participar */}
-        <Card id="reglas-premios">
+        <Card id="reglas-premios" className="dark:bg-transparent" style={{ backgroundColor: 'var(--color-gray-100)' }}>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Gift className="h-4 w-4" />
@@ -136,7 +136,7 @@ export default function RewardsPage() {
         </Card>
 
         {/* Ganadores recientes */}
-        <Card>
+        <Card className="dark:bg-transparent" style={{ backgroundColor: 'var(--color-gray-100)' }}>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Trophy className="h-4 w-4" />
@@ -156,7 +156,7 @@ export default function RewardsPage() {
         </Card>
 
         {/* Reglas y términos */}
-        <Card>
+        <Card className="dark:bg-transparent" style={{ backgroundColor: 'var(--color-gray-100)' }}>
           <CardHeader>
             <CardTitle>Reglas del Sorteo</CardTitle>
           </CardHeader>

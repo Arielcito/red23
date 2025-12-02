@@ -96,15 +96,10 @@ export default function ChatPage() {
 
   return (
     <AppLayout
-      title="Marketing Casino IA"
-      subtitle="Genera imágenes promocionales para casinos"
+      title="CHAT IA"
+      subtitle="Genera tus imagenes "
       showBackButton={true}
       backHref="/dashboard"
-      badge={{
-        text: "IA Activa",
-        variant: "outline",
-        className: "text-primary-600 border-primary-200 bg-primary-50 dark:bg-primary-900 dark:text-primary-300 dark:border-primary-800"
-      }}
       hideHeader={false}
     >
       <div className="flex flex-col flex-1 min-h-0 w-full max-w-full break-words overflow-x-hidden">
