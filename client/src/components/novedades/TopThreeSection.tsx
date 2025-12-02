@@ -65,7 +65,7 @@ export function TopThreeSection({ topThree }: TopThreeSectionProps) {
               </div>
 
               <Card
-                className="relative overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-xl bg-gray-100"
+                className="relative overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-xl bg-gray-50 dark:bg-transparent"
               >
                 <CardContent className="p-0">
                 {/* Casino Logo */}

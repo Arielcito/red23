@@ -1,1 +1,7 @@
 .cursor/mcp.json
+
+# Videos grandes
+client/public/*.mp4
+client/public/*.mov
+client/public/*.avi
+client/public/*.webm

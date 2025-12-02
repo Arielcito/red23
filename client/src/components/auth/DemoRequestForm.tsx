@@ -162,14 +162,13 @@ export function DemoRequestForm({ onSubmitSuccess, referralCode }: DemoRequestFo
           <div className="grid md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="telegram">
-                Usuario de Telegram <span className="text-red-500">*</span>
+                Usuario de Telegram <span className="text-red-500"></span>
               </Label>
               <Input
                 id="telegram"
                 placeholder="@usuario"
                 value={contactFormData.telegram}
                 onChange={(e) => handleContactInputChange("telegram", e.target.value)}
-                required
               />
             </div>
             <div className="space-y-2">
