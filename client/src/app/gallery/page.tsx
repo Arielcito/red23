@@ -150,7 +150,7 @@ export default function GalleryPage() {
       {/* Stats Cards */}
       <div className="pt-4 p-4 sm:pt-6 sm:p-2 lg:pt-8 lg:p-3">
         <div className="grid grid-cols-2 xl:grid-cols-3 gap-5 sm:gap-2 lg:gap-2 mb-2">
-          <Card className="h-full dark:bg-transparent" style={{ backgroundColor: 'var(--color-gray-100)' }}>
+          <Card className="h-full">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-0.5 px-2 py-1">
               <CardTitle className="text-xs font-medium">Imágenes Generadas</CardTitle>
               <Sparkles className="h-3 w-3 text-primary-500" />
@@ -161,7 +161,7 @@ export default function GalleryPage() {
             </CardContent>
           </Card>
 
-          <Card className="h-full dark:bg-transparent" style={{ backgroundColor: 'var(--color-gray-100)' }}>
+          <Card className="h-full">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-0.5 px-2 py-1">
               <CardTitle className="text-xs font-medium">Uso Mensual</CardTitle>
               <TrendingUp className="h-3 w-3 text-primary-600" />
@@ -256,7 +256,7 @@ export default function GalleryPage() {
             }
           >
             {filteredImages.map((image) => (
-              <Card key={image.id} className="overflow-hidden hover:shadow-lg transition-shadow dark:bg-transparent" style={{ backgroundColor: 'var(--color-gray-100)' }}>
+              <Card key={image.id} className="overflow-hidden hover:shadow-lg transition-shadow">
                 {viewMode === "grid" ? (
                   <div>
                     <div className="aspect-square bg-gray-100 overflow-hidden relative group">
