@@ -34,8 +34,7 @@ export function HeroSection() {
               <div className="relative aspect-video">
                 <video
                   className="absolute inset-0 w-full h-full object-cover"
-                  autoPlay
-                  muted
+                  controls
                   loop
                   playsInline
                   poster="/vsl-poster.jpg"
