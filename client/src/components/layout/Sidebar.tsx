@@ -16,6 +16,7 @@ import {
   Users,
   Newspaper,
   UserCog,
+  Bell,
 } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
@@ -159,6 +160,14 @@ export function Sidebar({ className }: SidebarProps) {
       icon: GraduationCap,
       badge: "Admin",
       description: "Gestión de rutas de aprendizaje",
+      isAdmin: true
+    },
+    {
+      title: "Admin Notificaciones",
+      href: "/admin/notifications",
+      icon: Bell,
+      badge: "Admin",
+      description: "Enviar notificaciones a usuarios",
       isAdmin: true
     },
   ]

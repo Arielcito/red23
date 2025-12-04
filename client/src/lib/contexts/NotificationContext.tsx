@@ -79,16 +79,36 @@ export function NotificationProvider({ children }: NotificationProviderProps) {
     dispatch({ type: 'ADD_NOTIFICATION', payload: newNotification })
   }, [])
 
-  const markAsRead = useCallback((id: string) => {
+  const markAsRead = useCallback(async (id: string) => {
     dispatch({ type: 'MARK_AS_READ', payload: id })
+
+    try {
+      const response = await fetch(`/api/notifications/${id}/read`, {
+        method: 'PATCH'
+      })
+      if (!response.ok) throw new Error('Error marcando como leída')
+    } catch (error) {
+      console.error('❌ Error marking as read:', error)
+      await refreshNotifications()
+    }
   }, [])
 
   const markAllAsRead = useCallback(() => {
     dispatch({ type: 'MARK_ALL_AS_READ' })
   }, [])
 
-  const removeNotification = useCallback((id: string) => {
+  const removeNotification = useCallback(async (id: string) => {
     dispatch({ type: 'REMOVE_NOTIFICATION', payload: id })
+
+    try {
+      const response = await fetch(`/api/notifications/${id}`, {
+        method: 'DELETE'
+      })
+      if (!response.ok) throw new Error('Error eliminando notificación')
+    } catch (error) {
+      console.error('❌ Error removing notification:', error)
+      await refreshNotifications()
+    }
   }, [])
 
   const clearAllNotifications = useCallback(() => {
@@ -97,69 +117,36 @@ export function NotificationProvider({ children }: NotificationProviderProps) {
 
   const refreshNotifications = useCallback(async () => {
     dispatch({ type: 'SET_LOADING', payload: true })
-    
+
     try {
-      // TODO: Implementar llamada a la API
-      // const response = await fetch('/api/notifications')
-      // if (!response.ok) {
-      //   throw new Error('Error al obtener notificaciones')
-      // }
-      // const data = await response.json()
-      // dispatch({ type: 'SET_NOTIFICATIONS', payload: data.notifications })
-      
-      // Por ahora, simular datos mockeados
-      await new Promise(resolve => setTimeout(resolve, 500))
-      dispatch({ type: 'SET_LOADING', payload: false })
+      console.log('🔄 Context: Refreshing notifications from API')
+      const response = await fetch('/api/notifications')
+
+      if (!response.ok) {
+        throw new Error('Error al obtener notificaciones')
+      }
+
+      const result = await response.json()
+
+      if (!result.success) {
+        throw new Error(result.error || 'Error desconocido')
+      }
+
+      dispatch({ type: 'SET_NOTIFICATIONS', payload: result.data })
+      console.log(`✅ Context: Loaded ${result.data.length} notifications`)
     } catch (error) {
-      dispatch({ type: 'SET_ERROR', payload: error instanceof Error ? error.message : 'Error desconocido' })
+      console.error('❌ Error refreshing notifications:', error)
+      dispatch({
+        type: 'SET_ERROR',
+        payload: error instanceof Error ? error.message : 'Error desconocido'
+      })
     }
   }, [])
 
-  // Inicializar con datos mockeados
+  // Load notifications on mount
   useEffect(() => {
-    const mockNotifications: Notification[] = [
-      {
-        id: '1',
-        type: 'prize',
-        title: '¡FELICITACIONES! 🙌🏻',
-        message: 'Fuiste el ganador del día, tenes un 10% de reintegro en todas las cargas de hoy!!! Manda una captura de este mensaje a tu proveedor para reclamar tu premio🙌🏻',
-        timestamp: new Date(Date.now() - 10 * 60 * 1000), // 10 minutos atrás
-        read: false,
-        data: {
-          prizeId: 'daily-winner-001',
-          prizeName: '10% de reintegro',
-          prizeValue: 10,
-          actionUrl: '/rewards/claim'
-        }
-      },
-      {
-        id: '2',
-        type: 'prize',
-        title: '¡FELICITACIONES! 🙌🏻',
-        message: 'Fuiste el ganador del premio semanal, ganaste una ...!!! Recorda estar atento a telegram ya que por ahi nos vamos a estar comunicando contigo para coordinar la entrega🙌🏻',
-        timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 horas atrás
-        read: false,
-        data: {
-          prizeId: 'weekly-winner-001',
-          prizeName: 'Premio semanal',
-          actionUrl: 'https://t.me/red23oficial'
-        }
-      },
-      {
-        id: '3',
-        type: 'info',
-        title: 'Bienvenido al software oficial de RED23 🙌🏻',
-        message: 'Esta web esta llena de las mejores herramientas para que exprimas tus ventas al máximo!! Recorda estar atento al canal de telegram donde se van a anunciar muchisimas cosas, entre ellas los premios diarios, semanales y mensuales🙌🏻',
-        timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000), // 1 día atrás
-        read: true,
-        data: {
-          actionUrl: 'https://t.me/red23oficial'
-        }
-      }
-    ]
-
-    dispatch({ type: 'SET_NOTIFICATIONS', payload: mockNotifications })
-  }, [])
+    refreshNotifications()
+  }, [refreshNotifications])
 
   const contextValue: NotificationContextType = {
     notifications: state.notifications,
