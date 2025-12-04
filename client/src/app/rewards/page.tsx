@@ -58,7 +58,7 @@ export default function RewardsPage() {
             <CardHeader className="relative">
               <div className="flex items-center gap-2">
                 <Clock className="h-4 w-4 text-primary" />
-                <CardTitle className="text-lg">Premio Diario</CardTitle>
+                <CardTitle className="text-lg">Premio semanal</CardTitle>
               </div>
               <CardDescription>
                 Sorteo automático cada día a las 00:00
@@ -169,10 +169,6 @@ export default function RewardsPage() {
               <li className="flex items-start gap-2">
                 <div className="w-1.5 h-1.5 bg-primary rounded-full mt-2 flex-shrink-0" />
                 <span>Los sorteos se realizan automáticamente sin intervención manual</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <div className="w-1.5 h-1.5 bg-primary rounded-full mt-2 flex-shrink-0" />
-                <span>Los ganadores son notificados por Telegram</span>
               </li>
               <li className="flex items-start gap-2">
                 <div className="w-1.5 h-1.5 bg-primary rounded-full mt-2 flex-shrink-0" />

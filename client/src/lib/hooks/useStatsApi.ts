@@ -25,7 +25,7 @@ export const useStatsApi = (): StatsApiHook => {
     imagesGenerated: 0,
     whatsappPosts: 0,
     galleryItems: 0,
-    monthlyLimit: 500,
+    monthlyLimit: 100,
     recentImagesCount: 0,
     totalTokens: 0
   })
@@ -66,7 +66,7 @@ export const useStatsApi = (): StatsApiHook => {
         imagesGenerated,
         whatsappPosts,
         galleryItems,
-        monthlyLimit: 500, // Esto podría venir de la API en el futuro
+        monthlyLimit: 100,
         recentImagesCount,
         totalTokens
       }

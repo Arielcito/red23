@@ -11,7 +11,7 @@ interface RewardsMenuItemProps {
 export function RewardsMenuItem({ className }: RewardsMenuItemProps) {
   const { nextDailyPrize } = useRewards()
 
-  // Calcular tiempo restante para el premio diario
+  // Calcular tiempo restante para el Premio semanal
   const getTimeUntilDailyPrize = () => {
     const now = new Date()
     const target = nextDailyPrize

@@ -345,7 +345,7 @@ export default function AdminRewardsPage() {
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid gap-3 sm:gap-4 grid-cols-1 md:grid-cols-2">
                 <div className="space-y-2">
-                  <Label htmlFor="daily-prize-amount">Premio Diario</Label>
+                  <Label htmlFor="daily-prize-amount">Premio semanal</Label>
                   <Input
                     id="daily-prize-amount"
                     value={formState.dailyPrizeAmount}

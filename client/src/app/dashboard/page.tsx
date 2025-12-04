@@ -74,9 +74,6 @@ export default function Dashboard() {
     >
       <div className="p-3 sm:p-4 lg:p-6 space-y-3 sm:space-y-4 lg:space-y-6">
 
-        {/* Winner Banner */}
-        <WinnerBanner winner={dailyWinner} />
-
 
         {/* Quick Actions */}
         <div>
@@ -117,7 +114,7 @@ export default function Dashboard() {
               <CardHeader className="relative">
                 <div className="flex items-center gap-2">
                   <Clock className="h-5 w-5 text-primary" />
-                  <CardTitle className="text-base sm:text-lg">Premio Diario</CardTitle>
+                  <CardTitle className="text-base sm:text-lg">Premio semanal</CardTitle>
                 </div>
                 <CardDescription>
                   Sorteo automático cada día a las 00:00
