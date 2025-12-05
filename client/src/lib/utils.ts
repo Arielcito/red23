@@ -129,6 +129,31 @@ export function convertDriveUrlToDirect(url: string): string {
 }
 
 /**
+ * Convierte enlaces de Google Drive a enlaces directos para videos
+ * @param url - URL de Google Drive
+ * @returns URL directa para video o la URL original si no es de Drive
+ */
+export function convertDriveUrlToVideo(url: string): string {
+  if (!url) return url
+
+  // Patrón para enlaces de compartir de Google Drive
+  const drivePattern = /https:\/\/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)(?:\/view|\/preview)?/
+  const match = url.match(drivePattern)
+
+  if (match?.[1]) {
+    return `https://drive.google.com/uc?export=download&id=${match[1]}`
+  }
+
+  // Patrón para enlaces directos que ya están convertidos
+  const directPattern = /https:\/\/drive\.google\.com\/uc\?export=download&id=/
+  if (directPattern.test(url)) {
+    return url
+  }
+
+  return url
+}
+
+/**
  * Valida si una URL es una imagen válida para nuestro sistema
  * @param url - URL a validar
  * @returns true si es una URL de imagen válida

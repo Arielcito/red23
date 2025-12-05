@@ -1,8 +1,14 @@
 "use client"
 
 import { MathBackgroundDecoration } from "@/components/math-background-decoration"
+import { convertDriveUrlToVideo } from "@/lib/utils"
+
+const DRIVE_VIDEO_URL = process.env.NEXT_PUBLIC_DRIVE_VIDEO_URL || ""
 
 export function HeroSection() {
+  const videoUrl = DRIVE_VIDEO_URL ? convertDriveUrlToVideo(DRIVE_VIDEO_URL) : "/vsl-optimized.mp4"
+  const posterUrl = process.env.NEXT_PUBLIC_DRIVE_POSTER_URL || "/vsl-poster.jpg"
+
   return (
     <section
       className="relative pt-32 sm:pt-32 sm:pb-12 pb-12 px-4 sm:px-6 overflow-hidden flex items-start"
@@ -37,9 +43,10 @@ export function HeroSection() {
                   controls
                   loop
                   playsInline
-                  poster="/vsl-poster.jpg"
+                  poster={posterUrl}
                 >
-                  <source src="/vsl-optimized.mp4" type="video/mp4" />
+                  <source src={videoUrl} type="video/mp4" />
+                  <track kind="captions" />
                   Your browser does not support the video tag.
                 </video>
               </div>
