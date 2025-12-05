@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useRef, useEffect } from "react"
-import { useChat, SendMessageOptions } from "@/lib/hooks/useChat"
+import { useChat } from "@/lib/hooks/useChat"
 import { ChatMessage } from "@/components/chat/ChatMessage"
 import { LoadingIndicator } from "@/components/chat/LoadingIndicator"
 import { ChatInput } from "@/components/chat/ChatInput"
@@ -32,13 +32,15 @@ export default function ChatPage() {
   
   console.log('📋 Loaded prompts for chat:', prompts.length)
   
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
-  }
+  const lastMessageId = messages[messages.length - 1]?.id
   
   useEffect(() => {
-    scrollToBottom()
-  }, [messages, isGenerating])
+    const timeoutId = setTimeout(() => {
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
+    }, 100)
+    
+    return () => clearTimeout(timeoutId)
+  }, [lastMessageId, isGenerating])
   
   // Filter active prompts and map to content array
   const quickPrompts = prompts
