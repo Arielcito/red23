@@ -3,7 +3,7 @@
 import { MathBackgroundDecoration } from "@/components/math-background-decoration"
 import { convertDriveUrlToVideo } from "@/lib/utils"
 
-const DRIVE_VIDEO_URL = process.env.NEXT_PUBLIC_DRIVE_VIDEO_URL || ""
+const DRIVE_VIDEO_URL = process.env.NEXT_PUBLIC_DRIVE_VIDEO_URL || "https://drive.google.com/file/d/1v_mAiUiBn5omwYMB681DnSlBM7S7yqzh/preview"
 
 export function HeroSection() {
   const videoUrl = DRIVE_VIDEO_URL ? convertDriveUrlToVideo(DRIVE_VIDEO_URL) : "/vsl-optimized.mp4"

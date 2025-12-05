@@ -130,13 +130,13 @@ export function convertDriveUrlToDirect(url: string): string {
 
 /**
  * Convierte enlaces de Google Drive a enlaces directos para videos
- * @param url - URL de Google Drive
+ * @param url - URL de Google Drive (puede ser formato view, preview, o iframe)
  * @returns URL directa para video o la URL original si no es de Drive
  */
 export function convertDriveUrlToVideo(url: string): string {
   if (!url) return url
 
-  // Patrón para enlaces de compartir de Google Drive
+  // Patrón para enlaces de compartir de Google Drive (view, preview, o iframe)
   const drivePattern = /https:\/\/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)(?:\/view|\/preview)?/
   const match = url.match(drivePattern)
 
