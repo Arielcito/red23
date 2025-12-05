@@ -3,11 +3,11 @@
 import { MathBackgroundDecoration } from "@/components/math-background-decoration"
 import { convertDriveUrlToVideo } from "@/lib/utils"
 
-const DRIVE_VIDEO_URL = process.env.NEXT_PUBLIC_DRIVE_VIDEO_URL || "https://drive.google.com/file/d/1v_mAiUiBn5omwYMB681DnSlBM7S7yqzh/preview"
+const DRIVE_VIDEO_URL = "https://drive.google.com/file/d/1v_mAiUiBn5omwYMB681DnSlBM7S7yqzh/preview"
 
 export function HeroSection() {
-  const videoUrl = DRIVE_VIDEO_URL ? convertDriveUrlToVideo(DRIVE_VIDEO_URL) : "/vsl-optimized.mp4"
-  const posterUrl = process.env.NEXT_PUBLIC_DRIVE_POSTER_URL || "/vsl-poster.jpg"
+  const videoUrl = convertDriveUrlToVideo(DRIVE_VIDEO_URL)
+  const posterUrl = "/vsl-poster.jpg"
 
   return (
     <section
