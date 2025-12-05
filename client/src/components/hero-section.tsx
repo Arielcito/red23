@@ -1,14 +1,10 @@
 "use client"
 
 import { MathBackgroundDecoration } from "@/components/math-background-decoration"
-import { convertDriveUrlToVideo } from "@/lib/utils"
 
-const DRIVE_VIDEO_URL = "https://drive.google.com/file/d/1v_mAiUiBn5omwYMB681DnSlBM7S7yqzh/preview"
+const DRIVE_VIDEO_ID = "1v_mAiUiBn5omwYMB681DnSlBM7S7yqzh"
 
 export function HeroSection() {
-  const videoUrl = convertDriveUrlToVideo(DRIVE_VIDEO_URL)
-  const posterUrl = "/vsl-poster.jpg"
-
   return (
     <section
       className="relative pt-32 sm:pt-32 sm:pb-12 pb-12 px-4 sm:px-6 overflow-hidden flex items-start"
@@ -38,17 +34,12 @@ export function HeroSection() {
           <div className="w-full max-w-4xl">
             <div className="relative rounded-2xl overflow-hidden bg-gradient-to-b from-slate-900 via-slate-900 to-purple-900/50 border border-slate-800 shadow-2xl shadow-purple-500/20">
               <div className="relative aspect-video">
-                <video
-                  className="absolute inset-0 w-full h-full object-cover"
-                  controls
-                  loop
-                  playsInline
-                  poster={posterUrl}
-                >
-                  <source src={videoUrl} type="video/mp4" />
-                  <track kind="captions" />
-                  Your browser does not support the video tag.
-                </video>
+                <iframe
+                  src={`https://drive.google.com/file/d/${DRIVE_VIDEO_ID}/preview`}
+                  className="absolute inset-0 w-full h-full"
+                  allow="autoplay"
+                  title="Video de presentación"
+                />
               </div>
             </div>
           </div>
