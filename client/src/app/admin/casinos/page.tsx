@@ -241,6 +241,12 @@ export default function AdminCasinosPage() {
   })
   const [newsFormErrors, setNewsFormErrors] = useState<Record<string, string>>({})
 
+  // News editing state
+  const [editingNews, setEditingNews] = useState<NewsFormatted | null>(null)
+  const [editNewsImageFile, setEditNewsImageFile] = useState<File | null>(null)
+  const [editNewsFormErrors, setEditNewsFormErrors] = useState<Record<string, string>>({})
+  const [isEditingNews, setIsEditingNews] = useState(false)
+
   const { createNotification } = useNotifications()
 
   // Sensors para drag and drop
@@ -472,7 +478,35 @@ export default function AdminCasinosPage() {
           actionLabel: 'Ver noticia'
         }
       )
-      
+
+      // Broadcast persistent notification to all users
+      try {
+        console.log('📢 Broadcasting notification to all users...')
+        const response = await fetch('/api/admin/notifications', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            type: 'info',
+            title: 'Nueva novedad publicada',
+            message: `Ya podés leer "${createdNews.title}"`,
+            data: {
+              actionUrl: `/novedades/${createdNews.id}`,
+              actionLabel: 'Ver noticia'
+            }
+          })
+        })
+
+        if (!response.ok) {
+          console.error('❌ Failed to broadcast notification:', await response.text())
+        } else {
+          const result = await response.json()
+          console.log(`✅ Notification broadcast to ${result.data.broadcastCount} users`)
+        }
+      } catch (error) {
+        // Non-blocking - log but don't fail news creation
+        console.error('❌ Error broadcasting notification:', error)
+      }
+
       // Reset form
       setNewNewsForm({
         title: '',
@@ -528,6 +562,90 @@ export default function AdminCasinosPage() {
       console.log(`✅ Noticia ${!currentStatus ? 'marcada como destacada' : 'desmarcada como destacada'} exitosamente`)
     } catch (err) {
       console.error('❌ Error actualizando estado destacado de noticia:', err)
+    }
+  }
+
+  const handleEditNews = (news: NewsFormatted) => {
+    setEditingNews(news)
+    setEditNewsFormErrors({})
+    setEditNewsImageFile(null)
+    console.log('📝 Opening edit form for news:', news.title)
+  }
+
+  const validateEditNewsForm = (news: NewsFormatted) => {
+    const errors: Record<string, string> = {}
+
+    if (!news.title.trim()) {
+      errors.title = 'El título es requerido'
+    }
+
+    setEditNewsFormErrors(errors)
+    return Object.keys(errors).length === 0
+  }
+
+  const handleSaveNews = async () => {
+    if (!editingNews) return
+
+    if (!validateEditNewsForm(editingNews)) {
+      console.error('❌ Errores en el formulario de edición')
+      return
+    }
+
+    setIsEditingNews(true)
+    try {
+      let imageUrl = editingNews.imageUrl
+
+      // Handle image upload/replacement
+      if (editNewsImageFile) {
+        try {
+          const validation = validateImageFile(editNewsImageFile)
+          if (!validation.valid) {
+            setEditNewsFormErrors({ image: validation.error || 'Archivo inválido' })
+            setIsEditingNews(false)
+            return
+          }
+
+          console.log('📤 Subiendo nueva imagen de la noticia...')
+
+          // Replace if existing, upload if new
+          if (editingNews.imageUrl) {
+            imageUrl = await replaceImage(editingNews.imageUrl, editNewsImageFile, 'news')
+          } else {
+            imageUrl = await uploadImage(editNewsImageFile, 'news')
+          }
+        } catch (error) {
+          console.error('❌ Error subiendo imagen:', error)
+          setEditNewsFormErrors({ image: 'Error subiendo la imagen. Intenta nuevamente.' })
+          setIsEditingNews(false)
+          return
+        }
+      }
+
+      // Update via NewsService
+      await NewsService.updateNews(editingNews.id, {
+        title: editingNews.title,
+        excerpt: editingNews.excerpt,
+        content: editingNews.content,
+        imageUrl: imageUrl,
+        author: editingNews.author,
+        category: editingNews.category,
+        isFeatured: editingNews.isFeatured,
+        isPublished: editingNews.isPublished
+      })
+
+      // Close sheet and refresh
+      setEditingNews(null)
+      setEditNewsFormErrors({})
+      setEditNewsImageFile(null)
+      await loadNews()
+
+      console.log('✅ Noticia actualizada exitosamente')
+
+    } catch (err) {
+      console.error('❌ Error actualizando noticia:', err)
+      setEditNewsFormErrors({ general: 'Error al actualizar la noticia. Intenta nuevamente.' })
+    } finally {
+      setIsEditingNews(false)
     }
   }
 
@@ -1261,7 +1379,12 @@ export default function AdminCasinosPage() {
                             >
                               {article.isPublished ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                             </Button>
-                            <Button variant="outline" size="sm">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleEditNews(article)}
+                              title="Editar noticia"
+                            >
                               <Edit className="h-4 w-4" />
                             </Button>
                             <Button 
@@ -1524,6 +1647,246 @@ export default function AdminCasinosPage() {
                     setEditCoverImageFile(null)
                   }}
                   disabled={isEditing}
+                >
+                  Cancelar
+                </Button>
+              </div>
+            </div>
+          )}
+        </SheetContent>
+      </Sheet>
+
+      {/* News Edit Drawer */}
+      <Sheet open={!!editingNews} onOpenChange={(open) => {
+        if (!open) {
+          setEditingNews(null)
+          setEditNewsFormErrors({})
+          setEditNewsImageFile(null)
+        }
+      }}>
+        <SheetContent className="w-[90vw] sm:w-[600px] md:w-[700px] lg:w-[800px] overflow-y-auto p-6">
+          <SheetHeader className="mb-6">
+            <SheetTitle>Editar Noticia</SheetTitle>
+            <SheetDescription>
+              {editingNews?.title}
+            </SheetDescription>
+          </SheetHeader>
+
+          {editingNews && (
+            <div className="space-y-6 pb-6">
+              <div className="space-y-6">
+                {/* Title Field */}
+                <div>
+                  <Label htmlFor="edit-news-title">Título *</Label>
+                  <Input
+                    id="edit-news-title"
+                    value={editingNews.title}
+                    onChange={(e) => {
+                      setEditingNews(prev => prev ? { ...prev, title: e.target.value } : null)
+                      if (editNewsFormErrors.title) {
+                        setEditNewsFormErrors(prev => ({ ...prev, title: '' }))
+                      }
+                    }}
+                    className={editNewsFormErrors.title ? 'border-red-500' : ''}
+                  />
+                  {editNewsFormErrors.title && <p className="text-red-500 text-sm mt-1">{editNewsFormErrors.title}</p>}
+                </div>
+
+                {/* Excerpt Field */}
+                <div>
+                  <Label htmlFor="edit-news-excerpt">Extracto</Label>
+                  <Input
+                    id="edit-news-excerpt"
+                    value={editingNews.excerpt || ''}
+                    onChange={(e) => {
+                      setEditingNews(prev => prev ? { ...prev, excerpt: e.target.value } : null)
+                    }}
+                    placeholder="Resumen breve de la noticia"
+                  />
+                </div>
+
+                {/* Content Field */}
+                <div>
+                  <Label htmlFor="edit-news-content">Contenido</Label>
+                  <Textarea
+                    id="edit-news-content"
+                    value={editingNews.content || ''}
+                    onChange={(e) => {
+                      setEditingNews(prev => prev ? { ...prev, content: e.target.value } : null)
+                    }}
+                    placeholder="Contenido completo de la noticia"
+                    rows={6}
+                  />
+                </div>
+
+                {/* Author Field */}
+                <div>
+                  <Label htmlFor="edit-news-author">Autor</Label>
+                  <Input
+                    id="edit-news-author"
+                    value={editingNews.author}
+                    onChange={(e) => {
+                      setEditingNews(prev => prev ? { ...prev, author: e.target.value } : null)
+                    }}
+                  />
+                </div>
+
+                {/* Category Field */}
+                <div>
+                  <Label htmlFor="edit-news-category">Categoría</Label>
+                  <Select
+                    value={editingNews.category}
+                    onValueChange={(value) => {
+                      setEditingNews(prev => prev ? { ...prev, category: value } : null)
+                    }}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="general">General</SelectItem>
+                      <SelectItem value="announcements">Anuncios</SelectItem>
+                      <SelectItem value="guides">Guías</SelectItem>
+                      <SelectItem value="promotions">Promociones</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Image Upload Field */}
+                <div>
+                  <Label htmlFor="edit-news-image">Imagen</Label>
+
+                  {/* Preview current image */}
+                  {editingNews.imageUrl && !editNewsImageFile && (
+                    <div className="mt-2 mb-3">
+                      <div className="flex items-center justify-between mb-2">
+                        <p className="text-xs text-muted-foreground">Imagen actual:</p>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            setEditingNews(prev => prev ? { ...prev, imageUrl: null } : null)
+                          }}
+                          className="h-7 text-xs"
+                        >
+                          <Trash2 className="h-3 w-3 mr-1" />
+                          Quitar imagen
+                        </Button>
+                      </div>
+                      <div className="relative w-full h-48 rounded-lg border-2 border-muted bg-muted/10 overflow-hidden">
+                        <Image
+                          src={editingNews.imageUrl}
+                          alt={editingNews.title}
+                          fill
+                          className="object-cover"
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement
+                            target.style.display = 'none'
+                          }}
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Preview new image selected */}
+                  {editNewsImageFile && (
+                    <div className="mt-2 mb-3">
+                      <div className="flex items-center justify-between mb-2">
+                        <p className="text-xs text-green-600">
+                          ✓ Nueva imagen seleccionada: {editNewsImageFile.name}
+                        </p>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            setEditNewsImageFile(null)
+                          }}
+                          className="h-7 text-xs"
+                        >
+                          <Trash2 className="h-3 w-3 mr-1" />
+                          Cancelar
+                        </Button>
+                      </div>
+                      <div className="relative w-full h-48 rounded-lg border-2 border-green-500 bg-muted/10 overflow-hidden">
+                        <Image
+                          src={URL.createObjectURL(editNewsImageFile)}
+                          alt="Preview"
+                          fill
+                          className="object-cover"
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  <Input
+                    id="edit-news-image"
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0] || null
+                      setEditNewsImageFile(file)
+                      if (editNewsFormErrors.image) {
+                        setEditNewsFormErrors(prev => ({ ...prev, image: '' }))
+                      }
+                    }}
+                    className={editNewsFormErrors.image ? 'border-red-500' : ''}
+                  />
+                  {editNewsFormErrors.image && <p className="text-red-500 text-sm mt-1">{editNewsFormErrors.image}</p>}
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Formatos soportados: JPG, PNG, WebP, GIF. Máximo 5MB.
+                  </p>
+                </div>
+
+                {/* Featured Toggle */}
+                <div className="flex items-center space-x-2">
+                  <Switch
+                    id="edit-news-featured"
+                    checked={editingNews.isFeatured}
+                    onCheckedChange={(checked) =>
+                      setEditingNews(prev => prev ? { ...prev, isFeatured: checked } : null)
+                    }
+                  />
+                  <Label htmlFor="edit-news-featured">Marcar como destacada</Label>
+                </div>
+
+                {/* Published Toggle */}
+                <div className="flex items-center space-x-2">
+                  <Switch
+                    id="edit-news-published"
+                    checked={editingNews.isPublished}
+                    onCheckedChange={(checked) =>
+                      setEditingNews(prev => prev ? { ...prev, isPublished: checked } : null)
+                    }
+                  />
+                  <Label htmlFor="edit-news-published">Publicada</Label>
+                </div>
+              </div>
+
+              {editNewsFormErrors.general && (
+                <div className="p-3 bg-red-50 border border-red-200 rounded-md">
+                  <p className="text-red-600 text-sm">{editNewsFormErrors.general}</p>
+                </div>
+              )}
+
+              <div className="flex gap-2 pt-4">
+                <Button
+                  onClick={handleSaveNews}
+                  disabled={isEditingNews}
+                  className="flex-1"
+                >
+                  <Save className="h-4 w-4 mr-2" />
+                  {isEditingNews ? 'Guardando...' : 'Guardar Cambios'}
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setEditingNews(null)
+                    setEditNewsFormErrors({})
+                    setEditNewsImageFile(null)
+                  }}
+                  disabled={isEditingNews}
                 >
                   Cancelar
                 </Button>

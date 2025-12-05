@@ -1,7 +1,7 @@
 "use client"
 
-import React, { createContext, useContext, useReducer, useCallback, useEffect } from 'react'
-import { Notification, NotificationContextType, NotificationProviderProps } from '@/lib/types/notifications'
+import { createContext, useContext, useReducer, useCallback, useEffect } from 'react'
+import type { Notification, NotificationContextType, NotificationProviderProps } from '@/lib/types/notifications'
 
 type NotificationAction =
   | { type: 'SET_LOADING'; payload: boolean }
@@ -70,51 +70,6 @@ export function NotificationProvider({ children }: NotificationProviderProps) {
 
   const unreadCount = state.notifications.filter(notification => !notification.read).length
 
-  const addNotification = useCallback((notificationData: Omit<Notification, 'id' | 'timestamp'>) => {
-    const newNotification: Notification = {
-      ...notificationData,
-      id: crypto.randomUUID(),
-      timestamp: new Date(),
-    }
-    dispatch({ type: 'ADD_NOTIFICATION', payload: newNotification })
-  }, [])
-
-  const markAsRead = useCallback(async (id: string) => {
-    dispatch({ type: 'MARK_AS_READ', payload: id })
-
-    try {
-      const response = await fetch(`/api/notifications/${id}/read`, {
-        method: 'PATCH'
-      })
-      if (!response.ok) throw new Error('Error marcando como leída')
-    } catch (error) {
-      console.error('❌ Error marking as read:', error)
-      await refreshNotifications()
-    }
-  }, [])
-
-  const markAllAsRead = useCallback(() => {
-    dispatch({ type: 'MARK_ALL_AS_READ' })
-  }, [])
-
-  const removeNotification = useCallback(async (id: string) => {
-    dispatch({ type: 'REMOVE_NOTIFICATION', payload: id })
-
-    try {
-      const response = await fetch(`/api/notifications/${id}`, {
-        method: 'DELETE'
-      })
-      if (!response.ok) throw new Error('Error eliminando notificación')
-    } catch (error) {
-      console.error('❌ Error removing notification:', error)
-      await refreshNotifications()
-    }
-  }, [])
-
-  const clearAllNotifications = useCallback(() => {
-    dispatch({ type: 'CLEAR_ALL' })
-  }, [])
-
   const refreshNotifications = useCallback(async () => {
     dispatch({ type: 'SET_LOADING', payload: true })
 
@@ -142,6 +97,61 @@ export function NotificationProvider({ children }: NotificationProviderProps) {
       })
     }
   }, [])
+
+  const addNotification = useCallback((notificationData: Omit<Notification, 'id' | 'timestamp'>) => {
+    const newNotification: Notification = {
+      ...notificationData,
+      id: crypto.randomUUID(),
+      timestamp: new Date(),
+    }
+    dispatch({ type: 'ADD_NOTIFICATION', payload: newNotification })
+  }, [])
+
+  const markAsRead = useCallback(async (id: string) => {
+    dispatch({ type: 'MARK_AS_READ', payload: id })
+
+    try {
+      const response = await fetch(`/api/notifications/${id}/read`, {
+        method: 'PATCH'
+      })
+      if (!response.ok) throw new Error('Error marcando como leída')
+    } catch (error) {
+      console.error('❌ Error marking as read:', error)
+      await refreshNotifications()
+    }
+  }, [refreshNotifications])
+
+  const markAllAsRead = useCallback(() => {
+    dispatch({ type: 'MARK_ALL_AS_READ' })
+  }, [])
+
+  const removeNotification = useCallback(async (id: string) => {
+    dispatch({ type: 'REMOVE_NOTIFICATION', payload: id })
+
+    try {
+      const response = await fetch(`/api/notifications/${id}`, {
+        method: 'DELETE'
+      })
+      if (!response.ok) throw new Error('Error eliminando notificación')
+    } catch (error) {
+      console.error('❌ Error removing notification:', error)
+      await refreshNotifications()
+    }
+  }, [refreshNotifications])
+
+  const clearAllNotifications = useCallback(async () => {
+    dispatch({ type: 'CLEAR_ALL' })
+
+    try {
+      const response = await fetch('/api/notifications', {
+        method: 'DELETE'
+      })
+      if (!response.ok) throw new Error('Error eliminando todas las notificaciones')
+    } catch (error) {
+      console.error('❌ Error clearing all notifications:', error)
+      await refreshNotifications()
+    }
+  }, [refreshNotifications])
 
   // Load notifications on mount
   useEffect(() => {

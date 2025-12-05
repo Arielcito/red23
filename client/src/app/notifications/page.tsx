@@ -60,7 +60,7 @@ export default function NotificationsPage() {
               <Button
                 variant="outline"
                 size="sm"
-                onClick={clearAllNotifications}
+                onClick={() => clearAllNotifications()}
                 className="text-red-600 hover:text-red-700 text-xs"
               >
                 <Trash2 className="h-3 w-3 mr-1" />

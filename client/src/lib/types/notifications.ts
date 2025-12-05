@@ -24,7 +24,7 @@ export interface NotificationContextType {
   markAsRead: (id: string) => void
   markAllAsRead: () => void
   removeNotification: (id: string) => void
-  clearAllNotifications: () => void
+  clearAllNotifications: () => Promise<void>
   refreshNotifications: () => Promise<void>
 }
 

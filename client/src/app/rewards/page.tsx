@@ -5,14 +5,13 @@ import { useRewardsData } from "@/lib/hooks/useRewardsData"
 import { CountdownTimer } from "@/components/rewards/CountdownTimer"
 import { RecentWinners } from "@/components/rewards/RecentWinners"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Gift, Trophy, Clock, Star } from "lucide-react"
-import { Badge } from "@/components/ui/badge"
+import { Gift, Clock, Star } from "lucide-react"
 import { RewardsBanner } from "@/components/rewards/RewardsBanner"
 import { useAdminRewardsSettings } from "@/lib/hooks/useAdminRewardsSettings"
 import { useBannerImage } from "@/lib/hooks/useBannerImage"
 
 export default function RewardsPage() {
-  const { nextDailyPrize, nextMonthlyPrize, recentWinners, rewardSettings, isLoading, error } = useRewardsData()
+  const { nextWeeklyPrize, weeklyPrizeAmount, recentWinners, isLoading, error } = useRewardsData()
   const { settings: bannerSettings, isLoaded: settingsLoaded } = useAdminRewardsSettings()
   const { bannerImage } = useBannerImage(bannerSettings.imageId)
   
@@ -46,58 +45,35 @@ export default function RewardsPage() {
             <h1 className="text-2xl font-bold">¡Gana premios increíbles!</h1>
           </div>
           <p className="text-sm text-muted-foreground max-w-2xl mx-auto">
-            Participa automáticamente en nuestros sorteos usando la plataforma.
-            Cada interacción te da más oportunidades de ganar.
+            Participa automáticamente en nuestros sorteos semanales usando la plataforma.
+            Cada viernes a las 20:00 (hora Argentina) seleccionamos ganadores.
           </p>
         </div>
 
-        {/* Countdowns de premios */}
-        <div className="grid md:grid-cols-2 gap-4">
+        {/* Countdown de premio semanal */}
+        <div className="grid gap-4">
           <Card className="relative overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-primary/20" />
             <CardHeader className="relative">
               <div className="flex items-center gap-2">
                 <Clock className="h-4 w-4 text-primary" />
-                <CardTitle className="text-lg">Premio semanal</CardTitle>
+                <CardTitle className="text-lg">Premio Semanal</CardTitle>
               </div>
               <CardDescription>
-                Sorteo automático cada día a las 00:00
+                Sorteo todos los viernes a las 20:00 (Argentina, GMT-3)
               </CardDescription>
             </CardHeader>
             <CardContent className="relative">
               <CountdownTimer
-                targetDate={nextDailyPrize}
-                label="Tiempo restante"
+                targetDate={nextWeeklyPrize}
+                label="Próximo sorteo en"
                 className="mb-4"
               />
               <div className="flex items-center gap-2">
                 <Star className="h-4 w-4 text-yellow-500" />
-                <span className="text-sm font-medium">Premio: {rewardSettings?.daily_prize_amount || "$500 - $1,500 USD"}</span>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="relative overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-br from-secondary/5 to-secondary/20" />
-            <CardHeader className="relative">
-              <div className="flex items-center gap-2">
-                <Trophy className="h-4 w-4 text-secondary" />
-                <CardTitle className="text-lg">Premio Mensual</CardTitle>
-                <Badge variant="secondary" className="text-xs">Premium</Badge>
-              </div>
-              <CardDescription>
-                Gran sorteo al final de cada mes
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="relative">
-              <CountdownTimer
-                targetDate={nextMonthlyPrize}
-                label="Tiempo restante"
-                className="mb-4"
-              />
-              <div className="flex items-center gap-2">
-                <Star className="h-4 w-4 text-yellow-500" />
-                <span className="text-sm font-medium">Premio: {rewardSettings?.monthly_prize_amount || "$5,000 - $15,000 USD"}</span>
+                <span className="text-sm font-medium">
+                  Premio: {weeklyPrizeAmount}
+                </span>
               </div>
             </CardContent>
           </Card>
@@ -135,25 +111,7 @@ export default function RewardsPage() {
           </CardContent>
         </Card>
 
-        {/* Ganadores recientes */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Trophy className="h-4 w-4" />
-              Ganadores Recientes
-            </CardTitle>
-            <CardDescription>
-              Felicitaciones a nuestros últimos ganadores
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <RecentWinners
-              winners={recentWinners}
-              isLoading={isLoading}
-              className="max-w-2xl mx-auto"
-            />
-          </CardContent>
-        </Card>
+
 
         {/* Reglas y términos */}
         <Card>

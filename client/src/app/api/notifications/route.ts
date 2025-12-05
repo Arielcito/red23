@@ -1,4 +1,5 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
+import type { NextRequest } from 'next/server'
 import { auth } from '@clerk/nextjs/server'
 import { NotificationService } from '@/lib/services/notificationService'
 
@@ -27,6 +28,37 @@ export async function GET(request: NextRequest) {
 
   } catch (error) {
     console.error('❌ Error fetching notifications:', error)
+    return NextResponse.json(
+      {
+        success: false,
+        error: error instanceof Error ? error.message : 'Error interno del servidor'
+      },
+      { status: 500 }
+    )
+  }
+}
+
+export async function DELETE(request: NextRequest) {
+  try {
+    console.log('🗑️ API: Deleting all user notifications')
+
+    const { userId } = await auth()
+    if (!userId) {
+      return NextResponse.json(
+        { success: false, error: 'No autenticado' },
+        { status: 401 }
+      )
+    }
+
+    await NotificationService.softDeleteAllForUser(userId)
+
+    return NextResponse.json({
+      success: true,
+      message: 'Todas las notificaciones fueron eliminadas'
+    })
+
+  } catch (error) {
+    console.error('❌ Error deleting all notifications:', error)
     return NextResponse.json(
       {
         success: false,

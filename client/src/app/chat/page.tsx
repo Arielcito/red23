@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useRef, useEffect } from "react"
 import { useChat, SendMessageOptions } from "@/lib/hooks/useChat"
 import { ChatMessage } from "@/components/chat/ChatMessage"
 import { LoadingIndicator } from "@/components/chat/LoadingIndicator"
@@ -28,8 +28,17 @@ export default function ChatPage() {
   const [aspectRatio, setAspectRatio] = useState<"9:16" | "16:9" | "1:1">("1:1")
   const { user } = useUser()
   const { prompts, isLoading: isLoadingPrompts } = useAdminPrompts()
+  const messagesEndRef = useRef<HTMLDivElement>(null)
   
   console.log('📋 Loaded prompts for chat:', prompts.length)
+  
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
+  }
+  
+  useEffect(() => {
+    scrollToBottom()
+  }, [messages, isGenerating])
   
   // Filter active prompts and map to content array
   const quickPrompts = prompts
@@ -119,6 +128,7 @@ export default function ChatPage() {
             ))}
 
             {isGenerating && <LoadingIndicator />}
+            <div ref={messagesEndRef} />
           </div>
 
           <div className="flex-shrink-0">

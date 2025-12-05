@@ -227,13 +227,7 @@ export function NewsSection({ featuredNews, recentNews }: NewsSectionProps) {
                 ))}
               </div>
 
-              {/* Show More News Button */}
-              <div className="text-center mt-8">
-                <Button variant="outline" size="lg">
-                  Ver Todas las Noticias
-                  <ExternalLink className="h-4 w-4 ml-2" />
-                </Button>
-              </div>
+
             </div>
           )}
 

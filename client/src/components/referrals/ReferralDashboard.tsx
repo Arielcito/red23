@@ -80,7 +80,7 @@ export function ReferralDashboard({ className }: ReferralDashboardProps) {
         <div>
 
           <p className="text-muted-foreground">
-            Referí a otras personas y gana $75.000 por cada uno
+            Referí a otras personas y gana $50.000 por cada uno
           </p>
         </div>
         <Button

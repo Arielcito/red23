@@ -33,15 +33,15 @@ interface UseAdminRewardsSettingsReturn {
 export function useAdminRewardsSettings(): UseAdminRewardsSettingsReturn {
   const [settings, setSettings] = useState<RewardsBannerSettings>({
     enabled: true,
-    title: "¡Participa por premios exclusivos en tu país!",
-    description: "Cada semana seleccionamos ganadores en Paraguay, México y Uruguay. Aumenta tus chances usando Red23.",
+    title: "¡Participa por premios semanales exclusivos!",
+    description: "Cada viernes a las 20:00 (Argentina) seleccionamos ganadores. Aumenta tus chances usando Red23.",
     ctaLabel: "Ver reglas",
     ctaUrl: "#reglas-premios",
     theme: "emerald",
     imageId: null,
     imageUrl: null,
     useImage: false,
-    dailyPrizeAmount: "$500 - $1,500 USD",
+    dailyPrizeAmount: "$1,000 - $3,000 USD",
     monthlyPrizeAmount: "$5,000 - $15,000 USD",
     dailyPrizeDrawDate: null,
     monthlyPrizeDrawDate: null,
@@ -177,21 +177,21 @@ export function useAdminRewardsSettings(): UseAdminRewardsSettingsReturn {
   const resetSettings = useCallback(async () => {
     const defaultSettings: RewardsBannerSettings = {
       enabled: true,
-      title: "¡Participa por premios exclusivos en tu país!",
-      description: "Cada semana seleccionamos ganadores en Paraguay, México y Uruguay. Aumenta tus chances usando Red23.",
+      title: "¡Participa por premios semanales exclusivos!",
+      description: "Cada viernes a las 20:00 (Argentina) seleccionamos ganadores. Aumenta tus chances usando Red23.",
       ctaLabel: "Ver reglas",
       ctaUrl: "#reglas-premios",
       theme: "emerald",
       imageId: null,
       imageUrl: null,
       useImage: false,
-      dailyPrizeAmount: "$500 - $1,500 USD",
+      dailyPrizeAmount: "$1,000 - $3,000 USD",
       monthlyPrizeAmount: "$5,000 - $15,000 USD",
       dailyPrizeDrawDate: null,
       monthlyPrizeDrawDate: null,
       useCustomDates: false
     }
-    
+
     await updateSettings(defaultSettings)
   }, [updateSettings])
 

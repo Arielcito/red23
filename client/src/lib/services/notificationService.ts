@@ -159,4 +159,22 @@ export class NotificationService {
       throw new Error(`Error eliminando notificación: ${error.message}`)
     }
   }
+
+  /**
+   * Soft delete all notifications for user
+   */
+  static async softDeleteAllForUser(userId: string): Promise<void> {
+    console.log(`🗑️ Service: Soft deleting all notifications for user ${userId}`)
+
+    const { error } = await supabase
+      .from('user_notifications')
+      .update({ deleted_at: new Date().toISOString() })
+      .eq('user_id', userId)
+      .is('deleted_at', null)
+
+    if (error) {
+      console.error('❌ Error soft deleting all notifications:', error)
+      throw new Error(`Error eliminando todas las notificaciones: ${error.message}`)
+    }
+  }
 }

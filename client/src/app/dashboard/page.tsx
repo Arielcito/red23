@@ -6,7 +6,6 @@ import {
   MessageCircle,
   GalleryThumbnailsIcon as Gallery,
   Clock,
-  Trophy,
   Star,
 } from "lucide-react"
 import Link from "next/link"
@@ -25,7 +24,7 @@ import { useTermsAcceptance } from "@/lib/hooks/useTermsAcceptance"
 export default function Dashboard() {
   const { winners } = useWinnersApi()
   const { topThree } = useCasinosData()
-  const { nextDailyPrize, nextMonthlyPrize } = useRewardsData()
+  const { nextWeeklyPrize, weeklyPrizeAmount } = useRewardsData()
   const { learningPaths, featuredPaths } = useLearningPaths()
   const { needsAcceptance, isAccepting, acceptTerms } = useTermsAcceptance()
 
@@ -108,51 +107,27 @@ export default function Dashboard() {
               </Button>
             </Link>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 lg:gap-6">
+          <div className="grid grid-cols-1 gap-3 sm:gap-4 lg:gap-6">
             <Card className="relative overflow-hidden">
               <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-primary/20" />
               <CardHeader className="relative">
                 <div className="flex items-center gap-2">
                   <Clock className="h-5 w-5 text-primary" />
-                  <CardTitle className="text-base sm:text-lg">Premio semanal</CardTitle>
+                  <CardTitle className="text-base sm:text-lg">Premio Semanal</CardTitle>
                 </div>
                 <CardDescription>
-                  Sorteo automático cada día a las 00:00
+                  Sorteo todos los viernes a las 20:00 (Argentina, GMT-3)
                 </CardDescription>
               </CardHeader>
               <CardContent className="relative">
                 <CountdownTimer
-                  targetDate={nextDailyPrize}
-                  label="Tiempo restante"
+                  targetDate={nextWeeklyPrize}
+                  label="Próximo sorteo en"
                   className="mb-4"
                 />
                 <div className="flex items-center gap-2">
                   <Star className="h-4 w-4 text-yellow-500" />
-                  <span className="text-sm font-medium">Premio: $500 - $1,500 USD</span>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="relative overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-br from-secondary/5 to-secondary/20" />
-              <CardHeader className="relative">
-                <div className="flex items-center gap-2">
-                  <Trophy className="h-5 w-5 text-secondary" />
-                  <CardTitle className="text-base sm:text-lg">Premio Mensual</CardTitle>
-                </div>
-                <CardDescription>
-                  Gran sorteo al final de cada mes
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="relative">
-                <CountdownTimer
-                  targetDate={nextMonthlyPrize}
-                  label="Tiempo restante"
-                  className="mb-4"
-                />
-                <div className="flex items-center gap-2">
-                  <Star className="h-4 w-4 text-yellow-500" />
-                  <span className="text-sm font-medium">Premio: $5,000 - $15,000 USD</span>
+                  <span className="text-sm font-medium">Premio: {weeklyPrizeAmount}</span>
                 </div>
               </CardContent>
             </Card>

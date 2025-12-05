@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button"
 import { ArrowRight } from "lucide-react"
+import Link from "next/link"
 
 export function CtaSection() {
   return (
@@ -16,9 +17,11 @@ export function CtaSection() {
           Empezá hoy y comenzá a <br />
           <span className="text-cyan-400">diferenciarte de tu competencia</span>
         </h2>
-        <Button className="bg-cyan-500 hover:bg-cyan-600 text-white rounded-full px-8 sm:px-12 py-6 sm:py-8 text-base sm:text-lg md:text-xl font-bold flex items-center gap-2 mx-auto shadow-2xl shadow-cyan-500/20">
-          Comenzar Ahora
-          <ArrowRight className="w-5 h-5 sm:w-6 sm:h-6" />
+        <Button asChild className="bg-cyan-500 hover:bg-cyan-600 text-white rounded-full px-8 sm:px-12 py-6 sm:py-8 text-base sm:text-lg md:text-xl font-bold flex items-center gap-2 mx-auto shadow-2xl shadow-cyan-500/20">
+          <Link href="/login">
+            Comenzar Ahora
+            <ArrowRight className="w-5 h-5 sm:w-6 sm:h-6" />
+          </Link>
         </Button>
       </div>
     </section>

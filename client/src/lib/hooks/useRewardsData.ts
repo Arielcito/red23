@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import type { RewardWinner, RewardSettings } from '@/lib/supabase/types'
+import type { RewardWinner } from '@/lib/supabase/types'
 
 export interface Winner {
   id: string
@@ -11,53 +11,50 @@ export interface Winner {
 }
 
 interface UseRewardsDataReturn {
-  nextDailyPrize: Date
-  nextMonthlyPrize: Date
+  nextWeeklyPrize: Date
+  weeklyPrizeAmount: string
   recentWinners: Winner[]
-  rewardSettings: RewardSettings | null
   isLoading: boolean
   error: string | null
   refetch: () => Promise<void>
 }
 
+// Helper: calcular próximo viernes 20:00 GMT-3 (Argentina)
+const getNextFridayArgentinaTime = (): Date => {
+  const now = new Date()
+
+  // GMT-3 offset (Argentina)
+  const argentinaOffset = -3 * 60 // minutes
+  const localOffset = now.getTimezoneOffset()
+  const offsetDiff = argentinaOffset - localOffset
+
+  // Ajustar a Argentina time
+  const argentinaTime = new Date(now.getTime() + offsetDiff * 60000)
+
+  // Calcular días hasta viernes (5 = Friday)
+  const dayOfWeek = argentinaTime.getDay()
+  const daysUntilFriday = (5 - dayOfWeek + 7) % 7 || 7
+
+  const nextFriday = new Date(argentinaTime)
+  nextFriday.setDate(argentinaTime.getDate() + daysUntilFriday)
+  nextFriday.setHours(20, 0, 0, 0)
+
+  // Si es viernes después de las 20:00, siguiente semana
+  if (daysUntilFriday === 0 && argentinaTime.getHours() >= 20) {
+    nextFriday.setDate(nextFriday.getDate() + 7)
+  }
+
+  // Convertir de vuelta a local timezone
+  return new Date(nextFriday.getTime() - offsetDiff * 60000)
+}
+
 export function useRewardsData(): UseRewardsDataReturn {
   const [recentWinners, setRecentWinners] = useState<Winner[]>([])
-  const [rewardSettings, setRewardSettings] = useState<RewardSettings | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  const getNextDailyPrize = (): Date => {
-    // Usar fecha personalizada si existe y use_custom_dates está habilitado
-    if (rewardSettings?.use_custom_dates && rewardSettings?.daily_prize_draw_date) {
-      const customDate = new Date(rewardSettings.daily_prize_draw_date)
-      if (customDate > new Date()) {
-        return customDate
-      }
-    }
-    
-    // Fallback: calcular próximo día automáticamente
-    const now = new Date()
-    const tomorrow = new Date(now)
-    tomorrow.setDate(tomorrow.getDate() + 1)
-    tomorrow.setHours(0, 0, 0, 0)
-    return tomorrow
-  }
-
-  const getNextMonthlyPrize = (): Date => {
-    // Usar fecha personalizada si existe y use_custom_dates está habilitado
-    if (rewardSettings?.use_custom_dates && rewardSettings?.monthly_prize_draw_date) {
-      const customDate = new Date(rewardSettings.monthly_prize_draw_date)
-      if (customDate > new Date()) {
-        return customDate
-      }
-    }
-    
-    // Fallback: calcular próximo mes automáticamente
-    const now = new Date()
-    const nextMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1)
-    nextMonth.setHours(0, 0, 0, 0)
-    return nextMonth
-  }
+  // Hardcodear premio semanal
+  const weeklyPrizeAmount = "$1,000 - $3,000 USD"
 
   const fetchRewards = async (type?: 'daily' | 'monthly', limit?: number) => {
     try {
@@ -94,11 +91,6 @@ export function useRewardsData(): UseRewardsDataReturn {
       }))
 
       setRecentWinners(transformedWinners)
-      
-      // También guardar reward settings si están disponibles
-      if (result.data.rewardSettings) {
-        setRewardSettings(result.data.rewardSettings)
-      }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to fetch rewards'
       console.error('❌ Error fetching rewards:', errorMessage)
@@ -113,10 +105,9 @@ export function useRewardsData(): UseRewardsDataReturn {
   }, [])
 
   return {
-    nextDailyPrize: getNextDailyPrize(),
-    nextMonthlyPrize: getNextMonthlyPrize(),
+    nextWeeklyPrize: getNextFridayArgentinaTime(),
+    weeklyPrizeAmount,
     recentWinners,
-    rewardSettings,
     isLoading,
     error,
     refetch: fetchRewards

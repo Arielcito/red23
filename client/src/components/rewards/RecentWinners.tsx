@@ -2,7 +2,6 @@
 
 import { Winner } from "@/lib/hooks/useRewardsData"
 import { Trophy, Calendar } from "lucide-react"
-import { Badge } from "@/components/ui/badge"
 import { formatRelativeDate } from "@/lib/utils"
 
 interface RecentWinnersProps {
@@ -77,11 +76,7 @@ export function RecentWinners({ winners, isLoading, className }: RecentWinnersPr
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2">
                 <p className="text-sm font-medium truncate">{winner.name}</p>
-                {winner.type === 'monthly' && (
-                  <Badge variant="secondary" className="text-xs px-1 py-0">
-                    Mensual
-                  </Badge>
-                )}
+                {/* Removed: monthly badge - showing all as weekly winners */}
               </div>
               <div className="flex items-center gap-1 mt-0.5">
                 <Calendar className="h-3 w-3 text-muted-foreground" />
