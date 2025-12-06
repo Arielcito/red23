@@ -2,10 +2,9 @@
 
 import { AppLayout } from "@/components/layout/AppLayout"
 import { useRewardsData } from "@/lib/hooks/useRewardsData"
-import { CountdownTimer } from "@/components/rewards/CountdownTimer"
-import { RecentWinners } from "@/components/rewards/RecentWinners"
+import { PrizeCard } from "@/components/rewards/PrizeCard"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Gift, Clock, Star } from "lucide-react"
+import { Gift, Clock } from "lucide-react"
 import { RewardsBanner } from "@/components/rewards/RewardsBanner"
 import { useAdminRewardsSettings } from "@/lib/hooks/useAdminRewardsSettings"
 import { useBannerImage } from "@/lib/hooks/useBannerImage"
@@ -53,63 +52,34 @@ export default function RewardsPage() {
         {/* Countdown de premios */}
         <div className="grid gap-4 md:grid-cols-2">
           {/* Premio Semanal */}
-          <Card className="relative overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-primary/20" />
-            <CardHeader className="relative">
-              <div className="flex items-center gap-2">
-                <Clock className="h-4 w-4 text-primary" />
-                <CardTitle className="text-lg">Premio Semanal</CardTitle>
-              </div>
-              <CardDescription>
-                Sorteo todos los viernes a las 20:00 (Argentina, GMT-3)
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="relative">
-              <CountdownTimer
-                targetDate={nextWeeklyPrize}
-                label="Próximo sorteo en"
-                className="mb-4"
-              />
-              <div className="flex items-center gap-2">
-                <Star className="h-4 w-4 text-yellow-500" />
-                <span className="text-sm font-medium">
-                  Premio: {weeklyPrizeAmount}
-                </span>
-              </div>
-            </CardContent>
-          </Card>
+          <PrizeCard
+            title="Premio Semanal"
+            description="Sorteo todos los viernes a las 20:00 (Argentina, GMT-3)"
+            targetDate={nextWeeklyPrize}
+            prizeAmount={settingsLoaded ? bannerSettings.dailyPrizeAmount : weeklyPrizeAmount}
+            icon={Clock}
+            theme="primary"
+          />
 
           {/* Premio Mensual */}
           {settingsLoaded && bannerSettings.monthlyPrizeAmount && (
-            <Card className="relative overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-br from-amber-500/5 to-amber-600/20" />
-              <CardHeader className="relative">
-                <div className="flex items-center gap-2">
-                  <Gift className="h-4 w-4 text-amber-600" />
-                  <CardTitle className="text-lg">Premio Mensual</CardTitle>
-                </div>
-                <CardDescription>
-                  {bannerSettings.useCustomDates && bannerSettings.monthlyPrizeDrawDate
-                    ? `Sorteo el ${new Date(bannerSettings.monthlyPrizeDrawDate).toLocaleDateString('es-AR', {
-                        day: 'numeric',
-                        month: 'long',
-                        year: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit'
-                      })}`
-                    : "Sorteo el último día de cada mes a las 20:00 (Argentina, GMT-3)"}
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="relative">
-                {bannerSettings.useCustomDates && bannerSettings.monthlyPrizeDrawDate ? (
-                  <CountdownTimer
-                    targetDate={new Date(bannerSettings.monthlyPrizeDrawDate)}
-                    label="Próximo sorteo en"
-                    className="mb-4"
-                  />
-                ) : (
-                  <CountdownTimer
-                    targetDate={(() => {
+            <PrizeCard
+              title="Premio Mensual"
+              description={
+                bannerSettings.useCustomDates && bannerSettings.monthlyPrizeDrawDate
+                  ? `Sorteo el ${new Date(bannerSettings.monthlyPrizeDrawDate).toLocaleDateString('es-AR', {
+                      day: 'numeric',
+                      month: 'long',
+                      year: 'numeric',
+                      hour: '2-digit',
+                      minute: '2-digit'
+                    })}`
+                  : "Sorteo el último día de cada mes a las 20:00 (Argentina, GMT-3)"
+              }
+              targetDate={
+                bannerSettings.useCustomDates && bannerSettings.monthlyPrizeDrawDate
+                  ? new Date(bannerSettings.monthlyPrizeDrawDate)
+                  : (() => {
                       const now = new Date()
                       const lastDayOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0)
                       lastDayOfMonth.setHours(20, 0, 0, 0)
@@ -121,19 +91,12 @@ export default function RewardsPage() {
                       }
 
                       return lastDayOfMonth
-                    })()}
-                    label="Próximo sorteo en"
-                    className="mb-4"
-                  />
-                )}
-                <div className="flex items-center gap-2">
-                  <Star className="h-4 w-4 text-amber-500" />
-                  <span className="text-sm font-medium">
-                    Premio: {bannerSettings.monthlyPrizeAmount}
-                  </span>
-                </div>
-              </CardContent>
-            </Card>
+                    })()
+              }
+              prizeAmount={bannerSettings.monthlyPrizeAmount}
+              icon={Gift}
+              theme="blue"
+            />
           )}
         </div>
 

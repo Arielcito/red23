@@ -6,7 +6,7 @@ import {
   MessageCircle,
   GalleryThumbnailsIcon as Gallery,
   Clock,
-  Star,
+  Gift,
 } from "lucide-react"
 import Link from "next/link"
 import { AppLayout } from "@/components/layout/AppLayout"
@@ -15,11 +15,12 @@ import { useWinnersApi } from "@/lib/hooks/useWinnersApi"
 import { useCasinosData } from "@/lib/hooks/useCasinosData"
 import { useRewardsData } from "@/lib/hooks/useRewardsData"
 import { useLearningPaths } from "@/lib/hooks/useLearningPaths"
-import { CountdownTimer } from "@/components/rewards/CountdownTimer"
+import { PrizeCard } from "@/components/rewards/PrizeCard"
 import { TopThreeSection } from "@/components/novedades/TopThreeSection"
 import { LearningPathsSection } from "@/components/tutorials/LearningPathsSection"
 import { TermsAcceptanceModal } from "@/components/legal/TermsAcceptanceModal"
 import { useTermsAcceptance } from "@/lib/hooks/useTermsAcceptance"
+import { useAdminRewardsSettings } from "@/lib/hooks/useAdminRewardsSettings"
 
 export default function Dashboard() {
   const { winners } = useWinnersApi()
@@ -27,6 +28,7 @@ export default function Dashboard() {
   const { nextWeeklyPrize, weeklyPrizeAmount } = useRewardsData()
   const { learningPaths, featuredPaths } = useLearningPaths()
   const { needsAcceptance, isAccepting, acceptTerms } = useTermsAcceptance()
+  const { settings: bannerSettings, isLoaded: settingsLoaded } = useAdminRewardsSettings()
 
   // Usar el primer ganador de la API o un fallback
   const dailyWinner = winners.length > 0 ? {
@@ -107,30 +109,54 @@ export default function Dashboard() {
               </Button>
             </Link>
           </div>
-          <div className="grid grid-cols-1 gap-3 sm:gap-4 lg:gap-6">
-            <Card className="relative overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-primary/20" />
-              <CardHeader className="relative">
-                <div className="flex items-center gap-2">
-                  <Clock className="h-5 w-5 text-primary" />
-                  <CardTitle className="text-base sm:text-lg">Premio Semanal</CardTitle>
-                </div>
-                <CardDescription>
-                  Sorteo todos los viernes a las 20:00 (Argentina, GMT-3)
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="relative">
-                <CountdownTimer
-                  targetDate={nextWeeklyPrize}
-                  label="Próximo sorteo en"
-                  className="mb-4"
-                />
-                <div className="flex items-center gap-2">
-                  <Star className="h-4 w-4 text-yellow-500" />
-                  <span className="text-sm font-medium">Premio: {weeklyPrizeAmount}</span>
-                </div>
-              </CardContent>
-            </Card>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 lg:gap-6">
+            {/* Premio Semanal */}
+            <PrizeCard
+              title="Premio Semanal"
+              description="Sorteo todos los viernes a las 20:00 (Argentina, GMT-3)"
+              targetDate={nextWeeklyPrize}
+              prizeAmount={settingsLoaded ? bannerSettings.dailyPrizeAmount : weeklyPrizeAmount}
+              icon={Clock}
+              theme="primary"
+            />
+
+            {/* Premio Mensual */}
+            {settingsLoaded && bannerSettings.monthlyPrizeAmount && (
+              <PrizeCard
+                title="Premio Mensual"
+                description={
+                  bannerSettings.useCustomDates && bannerSettings.monthlyPrizeDrawDate
+                    ? `Sorteo el ${new Date(bannerSettings.monthlyPrizeDrawDate).toLocaleDateString('es-AR', {
+                        day: 'numeric',
+                        month: 'long',
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                      })}`
+                    : "Sorteo el último día de cada mes a las 20:00 (Argentina, GMT-3)"
+                }
+                targetDate={
+                  bannerSettings.useCustomDates && bannerSettings.monthlyPrizeDrawDate
+                    ? new Date(bannerSettings.monthlyPrizeDrawDate)
+                    : (() => {
+                        const now = new Date()
+                        const lastDayOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0)
+                        lastDayOfMonth.setHours(20, 0, 0, 0)
+
+                        if (now > lastDayOfMonth) {
+                          const nextMonth = new Date(now.getFullYear(), now.getMonth() + 2, 0)
+                          nextMonth.setHours(20, 0, 0, 0)
+                          return nextMonth
+                        }
+
+                        return lastDayOfMonth
+                      })()
+                }
+                prizeAmount={bannerSettings.monthlyPrizeAmount}
+                icon={Gift}
+                theme="blue"
+              />
+            )}
           </div>
         </div>
 
