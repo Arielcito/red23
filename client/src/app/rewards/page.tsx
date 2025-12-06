@@ -55,7 +55,7 @@ export default function RewardsPage() {
           {/* Premio Semanal */}
           <PrizeCard
             title="Premio Semanal"
-            description="Sorteo todos los viernes a las 20:00 (Argentina, GMT-3)"
+            description="Sorteo todos los viernes a las 20:00"
             targetDate={nextWeeklyPrize}
             prizeAmount={settingsLoaded ? bannerSettings.dailyPrizeAmount : weeklyPrizeAmount}
             icon={Clock}
@@ -75,7 +75,7 @@ export default function RewardsPage() {
                       hour: '2-digit',
                       minute: '2-digit'
                     })}`
-                  : "Sorteo el último día de cada mes a las 20:00 (Argentina, GMT-3)"
+                  : "Sorteo el último día de cada mes a las 20:00"
               }
               targetDate={
                 bannerSettings.useCustomDates && bannerSettings.monthlyPrizeDrawDate
