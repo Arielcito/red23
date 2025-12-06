@@ -125,17 +125,7 @@ export default function Dashboard() {
             {settingsLoaded && bannerSettings.monthlyPrizeAmount && (
               <PrizeCard
                 title="Premio Mensual"
-                description={
-                  bannerSettings.useCustomDates && bannerSettings.monthlyPrizeDrawDate
-                    ? `Sorteo el ${new Date(bannerSettings.monthlyPrizeDrawDate).toLocaleDateString('es-AR', {
-                        day: 'numeric',
-                        month: 'long',
-                        year: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit'
-                      })}`
-                    : "Sorteo el último día de cada mes a las 20:00"
-                }
+                description="Sorteo el último día de cada mes a las 20:00"
                 targetDate={
                   bannerSettings.useCustomDates && bannerSettings.monthlyPrizeDrawDate
                     ? new Date(bannerSettings.monthlyPrizeDrawDate)
