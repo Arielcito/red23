@@ -1,6 +1,7 @@
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Check } from "lucide-react"
+import Link from "next/link"
 
 const plans = [
   {
@@ -93,13 +94,16 @@ export function PricingSection() {
               </div>
 
               <Button
+                asChild
                 className={`w-full rounded-full py-5 sm:py-6 text-sm sm:text-base ${
                   plan.popular
                     ? "bg-cyan-500 hover:bg-cyan-600 text-white"
                     : "bg-transparent border-2 border-cyan-500 text-cyan-400 hover:bg-cyan-500/10"
                 }`}
               >
-                Comenzar Ahora
+                <Link href="/login">
+                  Comenzar Ahora
+                </Link>
               </Button>
             </Card>
           ))}
