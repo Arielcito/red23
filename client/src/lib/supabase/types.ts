@@ -229,7 +229,6 @@ export interface NewCasino {
   plat_similar?: string | null
   position?: number | null
   image_url?: string | null
-  is_regulated?: boolean
   is_active?: boolean
 }
 

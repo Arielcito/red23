@@ -392,8 +392,7 @@ export class CasinoService {
       rtp: casinoData.rtp,
       plat_similar: casinoData.platSimilar,
       position: casinoData.position,
-      image_url: casinoData.imageUrl,
-      is_regulated: casinoData.isRegulated
+      image_url: casinoData.imageUrl
     }
   }
 }

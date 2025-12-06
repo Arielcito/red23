@@ -50,8 +50,9 @@ export default function RewardsPage() {
           </p>
         </div>
 
-        {/* Countdown de premio semanal */}
-        <div className="grid gap-4">
+        {/* Countdown de premios */}
+        <div className="grid gap-4 md:grid-cols-2">
+          {/* Premio Semanal */}
           <Card className="relative overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-primary/20" />
             <CardHeader className="relative">
@@ -77,6 +78,63 @@ export default function RewardsPage() {
               </div>
             </CardContent>
           </Card>
+
+          {/* Premio Mensual */}
+          {settingsLoaded && bannerSettings.monthlyPrizeAmount && (
+            <Card className="relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-br from-amber-500/5 to-amber-600/20" />
+              <CardHeader className="relative">
+                <div className="flex items-center gap-2">
+                  <Gift className="h-4 w-4 text-amber-600" />
+                  <CardTitle className="text-lg">Premio Mensual</CardTitle>
+                </div>
+                <CardDescription>
+                  {bannerSettings.useCustomDates && bannerSettings.monthlyPrizeDrawDate
+                    ? `Sorteo el ${new Date(bannerSettings.monthlyPrizeDrawDate).toLocaleDateString('es-AR', {
+                        day: 'numeric',
+                        month: 'long',
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                      })}`
+                    : "Sorteo el último día de cada mes a las 20:00 (Argentina, GMT-3)"}
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="relative">
+                {bannerSettings.useCustomDates && bannerSettings.monthlyPrizeDrawDate ? (
+                  <CountdownTimer
+                    targetDate={new Date(bannerSettings.monthlyPrizeDrawDate)}
+                    label="Próximo sorteo en"
+                    className="mb-4"
+                  />
+                ) : (
+                  <CountdownTimer
+                    targetDate={(() => {
+                      const now = new Date()
+                      const lastDayOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0)
+                      lastDayOfMonth.setHours(20, 0, 0, 0)
+
+                      if (now > lastDayOfMonth) {
+                        const nextMonth = new Date(now.getFullYear(), now.getMonth() + 2, 0)
+                        nextMonth.setHours(20, 0, 0, 0)
+                        return nextMonth
+                      }
+
+                      return lastDayOfMonth
+                    })()}
+                    label="Próximo sorteo en"
+                    className="mb-4"
+                  />
+                )}
+                <div className="flex items-center gap-2">
+                  <Star className="h-4 w-4 text-amber-500" />
+                  <span className="text-sm font-medium">
+                    Premio: {bannerSettings.monthlyPrizeAmount}
+                  </span>
+                </div>
+              </CardContent>
+            </Card>
+          )}
         </div>
 
         {/* Información sobre cómo participar */}
