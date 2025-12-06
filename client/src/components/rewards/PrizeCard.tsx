@@ -46,6 +46,12 @@ export function PrizeCard({
 }: PrizeCardProps) {
   const styles = THEME_STYLES[theme]
 
+  console.log(`🎁 [PRIZE CARD - ${title}] Target date recibida:`, targetDate)
+  console.log(`🎁 [PRIZE CARD - ${title}] Target date (locale):`, targetDate.toLocaleString())
+  console.log(`🎁 [PRIZE CARD - ${title}] Target date (ISO):`, targetDate.toISOString())
+  console.log(`🎁 [PRIZE CARD - ${title}] Premio:`, prizeAmount)
+  console.log('---')
+
   return (
     <Card className={cn("relative overflow-hidden", className)}>
       <div className={cn("absolute inset-0 bg-gradient-to-br", styles.gradient)} />

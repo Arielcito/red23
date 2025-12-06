@@ -27,20 +27,34 @@ export function CountdownTimer({ targetDate, label, className }: CountdownTimerP
   useEffect(() => {
     if (!mounted) return
 
+    console.log('⏱️ [COUNTDOWN] Target date:', targetDate)
+    console.log('⏱️ [COUNTDOWN] Target date (locale):', targetDate.toLocaleString())
+    console.log('⏱️ [COUNTDOWN] Target date (ISO):', targetDate.toISOString())
+
     const calculateTimeLeft = (): TimeLeft => {
-      const now = new Date().getTime()
+      const now = new Date()
+      const nowTime = now.getTime()
       const target = targetDate.getTime()
-      const difference = target - now
+      const difference = target - nowTime
+
+      console.log('⏱️ [COUNTDOWN] Ahora (locale):', now.toLocaleString())
+      console.log('⏱️ [COUNTDOWN] Ahora (timestamp):', nowTime)
+      console.log('⏱️ [COUNTDOWN] Target (timestamp):', target)
+      console.log('⏱️ [COUNTDOWN] Diferencia (ms):', difference)
+      console.log('⏱️ [COUNTDOWN] Diferencia (horas):', difference / (1000 * 60 * 60))
 
       if (difference > 0) {
-        return {
+        const result = {
           days: Math.floor(difference / (1000 * 60 * 60 * 24)),
           hours: Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
           minutes: Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60)),
           seconds: Math.floor((difference % (1000 * 60)) / 1000),
         }
+        console.log('⏱️ [COUNTDOWN] Tiempo restante:', result)
+        return result
       }
 
+      console.log('⏱️ [COUNTDOWN] ¡Tiempo expirado!')
       return { days: 0, hours: 0, minutes: 0, seconds: 0 }
     }
 

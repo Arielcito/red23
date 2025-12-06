@@ -21,6 +21,7 @@ import { LearningPathsSection } from "@/components/tutorials/LearningPathsSectio
 import { TermsAcceptanceModal } from "@/components/legal/TermsAcceptanceModal"
 import { useTermsAcceptance } from "@/lib/hooks/useTermsAcceptance"
 import { useAdminRewardsSettings } from "@/lib/hooks/useAdminRewardsSettings"
+import { getNextMonthlyDrawArgentinaTime } from "@/lib/utils/dateHelpers"
 
 export default function Dashboard() {
   const { winners } = useWinnersApi()
@@ -138,19 +139,7 @@ export default function Dashboard() {
                 targetDate={
                   bannerSettings.useCustomDates && bannerSettings.monthlyPrizeDrawDate
                     ? new Date(bannerSettings.monthlyPrizeDrawDate)
-                    : (() => {
-                        const now = new Date()
-                        const lastDayOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0)
-                        lastDayOfMonth.setHours(20, 0, 0, 0)
-
-                        if (now > lastDayOfMonth) {
-                          const nextMonth = new Date(now.getFullYear(), now.getMonth() + 2, 0)
-                          nextMonth.setHours(20, 0, 0, 0)
-                          return nextMonth
-                        }
-
-                        return lastDayOfMonth
-                      })()
+                    : getNextMonthlyDrawArgentinaTime()
                 }
                 prizeAmount={bannerSettings.monthlyPrizeAmount}
                 icon={Gift}

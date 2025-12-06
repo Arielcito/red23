@@ -8,6 +8,7 @@ import { Gift, Clock } from "lucide-react"
 import { RewardsBanner } from "@/components/rewards/RewardsBanner"
 import { useAdminRewardsSettings } from "@/lib/hooks/useAdminRewardsSettings"
 import { useBannerImage } from "@/lib/hooks/useBannerImage"
+import { getNextMonthlyDrawArgentinaTime } from "@/lib/utils/dateHelpers"
 
 export default function RewardsPage() {
   const { nextWeeklyPrize, weeklyPrizeAmount, recentWinners, isLoading, error } = useRewardsData()
@@ -79,19 +80,7 @@ export default function RewardsPage() {
               targetDate={
                 bannerSettings.useCustomDates && bannerSettings.monthlyPrizeDrawDate
                   ? new Date(bannerSettings.monthlyPrizeDrawDate)
-                  : (() => {
-                      const now = new Date()
-                      const lastDayOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0)
-                      lastDayOfMonth.setHours(20, 0, 0, 0)
-
-                      if (now > lastDayOfMonth) {
-                        const nextMonth = new Date(now.getFullYear(), now.getMonth() + 2, 0)
-                        nextMonth.setHours(20, 0, 0, 0)
-                        return nextMonth
-                      }
-
-                      return lastDayOfMonth
-                    })()
+                  : getNextMonthlyDrawArgentinaTime()
               }
               prizeAmount={bannerSettings.monthlyPrizeAmount}
               icon={Gift}
